@@ -1,0 +1,51 @@
+{
+  "name": "typescript",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "type": "tsc --noEmit --project ./tsconfig.json",
+    "publish": "npm publish --access=public",
+    "start": "ts-node --project ./tsconfig.json ./src/index.ts"
+  },
+  "dependencies": {
+    "kad-rtc": "^0.4.0",
+    "rx.mini": "^0.1.0",
+    "sha1": "^1.1.1",
+    "webrtc4me": "^0.7.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.13",
+    "@types/node": "^11.13.6",
+    "@types/sha1": "^1.1.2",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.5",
+    "ts-node": "^8.3.0",
+    "tslib": "^1.9.3",
+    "typescript": "^3.6.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfigFile": "tsconfig.json"
+      }
+    },
+    "testMatch": [
+      "**/*.test.ts"
+    ]
+  }
+}
