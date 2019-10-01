@@ -1,4 +1,4 @@
-import Kademlia from "kad-rtc";
+import Kademlia from "../vendor/kademlia";
 import { MainNetwork } from "../entity/network/main";
 import { NavigatorContainer } from "../usecase/actor/navigator/container";
 import { SeederContainer } from "../usecase/actor/seeder/container";

@@ -1,6 +1,6 @@
 import { CreatePeer } from "../../../service/peer/createPeer";
 import { MainNetwork } from "../../../entity/network/main";
-import { Peer } from "kad-rtc";
+import { Peer } from "../../../vendor/kademlia/modules/peer/base";
 import { SubNetworkManager } from "../../../service/network/submanager";
 
 export type Network = {

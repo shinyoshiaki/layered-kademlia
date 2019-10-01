@@ -18,7 +18,7 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@msgpack/msgpack@^1.4.5", "@msgpack/msgpack@^1.6.0":
+"@msgpack/msgpack@^1.6.0":
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/@msgpack/msgpack/-/msgpack-1.9.1.tgz#b0ed7e1ebdc612081bedd13b604ac22588bdc339"
   integrity sha512-oXZUHpDGpmMj06v5XHs9Y75mP403Xce7InSFtygzRqYdC4zILomBR28468IGjyBbTCKzrAtN6YlImb89CAINTA==
@@ -2129,18 +2129,6 @@ jsprim@^1.2.2:
   dependencies:
     sha1 "^1.1.1"
 
-kad-rtc@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/kad-rtc/-/kad-rtc-0.4.0.tgz#34e969580c2388f0690b1c5ff12e7213cf877a62"
-  integrity sha512-wZtMBt2Sfs13nR4kvs4DnmOpegkBEpHTDMUji2glBTDZqiUwAYDov5Vb42ueE7hO0zdAJFHuQUmcOrLeE7xpYA==
-  dependencies:
-    "@msgpack/msgpack" "^1.4.5"
-    kad-distance "git+https://git@github.com/shinyoshiaki/kad-distance.git"
-    rx.mini "^0.1.0"
-    sha1 "^1.1.1"
-    webrtc4me "^0.7.0"
-    wrtc "^0.4.0"
-
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-3.2.2.tgz#31ea21a734bab9bbb0f32466d893aea51e4a3c64"
@@ -2465,22 +2453,6 @@ node-pre-gyp@^0.12.0:
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.12.0.tgz#39ba4bb1439da030295f899e3b520b7785766149"
   integrity sha512-4KghwV8vH5k+g2ylT+sLTjy5wmUOb9vPhnM8NHvRf9dHmnW/CndrFXy2aRPaPST6dugXSdHXfeaHQm77PIz/1A==
-  dependencies:
-    detect-libc "^1.0.2"
-    mkdirp "^0.5.1"
-    needle "^2.2.1"
-    nopt "^4.0.1"
-    npm-packlist "^1.1.6"
-    npmlog "^4.0.2"
-    rc "^1.2.7"
-    rimraf "^2.6.1"
-    semver "^5.3.0"
-    tar "^4"
-
-node-pre-gyp@^0.13.0:
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.13.0.tgz#df9ab7b68dd6498137717838e4f92a33fc9daa42"
-  integrity sha512-Md1D3xnEne8b/HGVQkZZwV27WUi1ZRuZBij24TNaZwUPU3ZAFtvT6xxJGaUVillfmMKnn5oD1HoGsp2Ftik7SQ==
   dependencies:
     detect-libc "^1.0.2"
     mkdirp "^0.5.1"
@@ -3648,7 +3620,7 @@ webidl-conversions@^4.0.2:
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-4.0.2.tgz#a855980b1f0b6b359ba1d5d9fb39ae941faa63ad"
   integrity sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg==
 
-webrtc4me@^0.7.0, webrtc4me@^0.7.1:
+webrtc4me@^0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/webrtc4me/-/webrtc4me-0.7.1.tgz#c9c65e32a3ce911d9c5710ec797c4772a89136f6"
   integrity sha512-dGWrjWnA7pqOud2RwgNS/a0kW+QJivl2M7sbnjH3szbwa+aUfjrQZ7RPvPhZV8OTzQq6dp0MpSTiq0rJU0u8Sg==
@@ -3737,15 +3709,6 @@ write-file-atomic@^2.1.0:
     graceful-fs "^4.1.11"
     imurmurhash "^0.1.4"
     signal-exit "^3.0.2"
-
-wrtc@^0.4.0:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/wrtc/-/wrtc-0.4.2.tgz#feeb829709dac17139b49f7a18f57f4e98300a6f"
-  integrity sha512-IaXogllhkd3dHKrZxzQKXmKjqsR35X9XIjp1ElimieZuaPgDCPEbIg/DOwzGTT4bdKqmB8FjPgau2RNMFTGvHQ==
-  dependencies:
-    node-pre-gyp "^0.13.0"
-  optionalDependencies:
-    domexception "^1.0.1"
 
 ws@^5.2.0:
   version "5.2.2"

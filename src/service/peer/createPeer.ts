@@ -1,4 +1,6 @@
-import { Peer, PeerModule, genKid } from "kad-rtc";
+import { Peer } from "../../vendor/kademlia/modules/peer/base";
+import PeerModule from "../../vendor/kademlia/modules/peer";
+import genKid from "../../vendor/kademlia/util/kid";
 
 export class CreatePeer {
   async connect(url: string, peer: Peer) {

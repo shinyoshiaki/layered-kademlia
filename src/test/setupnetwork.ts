@@ -1,5 +1,5 @@
-import Kademlia, { PeerModule } from "kad-rtc";
-
+import Kademlia from "../vendor/kademlia";
+import PeerModule from "../vendor/kademlia/modules/peer";
 import { genKad } from "../entity/network/util";
 
 const kBucketSize = 8;

@@ -1,12 +1,15 @@
-import { EventManager, Peer, PeerModule, genKid } from "kad-rtc";
 import {
   RPCCreatePeerAnswer,
   RPCCreatePeerOffer
 } from "../../service/peer/createPeer";
 
+import EventManager from "../../vendor/kademlia/services/eventmanager";
 import { MainNetwork } from "../network/main";
+import { Peer } from "../../vendor/kademlia/modules/peer/base";
+import PeerModule from "../../vendor/kademlia/modules/peer";
 import { RPCNavigatorCallAnswer } from "./navigator";
 import { SubNetwork } from "../network/sub";
+import genKid from "../../vendor/kademlia/util/kid";
 import sha1 from "sha1";
 
 export class Seeder {

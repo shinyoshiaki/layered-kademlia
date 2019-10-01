@@ -4,7 +4,7 @@ import {
   RPCCreatePeerOffer
 } from "../../service/peer/createPeer";
 
-import { EventManager } from "kad-rtc";
+import EventManager from "../../vendor/kademlia/services/eventmanager";
 import { MainNetwork } from "../network/main";
 import { Seeder } from "./seeder";
 

@@ -1,6 +1,6 @@
-import { Item } from "kad-rtc/lib/kademlia/modules/kvs/base";
+import { Item } from "../../vendor/kademlia/modules/kvs/base";
 import { Meta } from "../data/meta";
-import { Peer } from "kad-rtc";
+import { Peer } from "../../vendor/kademlia/modules/peer/base";
 import { genKad } from "./util";
 import { mergeArraybuffer } from "../../util/arraybuffer";
 
