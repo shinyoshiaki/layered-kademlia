@@ -6,6 +6,7 @@ import {
 
 import EventManager from "../../vendor/kademlia/services/eventmanager";
 import { MainNetwork } from "../network/main";
+import { Peer } from "../../vendor/kademlia/modules/peer/base";
 import { Seeder } from "./seeder";
 
 export class Navigator {
@@ -26,7 +27,11 @@ export class Navigator {
     event.subscribe(async ({ rpc, peer }) => {
       const { offer, id, url } = rpc;
       if (this.url === url) {
-        const seederPeer = this.seeder.getPeers()[0];
+        const seederPeer = this.seeder.getPeers()[0] as Peer | undefined;
+        if (!seederPeer) {
+          console.warn("connect fail");
+          return;
+        }
         seederPeer.rpc(RPCNavigatorCallAnswer(offer, url, id));
         const { answer } = await peer
           .eventRpc<RPCCreatePeerAnswer>("RPCCreatePeerAnswer", id)
