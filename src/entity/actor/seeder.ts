@@ -15,7 +15,7 @@ export class Seeder {
     mainNet: MainNetwork,
     private subNet: SubNetwork
   ) {
-    this.listen(mainNet.kad.di.eventManager);
+    this.listen(mainNet.eventManager);
   }
 
   private listen(eventManager: EventManager) {

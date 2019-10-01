@@ -8,7 +8,7 @@ export type Network = {
   findValue: (url: string) => Promise<Peer | undefined>;
 };
 
-export class Uesr {
+export class User {
   constructor(
     private services: {
       SubNetworkManager: SubNetworkManager;

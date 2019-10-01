@@ -1,14 +1,11 @@
-import Kademlia, { KvsModule, Peer, PeerModule, genKid } from "kad-rtc";
-
 import { Item } from "kad-rtc/lib/kademlia/modules/kvs/base";
 import { Meta } from "../data/meta";
+import { Peer } from "kad-rtc";
+import { genKad } from "./util";
 import { mergeArraybuffer } from "../../util/arraybuffer";
 
 export class SubNetwork {
-  private kad = new Kademlia(genKid(), {
-    peerCreate: PeerModule,
-    kvs: KvsModule
-  });
+  private kad = genKad();
 
   kvs = this.kad.di.modules.kvs;
 

@@ -1,19 +1,19 @@
-import Kademlia, { KvsModule, Peer, PeerModule, genKid } from "kad-rtc";
+import Kademlia, { Peer } from "kad-rtc";
 
 import Event from "rx.mini";
 import { Meta } from "../data/meta";
+import { genKad } from "./util";
 import sha1 from "sha1";
 
 const metaMessage = "metaMessage";
 
 export class MainNetwork {
-  kad = new Kademlia(genKid(), { peerCreate: PeerModule, kvs: KvsModule });
+  private kad = this.existKad || genKad();
   onStoreMeta = new Event<{ meta: Meta; peer: Peer }>();
+  eventManager = this.kad.di.eventManager;
 
-  constructor() {
-    const { eventManager } = this.kad.di;
-
-    eventManager.store.subscribe(({ rpc, peer }) => {
+  constructor(private existKad?: Kademlia) {
+    this.eventManager.store.subscribe(({ rpc, peer }) => {
       const { msg, value } = rpc;
       if (msg === metaMessage) {
         this.onStoreMeta.execute({

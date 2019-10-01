@@ -14,7 +14,7 @@ export class Navigator {
     mainNet: MainNetwork,
     private seeder: Seeder
   ) {
-    this.listen(mainNet.kad.di.eventManager);
+    this.listen(mainNet.eventManager);
   }
 
   url = meta2URL(this.meta);
