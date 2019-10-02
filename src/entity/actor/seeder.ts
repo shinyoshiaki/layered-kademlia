@@ -9,7 +9,6 @@ import { Peer } from "../../vendor/kademlia/modules/peer/base";
 import PeerModule from "../../vendor/kademlia/modules/peer";
 import { RPCNavigatorCallAnswer } from "./navigator";
 import { SubNetwork } from "../network/sub";
-import genKid from "../../vendor/kademlia/util/kid";
 import sha1 from "sha1";
 
 export class Seeder {
@@ -47,7 +46,7 @@ export class Seeder {
   }
 
   private async connectPeer(offer: string, id: string, peer: Peer) {
-    const connect = PeerModule(genKid());
+    const connect = PeerModule(peer.kid);
     const answer = await connect.setOffer(JSON.parse(offer));
     peer.rpc(RPCCreatePeerAnswer(JSON.stringify(answer), id));
     await peer.onConnect.asPromise();

@@ -25,7 +25,7 @@ export class User {
     const { peer, meta } = res;
 
     // connect to seeder via navigator
-    const seederPeer = await CreatePeer.connect(url, peer);
+    const seederPeer = await CreatePeer.connect(url, this.mainNet.kid, peer);
 
     const subNet = SubNetworkManager.createNetwork(url);
     subNet.addPeer(seederPeer);

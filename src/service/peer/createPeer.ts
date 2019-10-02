@@ -1,14 +1,13 @@
 import { Peer } from "../../vendor/kademlia/modules/peer/base";
 import PeerModule from "../../vendor/kademlia/modules/peer";
-import genKid from "../../vendor/kademlia/util/kid";
 
 export class CreatePeer {
-  async connect(url: string, peer: Peer) {
-    const connect = PeerModule(genKid());
+  async connect(url: string, myKid: string, peer: Peer) {
+    const connect = PeerModule(peer.kid);
 
     const offer = await connect.createOffer();
     const id = Math.random().toString();
-    peer.rpc(RPCCreatePeerOffer(JSON.stringify(offer), url, id));
+    peer.rpc(RPCCreatePeerOffer(JSON.stringify(offer), url, myKid, id));
 
     const { answer } = await peer
       .eventRpc<RPCCreatePeerAnswer>("RPCCreatePeerAnswer", id)
@@ -19,11 +18,17 @@ export class CreatePeer {
   }
 }
 
-const RPCCreatePeerOffer = (offer: string, url: string, id: string) => ({
+const RPCCreatePeerOffer = (
+  offer: string,
+  url: string,
+  kid: string,
+  id: string
+) => ({
   type: "RPCCreatePeerOffer" as const,
   offer,
-  id,
-  url
+  kid,
+  url,
+  id
 });
 
 export type RPCCreatePeerOffer = ReturnType<typeof RPCCreatePeerOffer>;

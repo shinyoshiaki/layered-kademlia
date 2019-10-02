@@ -9,6 +9,8 @@ const metaMessage = "metaMessage";
 
 export class MainNetwork {
   private kad = this.existKad || genKad();
+
+  kid = this.kad.kid;
   onStoreMeta = new Event<{ meta: Meta; peer: Peer }>();
   eventManager = this.kad.di.eventManager;
 

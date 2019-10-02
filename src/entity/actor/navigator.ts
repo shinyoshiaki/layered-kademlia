@@ -29,7 +29,7 @@ export class Navigator {
       if (this.url === url) {
         const seederPeer = this.seeder.getPeers()[0] as Peer | undefined;
         if (!seederPeer) {
-          console.warn("connect fail");
+          // console.warn("connect fail");
           return;
         }
         seederPeer.rpc(RPCNavigatorCallAnswer(offer, url, id));

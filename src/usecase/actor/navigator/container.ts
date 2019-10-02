@@ -30,7 +30,7 @@ export class NavigatorContainer {
 
       NavigatorManager.createNavigator(meta, mainNet, seeder);
 
-      const seederPeer = await CreatePeer.connect(url, peer);
+      const seederPeer = await CreatePeer.connect(url, subNet.kid, peer);
       subNet.addPeer(seederPeer);
     });
   }

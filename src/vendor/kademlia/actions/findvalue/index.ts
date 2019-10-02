@@ -23,7 +23,7 @@ export default async function findValue(
           proxy,
           FindValue(key, except)
         );
-        const res = await wait(timeout).catch(console.warn);
+        const res = await wait(timeout).catch(() => {});
 
         if (res) {
           const { item, offers } = res.data;

@@ -6,7 +6,7 @@ import { mergeArraybuffer } from "../../util/arraybuffer";
 
 export class SubNetwork {
   private kad = genKad();
-
+  kid = this.kad.kid;
   kvs = this.kad.di.modules.kvs;
 
   store = this.kad.store;
@@ -25,7 +25,7 @@ export class SubNetwork {
         return res.item;
       })
     );
-    if (res.find(v => v === false)) return;
+    if (res.includes(false)) return;
     const chunks = (res as Item[]).map(v => v.value as ArrayBuffer);
     return mergeArraybuffer(chunks);
   }
