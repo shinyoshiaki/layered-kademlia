@@ -16,8 +16,9 @@ export default async function findValue(
 
   const job = async () => {
     const findValueResultResult = await Promise.all(
+      // todo : allPeers -> findnode()
       kTable.allPeers.map(async proxy => {
-        const except = kTable.allPeers.map(item => item.kid);
+        const except = kTable.allPeers.map(({ kid }) => kid);
 
         const wait = rpcManager.getWait<FindValueResult>(
           proxy,
