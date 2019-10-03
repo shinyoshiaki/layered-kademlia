@@ -12,4 +12,8 @@ export class SubNetworkManager {
   isExist(url: string) {
     return this.list[url] ? true : false;
   }
+
+  getSubNetwork(url: string) {
+    return this.list[url];
+  }
 }

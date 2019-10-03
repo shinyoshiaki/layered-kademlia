@@ -3,7 +3,7 @@ import {
   RPCCreatePeerOffer
 } from "../../service/peer/createPeer";
 
-import EventManager from "../../vendor/kademlia/services/eventmanager";
+import Event from "rx.mini";
 import { MainNetwork } from "../network/main";
 import { Peer } from "../../vendor/kademlia/modules/peer/base";
 import PeerModule from "../../vendor/kademlia/modules/peer";
@@ -12,44 +12,41 @@ import { SubNetwork } from "../network/sub";
 import sha1 from "sha1";
 
 export class Seeder {
+  onCreatePeerOffer = new Event<string>();
+
+  onNavigatorCallAnswer = new Event<string>();
+
   constructor(
     private url: string,
     mainNet: MainNetwork,
     private subNet: SubNetwork
   ) {
-    this.listen(mainNet.eventManager);
-  }
-
-  private listen(eventManager: EventManager) {
-    {
-      const event = eventManager.selectListen<RPCCreatePeerOffer>(
-        "RPCCreatePeerOffer"
-      );
-      event.subscribe(async ({ rpc, peer }) => {
+    mainNet.eventManager
+      .selectListen<RPCCreatePeerOffer>("RPCCreatePeerOffer")
+      .subscribe(async ({ rpc, peer }) => {
         const { offer, id, url } = rpc;
         if (this.url === url) {
           await this.connectPeer(offer, id, peer);
+          this.onCreatePeerOffer.execute(peer.kid);
         }
       });
-    }
-    {
-      const event = eventManager.selectListen<RPCNavigatorCallAnswer>(
-        "RPCNavigatorCallAnswer"
-      );
-      event.subscribe(async ({ rpc, peer }) => {
+    mainNet.eventManager
+      .selectListen<RPCNavigatorCallAnswer>("RPCNavigatorCallAnswer")
+      .subscribe(async ({ rpc, peer }) => {
         const { offer, id, url } = rpc;
         if (this.url === url) {
           await this.connectPeer(offer, id, peer);
+          // todo : handle
         }
       });
-    }
   }
 
   private async connectPeer(offer: string, id: string, peer: Peer) {
     const connect = PeerModule(peer.kid);
     const answer = await connect.setOffer(JSON.parse(offer));
     peer.rpc(RPCCreatePeerAnswer(JSON.stringify(answer), id));
-    await peer.onConnect.asPromise();
+    await connect.onConnect.asPromise();
+    this.subNet.addPeer(connect);
   }
 
   setAsset(ab: ArrayBuffer) {

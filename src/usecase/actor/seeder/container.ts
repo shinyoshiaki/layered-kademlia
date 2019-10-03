@@ -16,12 +16,27 @@ export class SeederContainer {
     const { SeederManager, SubNetworkManager } = this.services;
 
     const { meta, chunks } = createMeta(name, ab);
-    const url = await this.mainNet.store(JSON.stringify(meta));
+    const { url, peers } = await this.mainNet.store(meta);
 
     const subNet = SubNetworkManager.createNetwork(url);
     const seeder = SeederManager.createSeeder(url, this.mainNet, subNet);
+
+    await Promise.all(
+      peers.map(
+        peer =>
+          new Promise(r => {
+            const { unSubscribe } = seeder.onCreatePeerOffer.subscribe(id => {
+              if (peer.kid === id) {
+                unSubscribe();
+                r();
+              }
+            });
+          })
+      )
+    );
+
     chunks.forEach(ab => seeder.setAsset(ab));
 
-    return url;
+    return { url, meta };
   }
 }

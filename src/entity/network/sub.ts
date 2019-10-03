@@ -7,11 +7,14 @@ import { mergeArraybuffer } from "../../util/arraybuffer";
 export class SubNetwork {
   private kad = genKad();
   kid = this.kad.kid;
-  kvs = this.kad.di.modules.kvs;
-
   store = this.kad.store;
 
-  allPeers = this.kad.di.kTable.allPeers;
+  get kvs() {
+    return this.kad.di.modules.kvs;
+  }
+  get allPeers() {
+    return this.kad.di.kTable.allPeers;
+  }
 
   addPeer(peer: Peer) {
     this.kad.add(peer);

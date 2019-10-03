@@ -8,7 +8,7 @@ import sha1 from "sha1";
 const metaMessage = "metaMessage";
 
 export class MainNetwork {
-  private kad = this.existKad || genKad();
+  readonly kad = this.existKad || genKad();
 
   kid = this.kad.kid;
   onStoreMeta = new Event<{ meta: Meta; peer: Peer }>();
@@ -26,9 +26,15 @@ export class MainNetwork {
     });
   }
 
-  async store(v: string) {
-    const { key } = await this.kad.store(sha1(v), v, metaMessage);
-    return key;
+  async store(meta: Meta) {
+    const metaStr = JSON.stringify(meta);
+    const { item, peers } = await this.kad.store(
+      sha1(metaStr),
+      metaStr,
+      metaMessage
+    );
+    const { key } = item;
+    return { url: key, peers };
   }
 
   async findValue(url: string) {

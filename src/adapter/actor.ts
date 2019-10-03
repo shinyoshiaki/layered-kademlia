@@ -7,8 +7,8 @@ import { injectServices } from "../service";
 
 export class ActorAdapter {
   constructor(private existKad?: Kademlia) {}
-  private services = injectServices();
-  private mainNet = new MainNetwork(this.existKad);
+  services = injectServices();
+  mainNet = new MainNetwork(this.existKad);
   user = new User(this.services, this.mainNet);
   navigator = new NavigatorContainer(this.services, this.mainNet);
   seeder = new SeederContainer(this.services, this.mainNet);

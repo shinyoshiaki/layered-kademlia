@@ -24,11 +24,14 @@ export class User {
     if (!res) return;
     const { peer, meta } = res;
 
-    // connect to seeder via navigator
-    const seederPeer = await CreatePeer.connect(url, this.mainNet.kid, peer);
+    if (!SubNetworkManager.isExist(url)) {
+      // connect to seeder via navigator
+      const seederPeer = await CreatePeer.connect(url, this.mainNet.kid, peer);
 
-    const subNet = SubNetworkManager.createNetwork(url);
-    subNet.addPeer(seederPeer);
+      const subNet = SubNetworkManager.createNetwork(url);
+      subNet.addPeer(seederPeer);
+    }
+    const subNet = SubNetworkManager.getSubNetwork(url);
     return await subNet.findMetaTaeget(meta);
   }
 }
