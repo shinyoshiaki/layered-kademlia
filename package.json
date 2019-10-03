@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "test": "jest",
+    "test": "jest --forceExit",
     "type": "tsc --noEmit --project ./tsconfig.json",
     "publish": "npm publish --access=public",
     "start": "ts-node --project ./tsconfig.json ./src/index.ts"
@@ -29,7 +29,7 @@
     "ts-jest": "^23.10.5",
     "ts-node": "^8.3.0",
     "tslib": "^1.9.3",
-    "typescript": "^3.6.3"
+    "typescript": "^3.7.0-beta"
   },
   "jest": {
     "moduleFileExtensions": [

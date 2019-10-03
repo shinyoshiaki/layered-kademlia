@@ -3,7 +3,7 @@
     "target": "es6",
     "module": "commonjs",
     "lib": ["esnext", "dom"],
-    "incremental": true,
+    // "incremental": true,
     "declaration": true,
     "outDir": "lib",
     "strict": true,
