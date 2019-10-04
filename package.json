@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "test": "jest --forceExit",
+    "test": "npm run type && jest --forceExit",
     "type": "tsc --noEmit --project ./tsconfig.json",
     "publish": "npm publish --access=public",
     "start": "ts-node --project ./tsconfig.json ./src/index.ts"
