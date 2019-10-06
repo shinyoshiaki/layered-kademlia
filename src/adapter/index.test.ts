@@ -8,14 +8,16 @@ describe("Adapter", () => {
     const actors = nodes.map(node => new ActorAdapter(node));
 
     const actor = actors.pop()!;
-    const { url, meta } = await actor.seeder.store(
+    const { url, meta } = await actor.seeder.storeStatic(
       "test",
       Buffer.from("hello")
     );
 
     {
       const exist = actors.find(({ services }) =>
-        services.SubNetworkManager.getSubNetwork(url).kvs.get(meta.keys[0])
+        services.SubNetworkManager.getSubNetwork(url).kvs.get(
+          meta.payload.keys[0]
+        )
       );
 
       expect(exist).toBeUndefined();
@@ -40,7 +42,10 @@ describe("Adapter", () => {
     const num = 10;
     const nodes = await testSetupNodes(num);
     const actors = nodes.map(node => new ActorAdapter(node));
-    const { url } = await actors[0].seeder.store("test", Buffer.from("hello"));
+    const { url } = await actors[0].seeder.storeStatic(
+      "test",
+      Buffer.from("hello")
+    );
     const res = await actors[num - 1].user.find(url);
     expect(Buffer.from(res!)).toEqual(Buffer.from("hello"));
   }, 60_000_0);

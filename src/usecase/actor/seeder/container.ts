@@ -1,7 +1,7 @@
 import { MainNetwork } from "../../../entity/network/main";
 import { SeederManager } from "../../../service/actor/manager/seeder";
 import { SubNetworkManager } from "../../../service/network/submanager";
-import { createMeta } from "../../../entity/data/meta";
+import { createStaticMeta } from "../../../entity/data/meta";
 
 export class SeederContainer {
   constructor(
@@ -12,10 +12,10 @@ export class SeederContainer {
     private mainNet: MainNetwork
   ) {}
 
-  async store(name: string, ab: ArrayBuffer) {
+  async storeStatic(name: string, ab: ArrayBuffer) {
     const { SeederManager, SubNetworkManager } = this.services;
 
-    const { meta, chunks } = createMeta(name, ab);
+    const { meta, chunks } = createStaticMeta(name, ab);
     const { url, peers } = await this.mainNet.store(meta);
 
     const subNet = SubNetworkManager.createNetwork(url);

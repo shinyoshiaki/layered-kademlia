@@ -4,17 +4,27 @@ import { sliceArraybuffer } from "../../util/arraybuffer";
 export const metaChunksSize = 16000;
 
 export type Meta = {
+  type: "static" | "stream";
   name: string;
-  keys: string[];
+  payload: { [key: string]: any };
 };
 
-export function createMeta(
+export type StaticMeta = Meta & {
+  type: "static";
+  payload: { keys: string[] };
+};
+
+export function createStaticMeta(
   name: string,
   ab: ArrayBuffer
-): { meta: Meta; chunks: ArrayBuffer[] } {
+): { meta: StaticMeta; chunks: ArrayBuffer[] } {
   const chunks = sliceArraybuffer(ab, metaChunksSize);
   return {
-    meta: { name, keys: chunks.map(v => sha1(Buffer.from(v)).toString()) },
+    meta: {
+      type: "static",
+      name,
+      payload: { keys: chunks.map(v => sha1(Buffer.from(v)).toString()) }
+    },
     chunks
   };
 }

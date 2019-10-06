@@ -1,5 +1,6 @@
+import { Meta, StaticMeta } from "../data/meta";
+
 import { Item } from "../../vendor/kademlia/modules/kvs/base";
-import { Meta } from "../data/meta";
 import { Peer } from "../../vendor/kademlia/modules/peer/base";
 import { genKad } from "./util";
 import { mergeArraybuffer } from "../../util/arraybuffer";
@@ -21,8 +22,15 @@ export class SubNetwork {
   }
 
   async findMetaTaeget(meta: Meta) {
+    switch (meta.type) {
+      case "static":
+        return this.findStaticMetaTarget(meta as StaticMeta);
+    }
+  }
+
+  async findStaticMetaTarget(meta: StaticMeta) {
     const res = await Promise.all(
-      meta.keys.map(async key => {
+      meta.payload.keys.map(async key => {
         const res = await this.kad.findValue(key);
         if (!res) return false;
         return res.item;

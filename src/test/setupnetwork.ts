@@ -1,6 +1,7 @@
 import Kademlia from "../vendor/kademlia";
+import KeyValueStore from "../vendor/kademlia/modules/kvs/base";
 import PeerModule from "../vendor/kademlia/modules/peer";
-import { genKad } from "../entity/network/util";
+import sha1 from "sha1";
 
 const kBucketSize = 8;
 
@@ -9,11 +10,19 @@ export async function testSetupNodes(num: number) {
 
   for (let i = 0; i < num; i++) {
     if (nodes.length === 0) {
-      const node = genKad({ kBucketSize });
+      const node = new Kademlia(
+        sha1(i.toString()),
+        { peerCreate: PeerModule, kvs: new KeyValueStore() },
+        { kBucketSize }
+      );
       nodes.push(node);
     } else {
       const pre = nodes.slice(-1)[0];
-      const push = genKad({ kBucketSize });
+      const push = new Kademlia(
+        sha1(i.toString()),
+        { peerCreate: PeerModule, kvs: new KeyValueStore() },
+        { kBucketSize }
+      );
 
       const pushOffer = PeerModule(pre.di.kTable.kid);
       const offerSdp = await pushOffer.createOffer();
