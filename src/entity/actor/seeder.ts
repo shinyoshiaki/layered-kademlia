@@ -52,14 +52,14 @@ export class Seeder {
   setAsset(ab: ArrayBuffer) {
     const { kvs } = this.subNet;
 
-    const key = sha1(new Buffer(ab)).toString();
+    const key = sha1(Buffer.from(ab)).toString();
     kvs.set(key, ab, "");
   }
 
   async store(ab: ArrayBuffer) {
     const { store } = this.subNet;
 
-    const key = sha1(new Buffer(ab)).toString();
+    const key = sha1(Buffer.from(ab)).toString();
     await store(key, ab);
   }
 

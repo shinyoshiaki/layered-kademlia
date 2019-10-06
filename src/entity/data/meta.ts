@@ -14,7 +14,7 @@ export function createMeta(
 ): { meta: Meta; chunks: ArrayBuffer[] } {
   const chunks = sliceArraybuffer(ab, metaChunksSize);
   return {
-    meta: { name, keys: chunks.map(v => sha1(new Buffer(v)).toString()) },
+    meta: { name, keys: chunks.map(v => sha1(Buffer.from(v)).toString()) },
     chunks
   };
 }

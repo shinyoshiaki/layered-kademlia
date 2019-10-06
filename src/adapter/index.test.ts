@@ -37,7 +37,7 @@ describe("Adapter", () => {
   }, 60_000_0);
 
   test("find", async () => {
-    const num = 20;
+    const num = 10;
     const nodes = await testSetupNodes(num);
     const actors = nodes.map(node => new ActorAdapter(node));
     const { url } = await actors[0].seeder.store("test", Buffer.from("hello"));
