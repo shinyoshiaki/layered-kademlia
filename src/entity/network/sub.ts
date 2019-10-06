@@ -1,7 +1,6 @@
-import { Meta, StaticMeta, StreamMeta } from "../data/meta";
+import { StaticMeta, StreamMeta } from "../data/meta";
 
 import { Chunk } from "../data/stream";
-import Event from "rx.mini";
 import { Item } from "../../vendor/kademlia/modules/kvs/base";
 import { Peer } from "../../vendor/kademlia/modules/peer/base";
 import { genKad } from "./util";
@@ -38,19 +37,27 @@ export class SubNetwork {
 
   async findStreamMetaTarget(
     meta: StreamMeta,
-    cb: (ab: ArrayBuffer | undefined) => void
+    cb: (res: {
+      type: "error" | "chunk" | "complete";
+      chunk?: ArrayBuffer;
+    }) => void
   ) {
     const { payload } = meta;
     let target = payload.first;
     while (true) {
       const res = await this.kad.findValue(target);
-      if (!res) break;
+      if (!res) {
+        cb({ type: "error" });
+        break;
+      }
       const { item } = res;
       const order = JSON.parse(item.msg!) as Chunk;
-      if (order.next === "end") break;
+      if (order.next === "end") {
+        cb({ type: "complete" });
+        break;
+      }
       target = order.next;
-      cb(item.value as ArrayBuffer);
+      cb({ type: "chunk", chunk: item.value as ArrayBuffer });
     }
-    cb(undefined);
   }
 }

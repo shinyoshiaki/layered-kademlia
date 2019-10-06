@@ -15,7 +15,10 @@ describe("stream", () => {
     );
     const interval = setInterval(() => {
       event.execute(Buffer.from(`hello${count++}`));
-      if (count > 10) clearInterval(interval);
+      if (count > 10) {
+        event.execute(undefined);
+        clearInterval(interval);
+      }
     }, 1);
 
     const res = await new Promise<boolean>(async r => {
@@ -26,12 +29,15 @@ describe("stream", () => {
       }
       const { subNet, meta } = res;
       let count = 0;
-      subNet.findStreamMetaTarget(meta as StreamMeta, ab => {
-        if (!ab) {
+      subNet.findStreamMetaTarget(meta as StreamMeta, ({ type, chunk }) => {
+        expect(type).not.toBe("error");
+
+        if (type === "complete") {
           r(true);
           return;
         }
-        const receive = Buffer.from(ab).toString();
+
+        const receive = Buffer.from(chunk!).toString();
         const target = Buffer.from(`hello${count++}`).toString();
         expect(receive).toEqual(target);
       });

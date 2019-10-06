@@ -54,11 +54,15 @@ export class SeederContainer {
     const meta = createStreamMeta(name, first);
     const { seeder, url } = await this.connect(meta);
 
-    const event = new Event<ArrayBuffer>();
+    const event = new Event<ArrayBuffer | undefined>();
     let prev = first;
 
-    event.subscribe(ab => {
+    const { unSubscribe } = event.subscribe(ab => {
       seeder.setChunk(prev, ab);
+      if (!ab) {
+        unSubscribe();
+        return;
+      }
       prev = ab;
     });
 
