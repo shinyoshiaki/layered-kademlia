@@ -17,7 +17,7 @@ export class User {
     private mainNet: MainNetwork
   ) {}
 
-  async find(url: string) {
+  async connectSubNet(url: string) {
     const { SubNetworkManager, CreatePeer } = this.services;
 
     const res = await this.mainNet.findValue(url);
@@ -32,6 +32,6 @@ export class User {
       subNet.addPeer(seederPeer);
     }
     const subNet = SubNetworkManager.getSubNetwork(url);
-    return await subNet.findMetaTaeget(meta);
+    return { subNet, meta };
   }
 }

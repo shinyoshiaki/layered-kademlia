@@ -1,7 +1,8 @@
-import { ActorAdapter } from "./actor";
-import { testSetupNodes } from "../test/setupnetwork";
+import { ActorAdapter } from "../adapter/actor";
+import { StaticMeta } from "../entity/data/meta";
+import { testSetupNodes } from "./setupnetwork";
 
-describe("Adapter", () => {
+describe("static", () => {
   test("store", async () => {
     const num = 4;
     const nodes = await testSetupNodes(num);
@@ -46,7 +47,12 @@ describe("Adapter", () => {
       "test",
       Buffer.from("hello")
     );
-    const res = await actors[num - 1].user.find(url);
-    expect(Buffer.from(res!)).toEqual(Buffer.from("hello"));
+    const res = await actors[num - 1].user.connectSubNet(url);
+    expect(res).not.toBeUndefined();
+    if (res) {
+      const { subNet, meta } = res;
+      const ab = await subNet.findStaticMetaTarget(meta as StaticMeta);
+      expect(Buffer.from(ab!)).toEqual(Buffer.from("hello"));
+    }
   }, 60_000_0);
 });

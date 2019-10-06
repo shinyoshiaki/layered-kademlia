@@ -1,7 +1,13 @@
+import {
+  Meta,
+  createStaticMeta,
+  createStreamMeta
+} from "../../../entity/data/meta";
+
+import Event from "rx.mini";
 import { MainNetwork } from "../../../entity/network/main";
 import { SeederManager } from "../../../service/actor/manager/seeder";
 import { SubNetworkManager } from "../../../service/network/submanager";
-import { createStaticMeta } from "../../../entity/data/meta";
 
 export class SeederContainer {
   constructor(
@@ -12,12 +18,9 @@ export class SeederContainer {
     private mainNet: MainNetwork
   ) {}
 
-  async storeStatic(name: string, ab: ArrayBuffer) {
-    const { SeederManager, SubNetworkManager } = this.services;
-
-    const { meta, chunks } = createStaticMeta(name, ab);
+  async connect(meta: Meta) {
     const { url, peers } = await this.mainNet.store(meta);
-
+    const { SeederManager, SubNetworkManager } = this.services;
     const subNet = SubNetworkManager.createNetwork(url);
     const seeder = SeederManager.createSeeder(url, this.mainNet, subNet);
 
@@ -35,8 +38,30 @@ export class SeederContainer {
       )
     );
 
+    return { seeder, url };
+  }
+
+  async storeStatic(name: string, ab: ArrayBuffer) {
+    const { meta, chunks } = createStaticMeta(name, ab);
+    const { seeder, url } = await this.connect(meta);
+
     chunks.forEach(ab => seeder.setAsset(ab));
 
     return { url, meta };
+  }
+
+  async storeStream(name: string, first: ArrayBuffer) {
+    const meta = createStreamMeta(name, first);
+    const { seeder, url } = await this.connect(meta);
+
+    const event = new Event<ArrayBuffer>();
+    let prev = first;
+
+    event.subscribe(ab => {
+      seeder.setChunk(prev, ab);
+      prev = ab;
+    });
+
+    return { event: event.returnTrigger, url };
   }
 }

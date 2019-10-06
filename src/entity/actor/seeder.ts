@@ -56,6 +56,18 @@ export class Seeder {
     kvs.set(key, ab, "");
   }
 
+  setChunk(ab: ArrayBuffer, nextAb?: ArrayBuffer) {
+    const { kvs } = this.subNet;
+
+    const key = sha1(Buffer.from(ab)).toString();
+    if (nextAb) {
+      const next = sha1(Buffer.from(nextAb)).toString();
+      kvs.set(key, ab, JSON.stringify({ type: "chunk", next }));
+    } else {
+      kvs.set(key, ab, JSON.stringify({ type: "chunk", next: "end" }));
+    }
+  }
+
   async store(ab: ArrayBuffer) {
     const { store } = this.subNet;
 
