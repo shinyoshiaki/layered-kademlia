@@ -2,13 +2,11 @@
   "compilerOptions": {
     "sourceMap": true,
     "target": "es6",
-    "module": "commonjs",
+    "module": "es6",
     "jsx": "react",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "lib": ["esnext", "dom"],
-    "noImplicitAny": true,
-    "strictNullChecks": true
+    "lib": ["esnext", "dom"]
   },
-  "exclude": ["node_modules"]
+  "include": ["src"]
 }

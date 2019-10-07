@@ -1,4 +1,4 @@
-import { ActorAdapter } from "../adapter/actor";
+import { SP2P } from "../adapter/actor";
 import { StaticMeta } from "../entity/data/meta";
 import { testSetupNodes } from "./setupnetwork";
 
@@ -6,7 +6,7 @@ describe("static", () => {
   test("store", async () => {
     const num = 4;
     const nodes = await testSetupNodes(num);
-    const actors = nodes.map(node => new ActorAdapter(node));
+    const actors = nodes.map(node => new SP2P(node));
 
     const actor = actors.pop()!;
     const { url, meta } = await actor.seeder.storeStatic(
@@ -42,7 +42,7 @@ describe("static", () => {
   test("find", async () => {
     const num = 10;
     const nodes = await testSetupNodes(num);
-    const actors = nodes.map(node => new ActorAdapter(node));
+    const actors = nodes.map(node => new SP2P(node));
     const { url } = await actors[0].seeder.storeStatic(
       "test",
       Buffer.from("hello")

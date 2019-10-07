@@ -1,4 +1,4 @@
-import { ActorAdapter } from "../adapter/actor";
+import { SP2P } from "../adapter/actor";
 import { StreamMeta } from "../entity/data/meta";
 import { testSetupNodes } from "./setupnetwork";
 
@@ -6,7 +6,7 @@ describe("stream", () => {
   test("find", async () => {
     const num = 10;
     const nodes = await testSetupNodes(num);
-    const actors = nodes.map(node => new ActorAdapter(node));
+    const actors = nodes.map(node => new SP2P(node));
 
     let count = 0;
     const { url, event } = await actors[0].seeder.storeStream(
