@@ -26,7 +26,7 @@ export class MainNetwork {
     });
   }
 
-  async store(meta: Meta) {
+  store = async (meta: Meta) => {
     const metaStr = JSON.stringify(meta);
     const { item, peers } = await this.kad.store(
       sha1(metaStr),
@@ -35,12 +35,12 @@ export class MainNetwork {
     );
     const { key } = item;
     return { url: key, peers };
-  }
+  };
 
-  async findValue(url: string) {
+  findValue = async (url: string) => {
     const res = await this.kad.findValue(url);
     if (!res) return;
     const { peer, item } = res;
     return { peer, meta: JSON.parse(item.value as string) as Meta };
-  }
+  };
 }

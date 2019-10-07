@@ -18,9 +18,10 @@ export class SeederContainer {
     private mainNet: MainNetwork
   ) {}
 
-  async connect(meta: Meta) {
-    const { url, peers } = await this.mainNet.store(meta);
+  connect = async (meta: Meta) => {
     const { SeederManager, SubNetworkManager } = this.services;
+
+    const { url, peers } = await this.mainNet.store(meta);
     const subNet = SubNetworkManager.createNetwork(url);
     const seeder = SeederManager.createSeeder(url, this.mainNet, subNet);
 
@@ -28,27 +29,29 @@ export class SeederContainer {
       peers.map(
         peer =>
           new Promise(r => {
-            const { unSubscribe } = seeder.onCreatePeerOffer.subscribe(id => {
-              if (peer.kid === id) {
-                unSubscribe();
-                r();
+            const { unSubscribe } = seeder.onNewNavigatorConnect.subscribe(
+              id => {
+                if (peer.kid === id) {
+                  unSubscribe();
+                  r();
+                }
               }
-            });
+            );
           })
       )
     );
 
     return { seeder, url };
-  }
+  };
 
-  async storeStatic(name: string, ab: ArrayBuffer) {
+  storeStatic = async (name: string, ab: ArrayBuffer) => {
     const { meta, chunks } = createStaticMeta(name, ab);
     const { seeder, url } = await this.connect(meta);
 
     chunks.forEach(ab => seeder.setAsset(ab));
 
     return { url, meta };
-  }
+  };
 
   async storeStream(name: string, first: ArrayBuffer) {
     const meta = createStreamMeta(name, first);

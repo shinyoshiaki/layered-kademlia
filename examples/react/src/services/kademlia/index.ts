@@ -1,6 +1,7 @@
 import Kademlia from "../../../../../src/vendor/kademlia";
 import KeyValueStore from "../../../../../src/vendor/kademlia/modules/kvs/base";
 import PeerModule from "../../../../../src/vendor/kademlia/modules/peer";
+import { SP2P } from "../../../../../src/adapter/actor";
 import axios from "axios";
 import genKid from "../../../../../src/vendor/kademlia/util/kid";
 
@@ -13,7 +14,9 @@ const kad: Kademlia = new Kademlia(
   { kBucketSize: 4 }
 );
 
-export { kad };
+const actor = new SP2P(kad);
+
+export { kad, actor };
 
 export default async function guest(target: string) {
   const join = await axios.post(target + "/join", {

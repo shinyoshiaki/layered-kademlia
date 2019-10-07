@@ -1,8 +1,7 @@
+import { Item, Peer } from "../../vendor/kademlia";
 import { StaticMeta, StreamMeta } from "../data/meta";
 
 import { Chunk } from "../data/stream";
-import { Item } from "../../vendor/kademlia/modules/kvs/base";
-import { Peer } from "../../vendor/kademlia/modules/peer/base";
 import { genKad } from "./util";
 import { mergeArraybuffer } from "../../util/arraybuffer";
 
@@ -14,15 +13,18 @@ export class SubNetwork {
   get kvs() {
     return this.kad.di.modules.kvs;
   }
+  get kTable() {
+    return this.kad.di.kTable;
+  }
   get allPeers() {
-    return this.kad.di.kTable.allPeers;
+    return this.kTable.allPeers;
   }
 
-  addPeer(peer: Peer) {
-    this.kad.add(peer);
+  async addPeer(peer: Peer) {
+    await this.kad.add(peer);
   }
 
-  async findStaticMetaTarget(meta: StaticMeta) {
+  findStaticMetaTarget = async (meta: StaticMeta) => {
     const res = await Promise.all(
       meta.payload.keys.map(async key => {
         const res = await this.kad.findValue(key);
@@ -33,7 +35,7 @@ export class SubNetwork {
     if (res.includes(false)) return;
     const chunks = (res as Item[]).map(v => v.value as ArrayBuffer);
     return mergeArraybuffer(chunks);
-  }
+  };
 
   async findStreamMetaTarget(
     meta: StreamMeta,
