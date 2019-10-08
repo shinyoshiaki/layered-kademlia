@@ -1,7 +1,7 @@
 import { ID, Peer } from "../../../modules/peer/base";
 
 import { DependencyInjection } from "../../../di";
-import { Store } from "..";
+import { Store } from "../../store";
 
 class ListenStore {
   constructor(private listen: Peer, private di: DependencyInjection) {

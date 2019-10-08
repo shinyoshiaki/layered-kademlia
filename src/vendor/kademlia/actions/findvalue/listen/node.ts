@@ -1,4 +1,4 @@
-import { FindValue, FindValueAnswer } from "..";
+import { FindValue, FindValueAnswer } from "../../findvalue";
 import { ID, Peer } from "../../../modules/peer/base";
 
 import { DependencyInjection } from "../../../di";
