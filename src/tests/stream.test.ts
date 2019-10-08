@@ -1,3 +1,4 @@
+import { PeerModule } from "../vendor/kademlia";
 import { SP2P } from "../adapter/actor";
 import { StreamMeta } from "../entity/data/meta";
 import { testSetupNodes } from "./setupnetwork";
@@ -5,7 +6,7 @@ import { testSetupNodes } from "./setupnetwork";
 describe("stream", () => {
   test("find", async () => {
     const num = 10;
-    const nodes = await testSetupNodes(num);
+    const nodes = await testSetupNodes(num, PeerModule, { timeout: 1000 });
     const actors = nodes.map(node => new SP2P(node));
 
     let count = 0;

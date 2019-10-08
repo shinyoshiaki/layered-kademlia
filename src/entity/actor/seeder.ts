@@ -1,3 +1,4 @@
+import { Peer, PeerModule } from "../../vendor/kademlia";
 import {
   RPCCreatePeerAnswer,
   RPCCreatePeerOffer
@@ -5,14 +6,13 @@ import {
 
 import Event from "rx.mini";
 import { MainNetwork } from "../network/main";
-import { Peer } from "../../vendor/kademlia/modules/peer/base";
-import PeerModule from "../../vendor/kademlia/modules/peer";
 import { RPCNavigatorCallAnswer } from "./navigator";
 import { SubNetwork } from "../network/sub";
 import sha1 from "sha1";
 
 export class Seeder {
-  onCreatePeerOffer = new Event<string>();
+  private onCreatePeerOffer = new Event<string>();
+  onNewNavigatorConnect = this.onCreatePeerOffer.returnListener;
 
   onNavigatorCallAnswer = new Event<string>();
 
@@ -46,7 +46,7 @@ export class Seeder {
     const answer = await connect.setOffer(JSON.parse(offer));
     peer.rpc(RPCCreatePeerAnswer(JSON.stringify(answer), id));
     await connect.onConnect.asPromise();
-    this.subNet.addPeer(connect);
+    await this.subNet.addPeer(connect);
   }
 
   setAsset(ab: ArrayBuffer) {
@@ -75,7 +75,7 @@ export class Seeder {
     await store(key, ab);
   }
 
-  getPeers() {
-    return this.subNet.allPeers;
+  getCloseEst(kid: string): Peer | undefined {
+    return this.subNet.kTable.findNode(kid)[0];
   }
 }

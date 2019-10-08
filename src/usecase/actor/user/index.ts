@@ -1,6 +1,6 @@
 import { CreatePeer } from "../../../service/peer/createPeer";
 import { MainNetwork } from "../../../entity/network/main";
-import { Peer } from "../../../vendor/kademlia/modules/peer/base";
+import { Peer } from "../../../vendor/kademlia";
 import { SubNetworkManager } from "../../../service/network/submanager";
 
 export type Network = {
@@ -17,7 +17,7 @@ export class User {
     private mainNet: MainNetwork
   ) {}
 
-  async connectSubNet(url: string) {
+  connectSubNet = async (url: string) => {
     const { SubNetworkManager, CreatePeer } = this.services;
 
     const res = await this.mainNet.findValue(url);
@@ -29,9 +29,10 @@ export class User {
       const seederPeer = await CreatePeer.connect(url, this.mainNet.kid, peer);
 
       const subNet = SubNetworkManager.createNetwork(url);
-      subNet.addPeer(seederPeer);
+      await subNet.addPeer(seederPeer);
+      return { subNet, meta };
     }
     const subNet = SubNetworkManager.getSubNetwork(url);
     return { subNet, meta };
-  }
+  };
 }
