@@ -1,4 +1,4 @@
-import { FindNode, FindNodeAnswer } from "../../findnode";
+import { FindNode, FindNodeAnswer } from "..";
 import { ID, Peer, RPCBase } from "../../../modules/peer/base";
 
 import { DependencyInjection } from "../../../di";
