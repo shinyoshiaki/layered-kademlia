@@ -1,7 +1,7 @@
+import Kademlia, { Peer } from "../../vendor/kademlia";
+
 import Event from "rx.mini";
-import Kademlia from "../../vendor/kademlia";
 import { Meta } from "../data/meta";
-import { Peer } from "../../vendor/kademlia/modules/peer/base";
 import { genKad } from "./util";
 import sha1 from "sha1";
 
