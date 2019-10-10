@@ -1,7 +1,13 @@
+import {
+  Meta,
+  createStaticMeta,
+  createStreamMeta
+} from "../../../entity/data/meta";
+
+import Event from "rx.mini";
 import { MainNetwork } from "../../../entity/network/main";
 import { SeederManager } from "../../../service/actor/manager/seeder";
 import { SubNetworkManager } from "../../../service/network/submanager";
-import { createMeta } from "../../../entity/data/meta";
 
 export class SeederContainer {
   constructor(
@@ -12,12 +18,10 @@ export class SeederContainer {
     private mainNet: MainNetwork
   ) {}
 
-  async store(name: string, ab: ArrayBuffer) {
+  connect = async (meta: Meta) => {
     const { SeederManager, SubNetworkManager } = this.services;
 
-    const { meta, chunks } = createMeta(name, ab);
     const { url, peers } = await this.mainNet.store(meta);
-
     const subNet = SubNetworkManager.createNetwork(url);
     const seeder = SeederManager.createSeeder(url, this.mainNet, subNet);
 
@@ -25,18 +29,46 @@ export class SeederContainer {
       peers.map(
         peer =>
           new Promise(r => {
-            const { unSubscribe } = seeder.onCreatePeerOffer.subscribe(id => {
-              if (peer.kid === id) {
-                unSubscribe();
-                r();
+            const { unSubscribe } = seeder.onNewNavigatorConnect.subscribe(
+              id => {
+                if (peer.kid === id) {
+                  unSubscribe();
+                  r();
+                }
               }
-            });
+            );
           })
       )
     );
 
+    return { seeder, url };
+  };
+
+  storeStatic = async (name: string, ab: ArrayBuffer) => {
+    const { meta, chunks } = createStaticMeta(name, ab);
+    const { seeder, url } = await this.connect(meta);
+
     chunks.forEach(ab => seeder.setAsset(ab));
 
     return { url, meta };
+  };
+
+  async storeStream(name: string, first: ArrayBuffer) {
+    const meta = createStreamMeta(name, first);
+    const { seeder, url } = await this.connect(meta);
+
+    const event = new Event<ArrayBuffer | undefined>();
+    let prev = first;
+
+    const { unSubscribe } = event.subscribe(ab => {
+      seeder.setChunk(prev, ab);
+      if (!ab) {
+        unSubscribe();
+        return;
+      }
+      prev = ab;
+    });
+
+    return { event: event.returnTrigger, url };
   }
 }

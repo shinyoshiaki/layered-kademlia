@@ -4,41 +4,32 @@ import {
   RPCCreatePeerOffer
 } from "../../service/peer/createPeer";
 
-import EventManager from "../../vendor/kademlia/services/eventmanager";
 import { MainNetwork } from "../network/main";
-import { Peer } from "../../vendor/kademlia/modules/peer/base";
 import { Seeder } from "./seeder";
 
 export class Navigator {
+  url = meta2URL(this.meta);
+
   constructor(
     private meta: Meta,
     mainNet: MainNetwork,
     private seeder: Seeder
   ) {
-    this.listen(mainNet.eventManager);
-  }
+    mainNet.eventManager
+      .selectListen<RPCCreatePeerOffer>("RPCCreatePeerOffer")
+      .subscribe(async ({ rpc, peer }) => {
+        const { offer, id, url } = rpc;
+        if (this.url === url) {
+          const seederPeer = this.seeder.getCloseEst(peer.kid);
+          if (!seederPeer) return;
 
-  url = meta2URL(this.meta);
-
-  listen(eventManager: EventManager) {
-    const event = eventManager.selectListen<RPCCreatePeerOffer>(
-      "RPCCreatePeerOffer"
-    );
-    event.subscribe(async ({ rpc, peer }) => {
-      const { offer, id, url } = rpc;
-      if (this.url === url) {
-        const seederPeer = this.seeder.getPeers()[0] as Peer | undefined;
-        if (!seederPeer) {
-          // console.warn("connect fail");
-          return;
+          seederPeer.rpc(RPCNavigatorCallAnswer(offer, url, id));
+          const { answer } = await peer
+            .eventRpc<RPCCreatePeerAnswer>("RPCCreatePeerAnswer", id)
+            .asPromise();
+          peer.rpc(RPCCreatePeerAnswer(answer, id));
         }
-        seederPeer.rpc(RPCNavigatorCallAnswer(offer, url, id));
-        const { answer } = await peer
-          .eventRpc<RPCCreatePeerAnswer>("RPCCreatePeerAnswer", id)
-          .asPromise();
-        peer.rpc(RPCCreatePeerAnswer(answer, id));
-      }
-    });
+      });
   }
 }
 

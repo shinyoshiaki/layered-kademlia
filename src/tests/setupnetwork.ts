@@ -1,19 +1,23 @@
-import Kademlia from "../vendor/kademlia";
-import PeerModule from "../vendor/kademlia/modules/peer";
-import { genKad } from "../entity/network/util";
+import Kademlia, { KeyValueStore, PeerCreater } from "../vendor/kademlia";
 
-const kBucketSize = 8;
+import { Options } from "../vendor/kademlia";
+import sha1 from "sha1";
 
-export async function testSetupNodes(num: number) {
+export async function testSetupNodes(
+  num: number,
+  PeerModule: PeerCreater,
+  opt: Options
+) {
+  const modules = { peerCreate: PeerModule, kvs: new KeyValueStore() };
   const nodes: Kademlia[] = [];
 
   for (let i = 0; i < num; i++) {
     if (nodes.length === 0) {
-      const node = genKad({ kBucketSize });
+      const node = new Kademlia(sha1(i.toString()), modules, opt);
       nodes.push(node);
     } else {
       const pre = nodes.slice(-1)[0];
-      const push = genKad({ kBucketSize });
+      const push = new Kademlia(sha1(i.toString()), modules, opt);
 
       const pushOffer = PeerModule(pre.di.kTable.kid);
       const offerSdp = await pushOffer.createOffer();
@@ -24,12 +28,12 @@ export async function testSetupNodes(num: number) {
       push.add(pushOffer);
       pre.add(preAnswer);
 
+      await push.findNode(push.kid);
+      await pre.findNode(pre.kid);
+
       nodes.push(push);
     }
   }
 
-  for (let node of nodes) {
-    await node.findNode(node.kid);
-  }
   return nodes;
 }

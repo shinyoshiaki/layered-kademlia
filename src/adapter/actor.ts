@@ -5,7 +5,7 @@ import { SeederContainer } from "../usecase/actor/seeder/container";
 import { User } from "../usecase/actor/user";
 import { injectServices } from "../service";
 
-export class ActorAdapter {
+export class SP2P {
   constructor(private existKad?: Kademlia) {}
   services = injectServices();
   mainNet = new MainNetwork(this.existKad);

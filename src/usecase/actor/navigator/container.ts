@@ -22,7 +22,7 @@ export class NavigatorContainer {
       SeederManager
     } = services;
 
-    // seeder
+    //from seeder store
     mainNet.onStoreMeta.subscribe(async ({ meta, peer }) => {
       const url = meta2URL(meta);
       const subNet = SubNetworkManager.createNetwork(url);
@@ -31,7 +31,7 @@ export class NavigatorContainer {
       NavigatorManager.createNavigator(meta, mainNet, seeder);
 
       const seederPeer = await CreatePeer.connect(url, subNet.kid, peer);
-      subNet.addPeer(seederPeer);
+      await subNet.addPeer(seederPeer);
     });
   }
 }

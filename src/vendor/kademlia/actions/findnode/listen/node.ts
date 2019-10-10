@@ -3,9 +3,11 @@ import { ID, Peer, RPCBase } from "../../../modules/peer/base";
 
 import { DependencyInjection } from "../../../di";
 import { FindNodePeerOffer } from "./signaling";
-import { timeout } from "../../../const";
+import { Signal } from "webrtc4me";
 
 export default class FindNodeProxy {
+  timeout = this.di.opt.timeout;
+
   constructor(private listen: Peer, private di: DependencyInjection) {
     const { rpcManager } = di;
 
@@ -22,22 +24,25 @@ export default class FindNodeProxy {
     const { kTable, rpcManager } = this.di;
     const { searchkid, except, id } = data;
 
-    const offers: { peerkid: string; sdp: string }[] = [];
+    const offers: { peerkid: string; sdp: Signal }[] = [];
 
-    const peers = kTable.findNode(searchkid);
+    const peers = kTable
+      .findNode(searchkid)
+      .filter(({ kid }) => kid !== this.listen.kid)
+      .filter(({ kid }) => !except.includes(kid));
 
     await Promise.all(
       peers.map(async peer => {
-        if (!(peer.kid === this.listen.kid || except.includes(peer.kid))) {
-          const wait = rpcManager.getWait<FindNodePeerOffer>(
-            peer,
-            FindNodeProxyOpen(this.listen.kid)
-          );
-          const res = await wait(timeout).catch(() => {});
-          if (res) {
-            const { peerkid, sdp } = res;
-            if (sdp) offers.push({ peerkid, sdp });
-          }
+        const wait = rpcManager.getWait<FindNodePeerOffer>(
+          peer,
+          FindNodeProxyOpen(this.listen.kid)
+        );
+        const res = await wait(this.timeout).catch(() => {
+          return undefined;
+        });
+        if (res) {
+          const { peerkid, sdp } = res;
+          if (sdp) offers.push({ peerkid, sdp });
         }
       })
     );
@@ -57,7 +62,7 @@ export default class FindNodeProxy {
   };
 }
 
-export type Offer = { peerkid: string; sdp: string };
+export type Offer = { peerkid: string; sdp: Signal };
 
 const FindNodeProxyOffer = (peers: Offer[]) => ({
   type: "FindNodeProxyOffer" as const,
@@ -73,7 +78,7 @@ const FindNodeProxyOpen = (finderkid: string) => ({
 
 export type FindNodeProxyOpen = ReturnType<typeof FindNodeProxyOpen>;
 
-const FindNodeProxyAnswer = (sdp: string, finderkid: string) => ({
+const FindNodeProxyAnswer = (sdp: Signal, finderkid: string) => ({
   type: "FindNodeProxyAnswer" as const,
   sdp,
   finderkid

@@ -3,14 +3,16 @@ import { FindValueResult, Offer } from "./listen/node";
 import { DependencyInjection } from "../../di";
 import { Item } from "../../modules/kvs/base";
 import { Peer } from "../../modules/peer/base";
+import { Signal } from "webrtc4me";
 import { listeners } from "../../listeners";
-import { timeout } from "../../const";
 
 export default async function findValue(
   key: string,
   di: DependencyInjection
 ): Promise<{ item: Item; peer: Peer } | undefined> {
   const { kTable, rpcManager, signaling } = di;
+  let { timeout } = di.opt;
+  timeout! *= 2;
 
   let result: { item: Item; peer: Peer } | undefined;
 
@@ -18,13 +20,15 @@ export default async function findValue(
     const findValueResultResult = await Promise.all(
       // todo : allPeers -> findnode()
       kTable.allPeers.map(async proxy => {
-        const except = kTable.allPeers.map(({ kid }) => kid);
+        const except = kTable.findNode(key).map(({ kid }) => kid);
 
         const wait = rpcManager.getWait<FindValueResult>(
           proxy,
           FindValue(key, except)
         );
-        const res = await wait(timeout).catch(() => {});
+        const res = await wait(timeout).catch(() => {
+          return undefined;
+        });
 
         if (res) {
           const { item, offers } = res.data;
@@ -43,39 +47,41 @@ export default async function findValue(
       })
     );
 
-    if (!result) {
-      const findValueAnswer = async (offer: Offer, proxy: Peer) => {
-        const { peerkid, sdp } = offer;
-        const { peer, candidate } = signaling.create(peerkid);
+    if (result) return;
 
-        if (peer) {
-          const answer = await peer.setOffer(JSON.parse(sdp));
+    const findValueAnswer = async (offer: Offer, proxy: Peer) => {
+      const { peerkid, sdp } = offer;
+      const { peer, candidate } = signaling.create(peerkid);
 
-          rpcManager.run(
-            proxy,
-            FindValueAnswer(JSON.stringify(answer), peerkid)
-          );
+      if (peer) {
+        const answer = await peer.setOffer(sdp);
 
-          const err = await peer.onConnect
-            .asPromise(timeout)
-            .catch(() => "err");
-          if (err) {
-            signaling.delete(peerkid);
-          } else {
-            listeners(peer, di);
-          }
-        } else if (candidate) {
-          const peer = await candidate.asPromise(timeout).catch(() => {});
-          if (peer) listeners(peer, di);
+        rpcManager.run(proxy, FindValueAnswer(answer, peerkid));
+
+        const err = await peer.onConnect.asPromise(timeout).catch(() => {
+          return "err";
+        });
+        if (err) {
+          signaling.delete(peerkid);
+        } else {
+          listeners(peer, di);
         }
-      };
+      } else if (candidate) {
+        const peer = await candidate.asPromise(timeout).catch(() => {
+          return undefined;
+        });
+        if (peer) listeners(peer, di);
+      }
+      // 相手側のlistenが完了するまで待つ
+      // TODO : ちゃんと実装する
+      await new Promise(r => setTimeout(r, 100));
+    };
 
-      await Promise.all(
-        findValueResultResult
-          .map(v => v.offers.map(offer => findValueAnswer(offer, v.proxy)))
-          .flatMap(v => v)
-      );
-    }
+    await Promise.all(
+      findValueResultResult
+        .map(v => v.offers.map(offer => findValueAnswer(offer, v.proxy)))
+        .flatMap(v => v)
+    );
   };
 
   for (
@@ -98,7 +104,7 @@ const FindValue = (key: string, except: string[]) => ({
 
 export type FindValue = ReturnType<typeof FindValue>;
 
-const FindValueAnswer = (sdp: string, peerkid: string) => ({
+const FindValueAnswer = (sdp: Signal, peerkid: string) => ({
   type: "FindValueAnswer" as const,
   sdp,
   peerkid

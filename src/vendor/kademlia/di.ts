@@ -1,19 +1,15 @@
-import Ktable, { Option } from "./ktable";
-
 import EventManager from "./services/eventmanager";
 import JobSystem from "./services/jobsystem";
+import Ktable from "./ktable";
 import Modules from "./modules";
+import { Options } from "./kademlia";
 import RpcManager from "./services/rpcmanager";
 import Signaling from "./services/signaling";
-
-type Options = Option;
-
-export type DependencyInjection = ReturnType<typeof dependencyInjection>;
 
 export const dependencyInjection = (
   kid: string,
   modules: Modules,
-  opt: Partial<Options> = {}
+  opt: Options
 ) => {
   const rpcManager = new RpcManager();
   return {
@@ -22,6 +18,9 @@ export const dependencyInjection = (
     rpcManager,
     signaling: new Signaling(modules.peerCreate),
     jobSystem: new JobSystem(),
-    eventManager: new EventManager(rpcManager)
+    eventManager: new EventManager(rpcManager),
+    opt
   };
 };
+
+export type DependencyInjection = ReturnType<typeof dependencyInjection>;

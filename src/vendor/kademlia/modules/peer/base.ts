@@ -36,24 +36,59 @@ type PeerProps = {
 
 export class PeerMock implements Peer {
   type = "mock";
+  private onData = new Event<RPC>();
+  private send: Event<any> | undefined;
+
   onRpc = new Event<any>();
   onDisconnect = new Event();
   onConnect = new Event();
 
-  constructor(public kid: string) {}
+  constructor(public kid: string) {
+    this.onData.subscribe(data => {
+      try {
+        if (data.type) {
+          this.onRpc.execute(data);
+        }
+      } catch (error) {}
+    });
+  }
 
-  rpc = (data: { type: string; id: string }) => {};
+  rpc = async (data: { type: string; id: string }) => {
+    await new Promise(r => setTimeout(r));
+    this.send!.execute(data);
+  };
 
   parseRPC = (data: ArrayBuffer) => undefined as any;
 
-  eventRpc = <T extends { type: string }>(rpc: T["type"], id: string) =>
-    new Event<T>();
+  eventRpc = (type: string, id: string) => {
+    const observer = new Event<any>();
+    const { unSubscribe } = this.onData.subscribe(data => {
+      if (data.type === type && data.id === id) {
+        observer.execute(data);
+        unSubscribe();
+      }
+    });
+    return observer;
+  };
 
-  createOffer = async () => null as any;
+  createOffer = async () => this.onData as any;
 
-  setOffer = async (sdp: Signal) => null as any;
+  setOffer = async (sdp: any) => {
+    this.send = sdp;
+    return { send: this.onData, connect: this.onConnect } as any;
+  };
 
-  setAnswer = async (sdp: Signal) => null as any;
+  setAnswer = async (sdp: any) => {
+    const { send, connect } = sdp;
+
+    this.send = send;
+    await new Promise(r => setTimeout(r, 0));
+
+    connect.execute(null);
+    this.onConnect.execute(null);
+
+    return undefined;
+  };
 
   disconnect = () => {};
 }
