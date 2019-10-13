@@ -47,9 +47,6 @@ export default class Kademlia {
   };
 
   add = (connect: Peer) => {
-    const { kTable } = this.di;
-
-    kTable.add(connect);
     listeners(connect, this.di);
   };
 }

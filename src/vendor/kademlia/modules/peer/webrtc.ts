@@ -38,7 +38,9 @@ export default class PeerWebRTC implements Peer {
     const buffer = Buffer.from(data);
     try {
       const data: RPC = decode(buffer) as any;
+
       if (data.type) {
+        if (data.sdp) data.sdp = JSON.parse(data.sdp as any);
         return data;
       }
     } catch (error) {
@@ -48,6 +50,7 @@ export default class PeerWebRTC implements Peer {
   };
 
   rpc = (send: RPCBase & ID & { [key: string]: unknown }) => {
+    if (send.sdp) send.sdp = JSON.stringify(send.sdp);
     const packet = encode(send);
     this.peer.send(packet);
   };

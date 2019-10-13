@@ -12,7 +12,6 @@ export default async function findValue(
 ): Promise<{ item: Item; peer: Peer } | undefined> {
   const { kTable, rpcManager, signaling } = di;
   let { timeout } = di.opt;
-  timeout! *= 2;
 
   let result: { item: Item; peer: Peer } | undefined;
 
