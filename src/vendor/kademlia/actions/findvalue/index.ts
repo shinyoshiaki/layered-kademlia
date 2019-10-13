@@ -11,13 +11,12 @@ export default async function findValue(
   di: DependencyInjection
 ): Promise<{ item: Item; peer: Peer } | undefined> {
   const { kTable, rpcManager, signaling } = di;
-  let { timeout } = di.opt;
+  const { timeout } = di.opt;
 
   let result: { item: Item; peer: Peer } | undefined;
 
   const job = async () => {
     const findValueResultResult = await Promise.all(
-      // todo : allPeers -> findnode()
       kTable.allPeers.map(async proxy => {
         const except = kTable.findNode(key).map(({ kid }) => kid);
 

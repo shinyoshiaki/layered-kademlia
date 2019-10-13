@@ -31,13 +31,13 @@ describe("static/find", () => {
     expect(true).toBe(true);
   };
 
-  test("mock", async () => {
-    const nodes = await testSetupNodes(10, PeerMockModule, { timeout: 5_000 });
-    await job(nodes);
-  }, 600_000);
+  // test("mock", async () => {
+  //   const nodes = await testSetupNodes(10, PeerMockModule, { timeout: 10_000 });
+  //   await job(nodes);
+  // }, 600_000);
 
   test("webrtc", async () => {
-    const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
+    const nodes = await testSetupNodes(10, PeerModule, { timeout: 10_000 });
     await job(nodes);
   }, 600_000);
 });
