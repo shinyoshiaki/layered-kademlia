@@ -11,7 +11,8 @@ describe("stream/find", () => {
     let count = 0;
     const { url, event } = await actors[0].seeder.storeStream(
       "test",
-      Buffer.from(`hello${count++}`)
+      Buffer.from(`hello${count++}`),
+      { cycle: 0 }
     );
     const interval = setInterval(() => {
       event.execute(Buffer.from(`hello${count++}`));

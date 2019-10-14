@@ -66,7 +66,7 @@ const StoreStream: React.FC = () => {
         const { url, event } = await sp2pClient.actor.seeder.storeStream(
           "test",
           encoded,
-          { width: videoWidth, height: videoHeight }
+          { width: videoWidth, height: videoHeight, cycle: 0 }
         );
         eventStore = event as any;
         eventStoreFirst.execute(event as any);

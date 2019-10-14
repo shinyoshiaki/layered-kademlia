@@ -46,12 +46,21 @@ export class SubNetwork {
   ) {
     const { payload } = meta;
     let target = payload.first;
+    let retry = 0;
     while (true) {
       const res = await this.kad.findValue(target);
       if (!res) {
+        if (retry < 5) {
+          retry++;
+          console.warn({ retry });
+          await new Promise(r => setTimeout(r, this.kad.di.opt.timeout));
+          continue;
+        }
+        console.warn("error");
         cb({ type: "error" });
         break;
       }
+      retry = 0;
       const { item } = res;
       const order = JSON.parse(item.msg!) as Chunk;
       if (order.next === "end") {
@@ -60,6 +69,7 @@ export class SubNetwork {
       }
       target = order.next;
       cb({ type: "chunk", chunk: item.value as ArrayBuffer });
+      await new Promise(r => setTimeout(r, payload.cycle));
     }
   }
 }
