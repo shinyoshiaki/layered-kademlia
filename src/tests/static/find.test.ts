@@ -37,7 +37,7 @@ describe("static/find", () => {
   }, 600_000);
 
   test("webrtc", async () => {
-    const nodes = await testSetupNodes(10, PeerModule, { timeout: 10_000 });
+    const nodes = await testSetupNodes(10, PeerModule, { timeout: 15_000 });
     await job(nodes);
   }, 600_000);
 });
