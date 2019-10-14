@@ -1,24 +1,28 @@
-import React, { useEffect, useRef, useState } from "react";
-import guest, { actor, kad } from "./services/kademlia";
+import React, { createContext, useEffect, useRef, useState } from "react";
 
-import { SP2P } from "../../../src/adapter/actor";
+import PeerList from "./components/PeerList";
+import { SP2PClient } from "./services/kademlia";
 import { StaticMeta } from "../../../src/entity/data/meta";
-import { useAsyncEffect } from "./hooks/useAsyncEffect";
+import StoreStream from "./components/StoreStream";
+import WatchStream from "./components/WatchStream";
 import useInput from "./hooks/useInput";
 
+export const SP2PClientContext = createContext<SP2PClient>(undefined);
+
 const App: React.FC = () => {
+  const sP2PClientRef = useRef(new SP2PClient());
   const [key, setKey] = useState("");
   const [msg, setMsg] = useState("");
   const [url, inputUrl] = useInput();
 
+  const sP2PClient = sP2PClientRef.current;
+
   useEffect(() => {
-    guest("http://localhost:20000");
-    kad.di.eventManager.event.subscribe(console.log);
-    console.log(kad);
+    sP2PClient.connect("http://localhost:20000");
   }, []);
 
   const store = async () => {
-    const { url } = await actor.seeder.storeStatic(
+    const { url } = await sP2PClient.actor.seeder.storeStatic(
       "test",
       Buffer.from("hello")
     );
@@ -26,21 +30,20 @@ const App: React.FC = () => {
   };
 
   const find = async () => {
-    const { subNet, meta } = await actor.user.connectSubNet(url);
+    const { subNet, meta } = await sP2PClient.actor.user.connectSubNet(url);
     const ab = await subNet.findStaticMetaTarget(meta as StaticMeta);
-    console.log({ ab });
+
     setMsg(Buffer.from(ab).toString());
   };
 
   return (
-    <div>
+    <SP2PClientContext.Provider value={sP2PClientRef.current}>
       <p>sp2p</p>
-      <p>{key}</p>
-      <button onClick={store}>store</button>
-      <input onChange={inputUrl} />
-      <button onClick={find}>find </button>
-      <p>{msg}</p>
-    </div>
+      <p>{sP2PClient.kad.kid}</p>
+      <PeerList />
+      <StoreStream />
+      <WatchStream />
+    </SP2PClientContext.Provider>
   );
 };
 

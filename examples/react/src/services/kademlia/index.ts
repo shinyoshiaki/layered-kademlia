@@ -5,34 +5,37 @@ import { SP2P } from "../../../../../src/adapter/actor";
 import axios from "axios";
 import genKid from "../../../../../src/vendor/kademlia/util/kid";
 
-const kad: Kademlia = new Kademlia(
-  genKid(),
-  {
-    peerCreate: PeerModule,
-    kvs: new KeyValueStore()
-  },
-  { kBucketSize: 4 }
-);
+export class SP2PClient {
+  kad = new Kademlia(
+    genKid(),
+    {
+      peerCreate: PeerModule,
+      kvs: new KeyValueStore()
+    },
+    { timeout: 5000 }
+  );
+  actor = new SP2P(this.kad);
 
-const actor = new SP2P(kad);
+  constructor() {}
 
-export { kad, actor };
+  async connect(target: string) {
+    const join = await axios.post(target + "/join", {
+      kid: this.kad.kid
+    });
+    const { kid, offer } = join.data;
+    const peer = PeerModule(kid);
+    const answer = await peer.setOffer(offer);
+    axios.post(target + "/answer", {
+      kid: this.kad.kid,
+      answer
+    });
+    await peer.onConnect.asPromise();
+    this.kad.add(peer);
+    await new Promise(r => setTimeout(r));
 
-export default async function guest(target: string) {
-  const join = await axios.post(target + "/join", {
-    kid: kad.kid
-  });
-  console.log({ join });
-  const { kid, offer } = join.data;
-  const peer = PeerModule(kid);
-  const answer = await peer.setOffer(offer);
-  const res = await axios.post(target + "/answer", {
-    kid: kad.kid,
-    answer
-  });
-  kad.add(peer);
-  if (res) {
-    console.log("connected");
-    return kad;
+    this.kad.di.eventManager.event.subscribe(log => console.log({ log }));
+
+    await this.kad.findNode(this.kad.kid);
+    console.log("connect");
   }
 }

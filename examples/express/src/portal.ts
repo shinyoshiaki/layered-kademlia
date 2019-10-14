@@ -48,7 +48,7 @@ export async function portalNode(kad: Kademlia, port: number) {
       if (answer && kid) {
         const peer = peers[kid];
         await peer.setAnswer(answer);
-        kad.add(peer, { notfind: true });
+        kad.add(peer);
         delete peers[kid];
         console.log("connected");
         return res.send("connected");

@@ -9,6 +9,7 @@
   "scripts": {
     "build": "tsc",
     "type": "tsc --noEmit",
+    "server": "ts-node ./src/server",
     "start": "ts-node --project ./tsconfig.json ./src/testserver.ts"
   },
   "dependencies": {
