@@ -19,6 +19,11 @@ export class SeederContainer {
     private mainNet: MainNetwork
   ) {}
 
+  onSubnetAdd = this.services.SubNetworkManager.event.returnListener;
+  get subnetList() {
+    return this.services.SubNetworkManager.list;
+  }
+
   connect = async (meta: Meta) => {
     const { SeederManager, SubNetworkManager } = this.services;
 

@@ -1,11 +1,15 @@
+import Event from "rx.mini";
 import { SubNetwork } from "../../entity/network/sub";
 
 export class SubNetworkManager {
-  private list: { [url: string]: SubNetwork } = {};
+  list: { [url: string]: SubNetwork } = {};
+
+  event = new Event();
 
   createNetwork(url: string) {
-    if (this.isExist(url)) this.list[url];
+    if (this.isExist(url)) return this.list[url];
     this.list[url] = new SubNetwork();
+    this.event.execute(null);
     return this.list[url];
   }
 
