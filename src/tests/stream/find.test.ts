@@ -50,7 +50,7 @@ describe("stream/find", () => {
     await job(nodes);
   }, 60_000_0);
   test("webrtc", async () => {
-    const nodes = await testSetupNodes(10, PeerMockModule, { timeout: 5_000 });
+    const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
     await job(nodes);
   }, 60_000_0);
 });

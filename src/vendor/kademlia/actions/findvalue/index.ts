@@ -9,11 +9,11 @@ import { listeners } from "../../listeners";
 export default async function findValue(
   key: string,
   di: DependencyInjection,
-  opt?: { timeout?: number }
+  opt?: { preferTimeout?: number }
 ): Promise<{ item: Item; peer: Peer } | undefined> {
   const { kTable, rpcManager, signaling } = di;
   let { timeout } = di.opt;
-  if (opt && opt.timeout) timeout = opt.timeout;
+  if (opt && opt.preferTimeout) timeout = opt.preferTimeout;
 
   let result: { item: Item; peer: Peer } | undefined;
 

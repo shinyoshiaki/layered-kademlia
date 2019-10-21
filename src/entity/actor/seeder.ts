@@ -34,6 +34,7 @@ export class Seeder {
       .selectListen<RPCNavigatorCallAnswer>("RPCNavigatorCallAnswer")
       .subscribe(async ({ rpc, peer }) => {
         const { offer, id, url } = rpc;
+        console.log({ offer, id, url });
         if (this.url === url) {
           await this.connectPeer(offer, id, peer);
           // todo : handle
@@ -71,8 +72,7 @@ export class Seeder {
   async store(ab: ArrayBuffer) {
     const { store } = this.subNet;
 
-    const key = sha1(Buffer.from(ab)).toString();
-    await store(key, ab);
+    await store(ab);
   }
 
   getCloseEst(kid: string): Peer | undefined {
