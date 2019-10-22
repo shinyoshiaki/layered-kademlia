@@ -69,14 +69,4 @@ export class Seeder {
       kvs.set(key, ab, JSON.stringify({ type: "chunk", next: "end" }));
     }
   }
-
-  async store(ab: ArrayBuffer) {
-    const { store } = this.subNet;
-
-    await store(ab);
-  }
-
-  getCloseEst(kid: string): Peer | undefined {
-    return this.subNet.kTable.findNode(kid)[0];
-  }
 }

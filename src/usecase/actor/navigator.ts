@@ -10,30 +10,18 @@ export class NavigatorContainer {
     services: {
       NavigatorManager: NavigatorManager;
       SubNetworkManager: SubNetworkManager;
-      SeederManager: SeederManager;
       CreatePeer: CreatePeer;
     },
     mainNet: MainNetwork
   ) {
-    const {
-      SubNetworkManager,
-      CreatePeer,
-      NavigatorManager,
-      SeederManager
-    } = services;
+    const { SubNetworkManager, CreatePeer, NavigatorManager } = services;
 
     //from seeder store
     mainNet.onStoreMeta.subscribe(async ({ meta, peer }) => {
       const url = meta2URL(meta);
       const subNet = SubNetworkManager.createNetwork(url);
-      const seeder = SeederManager.createSeeder(
-        url,
-        mainNet,
-        subNet,
-        CreatePeer.peerCreater
-      );
 
-      NavigatorManager.createNavigator(meta, mainNet, seeder);
+      NavigatorManager.createNavigator(meta, mainNet, subNet);
 
       await new Promise(r => setTimeout(r, 200));
 
