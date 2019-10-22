@@ -34,16 +34,14 @@ export class SeederContainer {
 
     await Promise.all(
       peers.map(
-        peer =>
+        ({ kid }) =>
           new Promise(r => {
-            const { unSubscribe } = seeder.onNewNavigatorConnect.subscribe(
-              id => {
-                if (peer.kid === id) {
-                  unSubscribe();
-                  r();
-                }
+            const { unSubscribe } = seeder.onCreatePeerOffer.subscribe(id => {
+              if (kid === id) {
+                unSubscribe();
+                r();
               }
-            );
+            });
           })
       )
     );

@@ -12,8 +12,7 @@ import { SubNetwork } from "../network/sub";
 import sha1 from "sha1";
 
 export class Seeder {
-  private onCreatePeerOffer = new Event<string>();
-  onNewNavigatorConnect = this.onCreatePeerOffer.returnListener;
+  onCreatePeerOffer = new Event<string>();
 
   onNavigatorCallAnswer = new Event<string>();
 
