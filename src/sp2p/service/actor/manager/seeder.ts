@@ -12,7 +12,7 @@ export class SeederManager {
     subNet: SubNetwork,
     peerCreater: PeerCreater
   ) {
-    if (this.isExist(url)) this.list[url];
+    if (this.isExist(url)) return this.list[url];
     this.list[url] = new Seeder(url, mainNet, subNet, peerCreater);
     return this.list[url];
   }
