@@ -4,6 +4,7 @@ import {
   createStreamMeta
 } from "../../../entity/data/meta";
 
+import { CreatePeer } from "../../../service/peer/createPeer";
 import Event from "rx.mini";
 import { MainNetwork } from "../../../entity/network/main";
 import { SeederManager } from "../../../service/actor/manager/seeder";
@@ -14,16 +15,22 @@ export class SeederContainer {
     private services: {
       SubNetworkManager: SubNetworkManager;
       SeederManager: SeederManager;
+      CreatePeer: CreatePeer;
     },
     private mainNet: MainNetwork
   ) {}
 
   connect = async (meta: Meta) => {
-    const { SeederManager, SubNetworkManager } = this.services;
+    const { SeederManager, SubNetworkManager, CreatePeer } = this.services;
 
     const { url, peers } = await this.mainNet.store(meta);
     const subNet = SubNetworkManager.createNetwork(url);
-    const seeder = SeederManager.createSeeder(url, this.mainNet, subNet);
+    const seeder = SeederManager.createSeeder(
+      url,
+      this.mainNet,
+      subNet,
+      CreatePeer.peerCreater
+    );
 
     await Promise.all(
       peers.map(

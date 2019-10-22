@@ -1,4 +1,3 @@
-import { Peer, PeerModule } from "../../vendor/kademlia";
 import {
   RPCCreatePeerAnswer,
   RPCCreatePeerOffer
@@ -6,6 +5,8 @@ import {
 
 import Event from "rx.mini";
 import { MainNetwork } from "../network/main";
+import { Peer } from "../../vendor/kademlia";
+import { PeerCreater } from "../../module/peerCreater";
 import { RPCNavigatorCallAnswer } from "./navigator";
 import { SubNetwork } from "../network/sub";
 import sha1 from "sha1";
@@ -19,7 +20,8 @@ export class Seeder {
   constructor(
     private url: string,
     mainNet: MainNetwork,
-    private subNet: SubNetwork
+    private subNet: SubNetwork,
+    private peerCreater: PeerCreater
   ) {
     mainNet.eventManager
       .selectListen<RPCCreatePeerOffer>("RPCCreatePeerOffer")
@@ -42,9 +44,9 @@ export class Seeder {
   }
 
   private async connectPeer(offer: string, id: string, peer: Peer) {
-    const connect = PeerModule(peer.kid);
-    const answer = await connect.setOffer(JSON.parse(offer));
-    peer.rpc(RPCCreatePeerAnswer(JSON.stringify(answer), id));
+    const connect = this.peerCreater.create(peer.kid);
+    const answer = await connect.setOffer(offer);
+    peer.rpc(RPCCreatePeerAnswer(answer, id));
     await connect.onConnect.asPromise();
     await this.subNet.addPeer(connect);
   }

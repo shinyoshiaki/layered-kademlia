@@ -19,3 +19,5 @@ export const injectServices = () =>
     SubNetworkManager,
     CreatePeer
   });
+
+export type InjectServices = ReturnType<typeof injectServices>;

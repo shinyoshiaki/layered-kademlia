@@ -1,3 +1,4 @@
+import { PeerCreater } from "../../module/peerCreater";
 import { PeerMockModule } from "../../vendor/kademlia";
 import { SP2P } from "../../adapter/actor";
 import { testSetupNodes } from "../setupnetwork";
@@ -5,7 +6,9 @@ import { testSetupNodes } from "../setupnetwork";
 test("store", async () => {
   const num = 4;
   const nodes = await testSetupNodes(num, PeerMockModule, { timeout: 1000 });
-  const actors = nodes.map(node => new SP2P(node));
+  const actors = nodes.map(
+    node => new SP2P({ PeerCreater: new PeerCreater() }, node)
+  );
 
   const actor = actors.pop()!;
   const { url, meta } = await actor.seeder.storeStatic(

@@ -1,20 +1,28 @@
 import { Peer } from "../../vendor/kademlia/modules/peer/base";
-import PeerModule from "../../vendor/kademlia/modules/peer";
+import { PeerCreater } from "../../module/peerCreater";
 
 export class CreatePeer {
+  constructor(private modules: { PeerCreater: PeerCreater } = {} as any) {}
+
   async connect(url: string, myKid: string, peer: Peer) {
-    const connect = PeerModule(peer.kid);
+    const { PeerCreater } = this.modules;
+
+    const connect = PeerCreater.create(peer.kid);
 
     const offer = await connect.createOffer();
     const id = Math.random().toString();
-    peer.rpc(RPCCreatePeerOffer(JSON.stringify(offer), url, myKid, id));
+    peer.rpc(RPCCreatePeerOffer(offer, url, myKid, id));
 
     const { answer } = await peer
       .eventRpc<RPCCreatePeerAnswer>("RPCCreatePeerAnswer", id)
       .asPromise();
 
-    await connect.setAnswer(JSON.parse(answer));
+    await connect.setAnswer(answer);
     return connect;
+  }
+
+  get peerCreater() {
+    return this.modules.PeerCreater;
   }
 }
 
