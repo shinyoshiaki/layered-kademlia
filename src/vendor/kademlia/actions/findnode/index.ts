@@ -40,7 +40,7 @@ export default async function findNode(
     })
   );
 
-  const findNodeAnswer = async (proxy: Peer, offer: Offer) => {
+  const findNodeAnswer = async (node: Peer, offer: Offer) => {
     const { peerkid, sdp } = offer;
     const { peer, candidate } = signaling.create(peerkid);
     if (peer) {
@@ -49,13 +49,13 @@ export default async function findNode(
       rpcManager
         .asObservable<FindNodeProxyAnswerError>(
           "FindNodeProxyAnswerError",
-          proxy
+          node
         )
         .once(() => {
           peer.onConnect.error("FindNodeProxyAnswerError");
         });
 
-      rpcManager.run(proxy, FindNodeAnswer(answer, peerkid));
+      rpcManager.run(node, FindNodeAnswer(answer, peerkid));
 
       const err = await peer.onConnect.asPromise().catch(e => {
         return "err";

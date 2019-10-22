@@ -37,7 +37,9 @@ export class User {
       return { subNet, meta };
     } else {
       const subNet = SubNetworkManager.getSubNetwork(url);
-      if (subNet.state.onFinding) await subNet.state.onFinding.asPromise();
+      if (subNet.state.onFinding) {
+        await subNet.state.onFinding.asPromise();
+      }
       await subNet.findNode();
       return { subNet, meta };
     }

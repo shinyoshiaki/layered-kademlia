@@ -18,12 +18,12 @@ describe("static/subnet", () => {
       Buffer.from("test")
     );
 
-    await new Promise(r => setTimeout(r, 600_000));
-
     for (let actor of actors) {
       await actor.user.connectSubNet(url);
     }
-
+    console.log(
+      actors[0].services.SubNetworkManager.getSubNetwork(url).allPeers.length
+    );
     expect(
       actors[0].services.SubNetworkManager.getSubNetwork(url).allPeers.length >
         1

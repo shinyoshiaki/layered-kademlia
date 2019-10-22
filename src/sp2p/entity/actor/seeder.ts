@@ -26,25 +26,30 @@ export class Seeder {
     mainNet.eventManager
       .selectListen<RPCCreatePeerOffer>("RPCCreatePeerOffer")
       .subscribe(async ({ rpc, peer }) => {
-        const { offer, id, url } = rpc;
+        const { offer, id, url, kid } = rpc;
         if (this.url === url) {
-          await this.connectPeer(offer, id, peer);
+          await this.connectPeer(offer, kid, peer, id);
           this.onCreatePeerOffer.execute(peer.kid);
         }
       });
     mainNet.eventManager
       .selectListen<RPCNavigatorCallAnswer>("RPCNavigatorCallAnswer")
       .subscribe(async ({ rpc, peer }) => {
-        const { offer, id, url } = rpc;
+        const { offer, id, url, kid } = rpc;
         if (this.url === url) {
-          await this.connectPeer(offer, id, peer);
+          await this.connectPeer(offer, kid, peer, id);
           // todo : handle
         }
       });
   }
 
-  private async connectPeer(offer: string, id: string, peer: Peer) {
-    const connect = this.peerCreater.create(peer.kid);
+  private async connectPeer(
+    offer: string,
+    kid: string,
+    peer: Peer,
+    id: string
+  ) {
+    const connect = this.peerCreater.create(kid);
     const answer = await connect.setOffer(offer);
     peer.rpc(RPCCreatePeerAnswer(answer, id));
     await connect.onConnect.asPromise();

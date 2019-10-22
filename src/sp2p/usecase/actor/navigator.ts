@@ -29,7 +29,8 @@ export class NavigatorContainer {
 
       const seederPeer = await CreatePeer.connect(url, subNet.kid, peer);
       subNet.addPeer(seederPeer);
-      await subNet.findNode();
+      const res = await subNet.findNode();
+      this;
     });
   }
 }

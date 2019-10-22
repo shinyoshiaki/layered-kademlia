@@ -22,7 +22,7 @@ export class Navigator {
           const seederPeer = subNet.kTable.findNode(peer.kid).shift();
           if (!seederPeer) return;
 
-          seederPeer.rpc(RPCNavigatorCallAnswer(offer, url, id));
+          seederPeer.rpc(RPCNavigatorCallAnswer(offer, url, subNet.kid, id));
 
           const { answer } = await peer
             .eventRpc<RPCCreatePeerAnswer>("RPCCreatePeerAnswer", id)
@@ -39,10 +39,16 @@ export class Navigator {
   }
 }
 
-const RPCNavigatorCallAnswer = (offer: string, url: string, id: string) => ({
+const RPCNavigatorCallAnswer = (
+  offer: string,
+  url: string,
+  kid: string,
+  id: string
+) => ({
   type: "RPCNavigatorCallAnswer" as const,
   url,
   offer,
+  kid,
   id
 });
 
