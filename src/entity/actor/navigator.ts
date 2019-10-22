@@ -21,12 +21,14 @@ export class Navigator {
         const { offer, id, url } = rpc;
         if (this.url === url) {
           const seederPeer = this.seeder.getCloseEst(peer.kid);
+          console.log({ seederPeer }, this.seeder);
           if (!seederPeer) return;
 
           seederPeer.rpc(RPCNavigatorCallAnswer(offer, url, id));
           const { answer } = await peer
             .eventRpc<RPCCreatePeerAnswer>("RPCCreatePeerAnswer", id)
             .asPromise();
+          console.log({ answer });
           peer.rpc(RPCCreatePeerAnswer(answer, id));
         }
       });

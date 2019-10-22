@@ -14,11 +14,16 @@ export type StaticMeta = Meta & {
   payload: { keys: string[] };
 };
 
+export type StreamMetaPayload = {
+  first: string;
+  width?: number;
+  height?: number;
+  cycle: number;
+};
+
 export type StreamMeta = Meta & {
   type: "stream";
-  payload: {
-    first: string;
-  };
+  payload: StreamMetaPayload;
 };
 
 export function createStaticMeta(
@@ -36,9 +41,13 @@ export function createStaticMeta(
   };
 }
 
-export function createStreamMeta(name: string, ab: ArrayBuffer): StreamMeta {
+export function createStreamMeta(
+  name: string,
+  ab: ArrayBuffer,
+  payload: Omit<StreamMetaPayload, "first">
+): StreamMeta {
   const first = sha1(Buffer.from(ab)).toString();
-  return { type: "stream", name, payload: { first } };
+  return { type: "stream", name, payload: { first, ...payload } };
 }
 
 export function meta2URL(meta: Meta) {

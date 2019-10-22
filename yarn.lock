@@ -3636,10 +3636,10 @@ webidl-conversions@^4.0.2:
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-4.0.2.tgz#a855980b1f0b6b359ba1d5d9fb39ae941faa63ad"
   integrity sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg==
 
-webrtc4me@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/webrtc4me/-/webrtc4me-0.7.1.tgz#c9c65e32a3ce911d9c5710ec797c4772a89136f6"
-  integrity sha512-dGWrjWnA7pqOud2RwgNS/a0kW+QJivl2M7sbnjH3szbwa+aUfjrQZ7RPvPhZV8OTzQq6dp0MpSTiq0rJU0u8Sg==
+webrtc4me@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/webrtc4me/-/webrtc4me-0.7.2.tgz#ab1f348520c5f08390dc3f8732d378ef1beef64e"
+  integrity sha512-lftThbeq+rz3Y5h6LKOuqfXzbizuPhPph0YgRpkOwZ8OLp802wZj3QDU9TYpAqC3z01r0sfbPSizfuxGIrEdQg==
   dependencies:
     "@msgpack/msgpack" "^1.6.0"
     rx.mini "^0.1.0"

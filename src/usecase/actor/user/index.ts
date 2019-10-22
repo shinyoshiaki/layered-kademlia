@@ -29,8 +29,13 @@ export class User {
       const seederPeer = await CreatePeer.connect(url, this.mainNet.kid, peer);
 
       const subNet = SubNetworkManager.createNetwork(url);
-      await subNet.addPeer(seederPeer);
+      subNet.addPeer(seederPeer);
+      await subNet.findPeer();
       return { subNet, meta };
+    } else {
+      const subNet = SubNetworkManager.getSubNetwork(url);
+      const wait = subNet.state.isFindPeer;
+      if (wait) await wait.asPromise();
     }
     const subNet = SubNetworkManager.getSubNetwork(url);
     return { subNet, meta };

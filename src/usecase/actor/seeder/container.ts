@@ -1,5 +1,6 @@
 import {
   Meta,
+  StreamMetaPayload,
   createStaticMeta,
   createStreamMeta
 } from "../../../entity/data/meta";
@@ -17,6 +18,11 @@ export class SeederContainer {
     },
     private mainNet: MainNetwork
   ) {}
+
+  onSubnetAdd = this.services.SubNetworkManager.event.returnListener;
+  get subnetList() {
+    return this.services.SubNetworkManager.list;
+  }
 
   connect = async (meta: Meta) => {
     const { SeederManager, SubNetworkManager } = this.services;
@@ -53,8 +59,12 @@ export class SeederContainer {
     return { url, meta };
   };
 
-  async storeStream(name: string, first: ArrayBuffer) {
-    const meta = createStreamMeta(name, first);
+  async storeStream(
+    name: string,
+    first: ArrayBuffer,
+    payload: Omit<StreamMetaPayload, "first">
+  ) {
+    const meta = createStreamMeta(name, first, payload);
     const { seeder, url } = await this.connect(meta);
 
     const event = new Event<ArrayBuffer | undefined>();
@@ -69,6 +79,6 @@ export class SeederContainer {
       prev = ab;
     });
 
-    return { event: event.returnTrigger, url };
+    return { event: event, url };
   }
 }

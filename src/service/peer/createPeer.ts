@@ -9,6 +9,7 @@ export class CreatePeer {
     const id = Math.random().toString();
     peer.rpc(RPCCreatePeerOffer(JSON.stringify(offer), url, myKid, id));
 
+    // todo : handle timeout
     const { answer } = await peer
       .eventRpc<RPCCreatePeerAnswer>("RPCCreatePeerAnswer", id)
       .asPromise();

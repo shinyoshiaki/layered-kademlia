@@ -28,11 +28,7 @@ export class MainNetwork {
 
   store = async (meta: Meta) => {
     const metaStr = JSON.stringify(meta);
-    const { item, peers } = await this.kad.store(
-      sha1(metaStr),
-      metaStr,
-      metaMessage
-    );
+    const { item, peers } = await this.kad.store(metaStr, metaMessage);
     const { key } = item;
     return { url: key, peers };
   };

@@ -46,7 +46,7 @@ export class Seeder {
     const answer = await connect.setOffer(JSON.parse(offer));
     peer.rpc(RPCCreatePeerAnswer(JSON.stringify(answer), id));
     await connect.onConnect.asPromise();
-    await this.subNet.addPeer(connect);
+    this.subNet.addPeer(connect);
   }
 
   setAsset(ab: ArrayBuffer) {
@@ -71,8 +71,7 @@ export class Seeder {
   async store(ab: ArrayBuffer) {
     const { store } = this.subNet;
 
-    const key = sha1(Buffer.from(ab)).toString();
-    await store(key, ab);
+    await store(ab);
   }
 
   getCloseEst(kid: string): Peer | undefined {

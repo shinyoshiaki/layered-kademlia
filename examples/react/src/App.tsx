@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useRef, useState } from "react";
 
 import PeerList from "./components/PeerList";
 import { SP2PClient } from "./services/kademlia";
+import SeederList from "./components/SeederList";
 import { StaticMeta } from "../../../src/entity/data/meta";
 import StoreStream from "./components/StoreStream";
 import WatchStream from "./components/WatchStream";
@@ -41,6 +42,7 @@ const App: React.FC = () => {
       <p>sp2p</p>
       <p>{sP2PClient.kad.kid}</p>
       <PeerList />
+      <SeederList />
       <StoreStream />
       <WatchStream />
     </SP2PClientContext.Provider>

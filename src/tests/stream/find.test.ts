@@ -11,7 +11,8 @@ describe("stream/find", () => {
     let count = 0;
     const { url, event } = await actors[0].seeder.storeStream(
       "test",
-      Buffer.from(`hello${count++}`)
+      Buffer.from(`hello${count++}`),
+      { cycle: 0 }
     );
     const interval = setInterval(() => {
       event.execute(Buffer.from(`hello${count++}`));
@@ -49,7 +50,7 @@ describe("stream/find", () => {
     await job(nodes);
   }, 60_000_0);
   test("webrtc", async () => {
-    const nodes = await testSetupNodes(10, PeerMockModule, { timeout: 5_000 });
+    const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
     await job(nodes);
   }, 60_000_0);
 });
