@@ -48,7 +48,7 @@ export class Seeder {
     const answer = await connect.setOffer(offer);
     peer.rpc(RPCCreatePeerAnswer(answer, id));
     await connect.onConnect.asPromise();
-    await this.subNet.addPeer(connect);
+    this.subNet.addPeer(connect);
   }
 
   setAsset(ab: ArrayBuffer) {

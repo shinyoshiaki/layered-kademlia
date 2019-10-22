@@ -25,7 +25,8 @@ export class NavigatorContainer {
       await new Promise(r => setTimeout(r, 200));
 
       const seederPeer = await CreatePeer.connect(url, subNet.kid, peer);
-      await subNet.addPeer(seederPeer);
+      subNet.addPeer(seederPeer);
+      await subNet.findNode();
     });
   }
 }

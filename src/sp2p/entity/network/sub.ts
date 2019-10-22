@@ -20,8 +20,11 @@ export class SubNetwork {
     return this.kTable.allPeers;
   }
 
-  async addPeer(peer: Peer) {
+  addPeer(peer: Peer) {
     this.kad.add(peer);
+  }
+
+  async findNode() {
     await this.kad.findNode(this.kad.kid);
   }
 
