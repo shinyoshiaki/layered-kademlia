@@ -1,9 +1,9 @@
-import { CreatePeer } from "../../../service/peer/createPeer";
-import { MainNetwork } from "../../../entity/network/main";
-import { NavigatorManager } from "../../../service/actor/manager/navigator";
-import { SeederManager } from "../../../service/actor/manager/seeder";
-import { SubNetworkManager } from "../../../service/network/submanager";
-import { meta2URL } from "../../../entity/data/meta";
+import { CreatePeer } from "../../service/peer/createPeer";
+import { MainNetwork } from "../../entity/network/main";
+import { NavigatorManager } from "../../service/actor/manager/navigator";
+import { SeederManager } from "../../service/actor/manager/seeder";
+import { SubNetworkManager } from "../../service/network/submanager";
+import { meta2URL } from "../../entity/data/meta";
 
 export class NavigatorContainer {
   constructor(

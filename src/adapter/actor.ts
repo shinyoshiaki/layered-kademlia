@@ -3,9 +3,9 @@ import { InjectServices, injectServices } from "../service";
 import { CreatePeer } from "../service/peer/createPeer";
 import Kademlia from "../vendor/kademlia";
 import { MainNetwork } from "../entity/network/main";
-import { NavigatorContainer } from "../usecase/actor/navigator/container";
+import { NavigatorContainer } from "../usecase/actor/navigator";
 import { PeerCreater } from "../module/peerCreater";
-import { SeederContainer } from "../usecase/actor/seeder/container";
+import { SeederContainer } from "../usecase/actor/seeder";
 import { User } from "../usecase/actor/user";
 
 export class SP2P {

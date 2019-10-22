@@ -2,13 +2,13 @@ import {
   Meta,
   createStaticMeta,
   createStreamMeta
-} from "../../../entity/data/meta";
+} from "../../entity/data/meta";
 
-import { CreatePeer } from "../../../service/peer/createPeer";
+import { CreatePeer } from "../../service/peer/createPeer";
 import Event from "rx.mini";
-import { MainNetwork } from "../../../entity/network/main";
-import { SeederManager } from "../../../service/actor/manager/seeder";
-import { SubNetworkManager } from "../../../service/network/submanager";
+import { MainNetwork } from "../../entity/network/main";
+import { SeederManager } from "../../service/actor/manager/seeder";
+import { SubNetworkManager } from "../../service/network/submanager";
 
 export class SeederContainer {
   constructor(
