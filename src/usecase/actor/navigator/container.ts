@@ -29,9 +29,14 @@ export class NavigatorContainer {
       const seeder = SeederManager.createSeeder(url, mainNet, subNet);
 
       NavigatorManager.createNavigator(meta, mainNet, seeder);
+      await new Promise(r => setTimeout(r, 100));
 
       const seederPeer = await CreatePeer.connect(url, subNet.kid, peer);
-      await subNet.addPeer(seederPeer);
+      subNet.addPeer(seederPeer);
+      await new Promise(r => setTimeout(r, 5_000));
+
+      await subNet.findPeer();
+      subNet;
     });
   }
 }

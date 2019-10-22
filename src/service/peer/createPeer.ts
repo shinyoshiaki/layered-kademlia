@@ -13,7 +13,7 @@ export class CreatePeer {
     const { answer } = await peer
       .eventRpc<RPCCreatePeerAnswer>("RPCCreatePeerAnswer", id)
       .asPromise();
-    console.log({ answer });
+
     await connect.setAnswer(JSON.parse(answer));
     return connect;
   }

@@ -1,13 +1,14 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { FC, useContext, useRef, useState } from "react";
 
 import { SP2PClientContext } from "../App";
 import { StreamMeta } from "../../../../src/entity/data/meta";
+import { StreamPlayer } from "../domain/stream/que";
 import { VideoCanvas } from "../atoms/VideoCanvas";
 import { decode } from "@msgpack/msgpack";
 import { libvpxDec } from "../domain/libvpx";
 import useInput from "../hooks/useInput";
 
-const WatchStream: React.FC = () => {
+const WatchStream: FC = () => {
   const [resolution, setResolution] = useState({ x: 400, y: 400 });
   const [url, seturl] = useInput();
   const canvasRef = useRef<any>();
@@ -30,26 +31,31 @@ const WatchStream: React.FC = () => {
       packetSize: 1
     });
 
-    subNet.findStreamMetaTarget(
-      meta as StreamMeta,
-      ({ type, chunk }) => {
-        if (type === "chunk") {
-          const { video } = decode(chunk) as {
-            video: Uint8Array;
-            audio: Uint8Array[];
-          };
-          sender.execute(new Uint8Array(Object.values(video)).buffer);
-        }
-      },
-      300
-    );
-
     listener.subscribe(ab => {
       const ctx = canvasRef.current.getContext("2d");
       const frame = ctx.createImageData(width, height);
       frame.data.set(ab, 0);
       ctx.putImageData(frame, 0, 0);
     });
+
+    const streamPlayer = new StreamPlayer();
+    streamPlayer.event.subscribe(async v => {
+      sender.execute(new Uint8Array(Object.values(v)).buffer);
+    });
+
+    subNet.findStreamMetaTarget(
+      meta as StreamMeta,
+      async ({ type, chunk }) => {
+        if (type === "chunk") {
+          const { video } = decode(chunk) as {
+            video: Uint8Array[];
+            audio: Uint8Array[];
+          };
+          streamPlayer.push(video.map(v => decode(v) as any));
+        }
+      },
+      { preferTimeout: 1000 }
+    );
   };
 
   const { x, y } = resolution;

@@ -27,7 +27,7 @@
         "--runInBand",
         "--forceExit",
         "--detectOpenHandles",
-        "${workspaceRoot}/src/tests/stream/find.test.ts"
+        "${workspaceRoot}/src/tests/static/subnet.test.ts"
       ],
       "windows": {
         "program": "${workspaceRoot}/node_modules/jest/bin/jest.js"

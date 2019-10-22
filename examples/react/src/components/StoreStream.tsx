@@ -1,7 +1,8 @@
-import React, { MutableRefObject, useContext, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 
 import Event from "rx.mini";
 import { SP2PClientContext } from "../App";
+import { StreamPool } from "../domain/stream/pool";
 import { VideoCanvas } from "../atoms/VideoCanvas";
 import { encode } from "@msgpack/msgpack";
 import { libvpxEnc } from "../domain/libvpx";
@@ -44,39 +45,39 @@ const StoreStream: React.FC = () => {
       height,
       fps: 30,
       bitrate: 10000,
-      packetSize: 1
+      packetSize: 16
     });
 
     rawListener.subscribe(ab => {
       const ctx = canvasRef.current.getContext("2d");
       const frame = ctx.createImageData(width, height);
-      console.log({ ab });
       frame.data.set(new Uint8Array(ab), 0);
       ctx.putImageData(frame, 0, 0);
     });
 
     let eventStore: Event<ArrayBuffer>;
     setTimeout(() => start());
-    const video = await listener.asPromise();
-    const encoded = encode({ video });
+    const uint8 = await listener.asPromise();
+    const encoded = encode({ video: [encode({ v: uint8, t: 0 })] });
     const eventStoreFirst = new Event<Event<ArrayBuffer>>();
 
-    listener.subscribe(async video => {
-      const encoded = encode({ video });
-      console.log({ encoded });
-      if (eventStore) {
-        eventStore.execute(encoded);
-      } else {
-        const event = await eventStoreFirst.asPromise();
-        event.execute(encoded);
-      }
-    });
     const { url, event } = await sp2pClient.actor.seeder.storeStream(
       "test",
       encoded,
-      { width, height, cycle: 1 / 30 }
+      { width, height, cycle: 1000 }
     );
     eventStore = event as any;
+
+    const pool = new StreamPool(1000);
+
+    listener.subscribe(video => {
+      pool.push(video);
+    });
+
+    pool.event.subscribe(abs => {
+      eventStore.execute(encode({ video: abs }));
+    });
+
     eventStoreFirst.execute(event as any);
     setUrl(url);
   };

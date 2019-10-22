@@ -34,7 +34,6 @@ export class Seeder {
       .selectListen<RPCNavigatorCallAnswer>("RPCNavigatorCallAnswer")
       .subscribe(async ({ rpc, peer }) => {
         const { offer, id, url } = rpc;
-        console.log({ offer, id, url });
         if (this.url === url) {
           await this.connectPeer(offer, id, peer);
           // todo : handle
@@ -47,7 +46,7 @@ export class Seeder {
     const answer = await connect.setOffer(JSON.parse(offer));
     peer.rpc(RPCCreatePeerAnswer(JSON.stringify(answer), id));
     await connect.onConnect.asPromise();
-    await this.subNet.addPeer(connect);
+    this.subNet.addPeer(connect);
   }
 
   setAsset(ab: ArrayBuffer) {

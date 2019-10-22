@@ -2,13 +2,30 @@ import { ChunkBase, ChunkNext } from "../data/stream";
 import { Item, Peer } from "../../vendor/kademlia";
 import { StaticMeta, StreamMeta } from "../data/meta";
 
+import Event from "rx.mini";
 import { genKad } from "./util";
 import { mergeArraybuffer } from "../../util/arraybuffer";
 
 export class SubNetwork {
-  private kad = genKad();
+  state: { isFindPeer?: Event } = { isFindPeer: undefined };
+  kad = genKad({ timeout: 60_000 });
   kid = this.kad.kid;
   store = this.kad.store;
+
+  constructor() {
+    this.kad.di.eventManager.selectListen("FindNodeAnswer").subscribe(v => {
+      console.log(this.kTable.allKids);
+    });
+    this.kad.di.eventManager
+      .selectListen("FindNodeProxyAnswer")
+      .subscribe(v => {
+        console.log(this.kTable.allKids);
+      });
+
+    this.kad.di.eventManager.selectListen("FindNodeProxyOpen").subscribe(v => {
+      console.log(this.kTable.allKids);
+    });
+  }
 
   get kvs() {
     return this.kad.di.modules.kvs;
@@ -20,10 +37,15 @@ export class SubNetwork {
     return this.kTable.allPeers;
   }
 
-  async addPeer(peer: Peer) {
+  addPeer(peer: Peer) {
     this.kad.add(peer);
+  }
+
+  async findPeer() {
+    this.state.isFindPeer = new Event();
     await this.kad.findNode(this.kad.kid);
-    console.log("subnet addpeer");
+    this.state.isFindPeer!.execute(null);
+    this.state.isFindPeer = undefined;
   }
 
   findStaticMetaTarget = async (meta: StaticMeta) => {
@@ -61,7 +83,9 @@ export class SubNetwork {
       if (!res) {
         if (state.retry < 10) {
           state.prefetch = false;
-          console.warn({ retry: state.retry }, this.kad);
+          console.warn({ retry: state.retry }, this.kad, [
+            ...this.kad.di.kTable.allKids
+          ]);
           await new Promise(r => setTimeout(r));
           state.retry++;
           continue;
