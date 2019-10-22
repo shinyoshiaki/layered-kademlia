@@ -1,6 +1,6 @@
-import { PeerCreater } from "../../module/peerCreater";
+import { PeerCreater } from "../../sp2p/module/peerCreater";
 import { PeerMockModule } from "../../vendor/kademlia";
-import { SP2P } from "../../adapter/actor";
+import { SP2P } from "../../sp2p/adapter/actor";
 import { testSetupNodes } from "../setupnetwork";
 
 describe("static/subnet", () => {

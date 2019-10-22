@@ -1,7 +1,7 @@
 import { InjectServices, injectServices } from "../service";
 
 import { CreatePeer } from "../service/peer/createPeer";
-import Kademlia from "../vendor/kademlia";
+import Kademlia from "../../vendor/kademlia";
 import { MainNetwork } from "../entity/network/main";
 import { NavigatorContainer } from "../usecase/actor/navigator";
 import { PeerCreater } from "../module/peerCreater";

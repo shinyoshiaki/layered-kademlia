@@ -5,7 +5,7 @@ import {
 
 import Event from "rx.mini";
 import { MainNetwork } from "../network/main";
-import { Peer } from "../../vendor/kademlia";
+import { Peer } from "../../../vendor/kademlia";
 import { PeerCreater } from "../../module/peerCreater";
 import { RPCNavigatorCallAnswer } from "./navigator";
 import { SubNetwork } from "../network/sub";

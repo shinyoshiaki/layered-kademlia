@@ -1,6 +1,6 @@
 import { CreatePeer } from "../../service/peer/createPeer";
 import { MainNetwork } from "../../entity/network/main";
-import { Peer } from "../../vendor/kademlia";
+import { Peer } from "../../../vendor/kademlia";
 import { SubNetworkManager } from "../../service/network/submanager";
 
 export type Network = {

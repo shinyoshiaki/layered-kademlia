@@ -1,4 +1,4 @@
-import Kademlia, { Peer } from "../../vendor/kademlia";
+import Kademlia, { Peer } from "../../../vendor/kademlia";
 
 import Event from "rx.mini";
 import { Meta } from "../data/meta";

@@ -1,5 +1,5 @@
 import sha1 from "sha1";
-import { sliceArraybuffer } from "../../util/arraybuffer";
+import { sliceArraybuffer } from "../../../util/arraybuffer";
 
 export const metaChunksSize = 16000;
 

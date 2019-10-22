@@ -1,4 +1,4 @@
-import { PeerMockModule } from "../vendor/kademlia";
+import { PeerMockModule } from "../../vendor/kademlia";
 
 export class PeerCreater {
   create(id: string) {

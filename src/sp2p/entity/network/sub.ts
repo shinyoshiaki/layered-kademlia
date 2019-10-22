@@ -1,9 +1,9 @@
-import { Item, Peer } from "../../vendor/kademlia";
+import { Item, Peer } from "../../../vendor/kademlia";
 import { StaticMeta, StreamMeta } from "../data/meta";
 
 import { Chunk } from "../data/stream";
 import { genKad } from "./util";
-import { mergeArraybuffer } from "../../util/arraybuffer";
+import { mergeArraybuffer } from "../../../util/arraybuffer";
 
 export class SubNetwork {
   private kad = genKad();

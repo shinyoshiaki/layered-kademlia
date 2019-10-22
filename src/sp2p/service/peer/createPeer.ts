@@ -1,4 +1,4 @@
-import { Peer } from "../../vendor/kademlia/modules/peer/base";
+import { Peer } from "../../../vendor/kademlia/modules/peer/base";
 import { PeerCreater } from "../../module/peerCreater";
 
 export class CreatePeer {

@@ -1,8 +1,8 @@
 import Kademlia, { PeerMockModule } from "../../vendor/kademlia";
 
-import { PeerCreater } from "../../module/peerCreater";
-import { SP2P } from "../../adapter/actor";
-import { StreamMeta } from "../../entity/data/meta";
+import { PeerCreater } from "../../sp2p/module/peerCreater";
+import { SP2P } from "../../sp2p/adapter/actor";
+import { StreamMeta } from "../../sp2p/entity/data/meta";
 import { testSetupNodes } from "../setupnetwork";
 
 describe("stream/find", () => {
