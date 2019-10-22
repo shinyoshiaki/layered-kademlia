@@ -38,7 +38,6 @@ export default class PeerWebRTC implements Peer {
     const buffer = Buffer.from(data);
     try {
       const data: RPC = decode(buffer) as any;
-
       if (data.type) {
         if (data.sdp) data.sdp = JSON.parse(data.sdp as any);
         return data;

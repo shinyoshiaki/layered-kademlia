@@ -21,7 +21,8 @@ export class SubNetwork {
   }
 
   async addPeer(peer: Peer) {
-    await this.kad.add(peer);
+    this.kad.add(peer);
+    await this.kad.findNode(this.kad.kid);
   }
 
   findStaticMetaTarget = async (meta: StaticMeta) => {
