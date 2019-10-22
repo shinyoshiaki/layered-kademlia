@@ -4,7 +4,9 @@ import {
   RPCCreatePeerOffer
 } from "../../service/peer/createPeer";
 
+import { FindNodeProxyOpen } from "../../../vendor/kademlia/actions/findnode/listen/node";
 import { MainNetwork } from "../network/main";
+import { RPC } from "../../../vendor/kademlia/modules/peer/base";
 import { SubNetwork } from "../network/sub";
 
 export class Navigator {
@@ -17,7 +19,7 @@ export class Navigator {
       .subscribe(async ({ rpc, peer }) => {
         const { offer, id, url } = rpc;
         if (this.url === url) {
-          const seederPeer = subNet.kTable.getPeer(peer.kid);
+          const seederPeer = subNet.kTable.findNode(peer.kid).shift();
           if (!seederPeer) return;
 
           seederPeer.rpc(RPCNavigatorCallAnswer(offer, url, id));
@@ -27,6 +29,12 @@ export class Navigator {
             .asPromise();
           peer.rpc(RPCCreatePeerAnswer(answer, id));
         }
+      });
+
+    subNet.kad.di.eventManager
+      .selectListen<FindNodeProxyOpen & RPC>("FindNodeProxyOpen")
+      .subscribe(v => {
+        this;
       });
   }
 }

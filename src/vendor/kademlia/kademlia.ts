@@ -23,7 +23,7 @@ export default class Kademlia {
   }
 
   findNode = async (searchkid: string) => {
-    let target: undefined | Peer;
+    let target: Peer[] | undefined;
 
     for (
       let pre = "";

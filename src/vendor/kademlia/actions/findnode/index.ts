@@ -13,10 +13,11 @@ export default async function findNode(
   searchkid: string,
   di: DependencyInjection
 ) {
+  const connected: Peer[] = [];
   const { kTable, rpcManager, signaling } = di;
   const { timeout } = di.opt;
 
-  if (kTable.getPeer(searchkid)) return kTable.getPeer(searchkid);
+  if (kTable.getPeer(searchkid)) return [kTable.getPeer(searchkid)!];
 
   const findNodeProxyOfferResult = await Promise.all(
     kTable.findNode(searchkid).map(async peer => {
@@ -56,19 +57,23 @@ export default async function findNode(
 
       rpcManager.run(proxy, FindNodeAnswer(answer, peerkid));
 
-      const err = await peer.onConnect.asPromise(timeout).catch(() => {
+      const err = await peer.onConnect.asPromise().catch(e => {
         return "err";
       });
       if (err) {
         signaling.delete(peerkid);
       } else {
         listeners(peer, di);
+        connected.push(peer);
       }
     } else if (candidate) {
       const peer = await candidate.asPromise(timeout).catch(() => {
         return undefined;
       });
-      if (peer) listeners(peer, di);
+      if (peer) {
+        listeners(peer, di);
+        connected.push(peer);
+      }
     }
     // 相手側のlistenが完了するまで待つ
     // TODO : ちゃんと実装する
@@ -81,7 +86,7 @@ export default async function findNode(
       .flatMap(v => v)
   );
 
-  return kTable.getPeer(searchkid);
+  return connected;
 }
 
 const FindNode = (searchkid: string, except: string[]) => ({

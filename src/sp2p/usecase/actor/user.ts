@@ -28,12 +28,18 @@ export class User {
       // connect to seeder via navigator
       const seederPeer = await CreatePeer.connect(url, this.mainNet.kid, peer);
 
-      const subNet = SubNetworkManager.createNetwork(url);
+      const subNet = SubNetworkManager.createNetwork(
+        url,
+        CreatePeer.peerCreater
+      );
       subNet.addPeer(seederPeer);
       await subNet.findNode();
       return { subNet, meta };
+    } else {
+      const subNet = SubNetworkManager.getSubNetwork(url);
+      if (subNet.state.onFinding) await subNet.state.onFinding.asPromise();
+      await subNet.findNode();
+      return { subNet, meta };
     }
-    const subNet = SubNetworkManager.getSubNetwork(url);
-    return { subNet, meta };
   };
 }

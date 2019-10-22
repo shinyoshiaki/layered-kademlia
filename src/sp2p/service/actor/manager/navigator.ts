@@ -9,7 +9,8 @@ export class NavigatorManager {
 
   createNavigator(meta: Meta, mainNet: MainNetwork, subNet: SubNetwork) {
     const url = meta2URL(meta);
-    if (this.isExist(url)) this.list[url];
+    if (this.isExist(url)) return this.list[url];
+
     this.list[url] = new Navigator(meta, mainNet, subNet);
     return this.list[url];
   }

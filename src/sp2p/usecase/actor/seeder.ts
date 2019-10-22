@@ -24,7 +24,7 @@ export class SeederContainer {
     const { SeederManager, SubNetworkManager, CreatePeer } = this.services;
 
     const { url, peers } = await this.mainNet.store(meta);
-    const subNet = SubNetworkManager.createNetwork(url);
+    const subNet = SubNetworkManager.createNetwork(url, CreatePeer.peerCreater);
     const seeder = SeederManager.createSeeder(
       url,
       this.mainNet,

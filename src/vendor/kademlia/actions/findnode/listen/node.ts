@@ -55,8 +55,9 @@ export default class FindNodeProxy {
     const { sdp, peerkid, id } = data;
 
     const peer = kTable.getPeer(peerkid);
-    if (peer) peer.rpc({ ...FindNodeProxyAnswer(sdp, this.listen.kid), id });
-    else {
+    if (peer) {
+      peer.rpc({ ...FindNodeProxyAnswer(sdp, this.listen.kid), id });
+    } else {
       this.listen.rpc({ ...FindNodeProxyAnswerError(), id });
     }
   };

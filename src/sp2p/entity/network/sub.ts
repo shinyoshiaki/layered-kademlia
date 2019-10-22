@@ -2,11 +2,17 @@ import { Item, Peer } from "../../../vendor/kademlia";
 import { StaticMeta, StreamMeta } from "../data/meta";
 
 import { Chunk } from "../data/stream";
+import Event from "rx.mini";
+import { PeerCreater } from "../../module/peerCreater";
 import { genKad } from "./util";
 import { mergeArraybuffer } from "../../../util/arraybuffer";
 
 export class SubNetwork {
-  private kad = genKad();
+  state: { onFinding?: Event } = { onFinding: undefined };
+
+  constructor(private peerCreater: PeerCreater) {}
+
+  kad = genKad(this.peerCreater, { timeout: 600_000 });
   kid = this.kad.kid;
   store = this.kad.store;
 
@@ -25,7 +31,11 @@ export class SubNetwork {
   }
 
   async findNode() {
-    await this.kad.findNode(this.kad.kid);
+    this.state.onFinding = new Event();
+    const res = await this.kad.findNode(this.kad.kid);
+    this.state.onFinding!.execute(null);
+    this.state.onFinding = undefined;
+    return res;
   }
 
   findStaticMetaTarget = async (meta: StaticMeta) => {
