@@ -20,7 +20,8 @@ export class NavigatorContainer {
       const url = meta2URL(meta);
       const subNet = SubNetworkManager.createNetwork(
         url,
-        CreatePeer.peerCreater
+        CreatePeer.peerCreater,
+        mainNet.kid
       );
 
       NavigatorManager.createNavigator(meta, mainNet, subNet);

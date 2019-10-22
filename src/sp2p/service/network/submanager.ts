@@ -4,9 +4,9 @@ import { SubNetwork } from "../../entity/network/sub";
 export class SubNetworkManager {
   private list: { [url: string]: SubNetwork } = {};
 
-  createNetwork(url: string, peerCrater: PeerCreater) {
+  createNetwork(url: string, peerCrater: PeerCreater, kid: string) {
     if (this.isExist(url)) this.list[url];
-    this.list[url] = new SubNetwork(peerCrater);
+    this.list[url] = new SubNetwork(peerCrater, kid);
     return this.list[url];
   }
 

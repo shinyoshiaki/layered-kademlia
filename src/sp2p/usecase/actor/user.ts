@@ -30,7 +30,8 @@ export class User {
 
       const subNet = SubNetworkManager.createNetwork(
         url,
-        CreatePeer.peerCreater
+        CreatePeer.peerCreater,
+        this.mainNet.kid
       );
       subNet.addPeer(seederPeer);
       await subNet.findNode();

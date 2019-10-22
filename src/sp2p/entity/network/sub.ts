@@ -10,9 +10,9 @@ import { mergeArraybuffer } from "../../../util/arraybuffer";
 export class SubNetwork {
   state: { onFinding?: Event } = { onFinding: undefined };
 
-  constructor(private peerCreater: PeerCreater) {}
+  constructor(private peerCreater: PeerCreater, private existKid: string) {}
 
-  kad = genKad(this.peerCreater, { timeout: 60_000 });
+  kad = genKad(this.peerCreater, this.existKid, { timeout: 60_000 });
   kid = this.kad.kid;
   store = this.kad.store;
 
