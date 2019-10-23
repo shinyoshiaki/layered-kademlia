@@ -57,7 +57,7 @@ export default async function findNode(
 
       rpcManager.run(node, FindNodeAnswer(answer, peerkid));
 
-      const err = await peer.onConnect.asPromise().catch(e => {
+      const err = await peer.onConnect.asPromise(timeout).catch(e => {
         return "err";
       });
       if (err) {
@@ -67,13 +67,13 @@ export default async function findNode(
         connected.push(peer);
       }
     } else if (candidate) {
-      const peer = await candidate.asPromise(timeout).catch(() => {
+      await candidate.asPromise(timeout).catch(() => {
         return undefined;
       });
-      if (peer) {
-        listeners(peer, di);
-        connected.push(peer);
-      }
+      // if (peer) {
+      //   listeners(peer, di);
+      //   connected.push(peer);
+      // }
     }
     // 相手側のlistenが完了するまで待つ
     // TODO : ちゃんと実装する

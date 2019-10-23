@@ -36,6 +36,10 @@ export class SeederContainer {
       CreatePeer.peerCreater
     );
 
+    peers.forEach(peer => {
+      peer.rpc(RPCSeederStoreDone(url, Math.random().toString()));
+    });
+
     await Promise.all(
       peers.map(
         ({ kid }) =>
@@ -81,3 +85,11 @@ export class SeederContainer {
     return { event: event.returnTrigger, url };
   }
 }
+
+const RPCSeederStoreDone = (url: string, id: string) => ({
+  type: "RPCSeederStoreDone" as const,
+  url,
+  id
+});
+
+export type RPCSeederStoreDone = ReturnType<typeof RPCSeederStoreDone>;

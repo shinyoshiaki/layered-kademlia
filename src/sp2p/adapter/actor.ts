@@ -11,7 +11,8 @@ import { User } from "../usecase/actor/user";
 export class SP2P {
   constructor(
     private modules: { PeerCreater: PeerCreater },
-    private existKad: Kademlia
+    private existKad: Kademlia,
+    private options?: { subNetTimeout: number }
   ) {}
   services: InjectServices = {
     ...injectServices(),

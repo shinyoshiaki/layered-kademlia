@@ -1,6 +1,7 @@
 import { CreatePeer } from "../../service/peer/createPeer";
 import { MainNetwork } from "../../entity/network/main";
 import { NavigatorManager } from "../../service/actor/manager/navigator";
+import { RPCSeederStoreDone } from "./seeder";
 import { SubNetworkManager } from "../../service/network/submanager";
 import { meta2URL } from "../../entity/data/meta";
 
@@ -26,7 +27,16 @@ export class NavigatorContainer {
 
       NavigatorManager.createNavigator(meta, mainNet, subNet);
 
-      await new Promise(r => setTimeout(r, 200));
+      await new Promise(r => {
+        const { unSubscribe } = mainNet.eventManager
+          .selectListen<RPCSeederStoreDone>("RPCSeederStoreDone")
+          .subscribe(({ rpc }) => {
+            if (rpc.url === url) {
+              unSubscribe();
+              r();
+            }
+          });
+      });
 
       const seederPeer = await CreatePeer.connect(url, subNet.kid, peer);
       subNet.addPeer(seederPeer);
