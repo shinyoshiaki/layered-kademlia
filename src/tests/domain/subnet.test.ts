@@ -3,7 +3,7 @@ import { PeerModule } from "../../vendor/kademlia";
 import { SP2P } from "../../sp2p/adapter/actor";
 import { testSetupNodes } from "../setupnetwork";
 
-describe("static/subnet", () => {
+describe("domain/subnet", () => {
   test("", async () => {
     const nodes = await testSetupNodes(4, PeerModule, {
       timeout: 1_000

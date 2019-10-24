@@ -6,10 +6,8 @@ import { StaticMeta } from "../../sp2p/entity/data/meta";
 import { testSetupNodes } from "../setupnetwork";
 
 describe("static/find", () => {
-  const job = async (nodes: Kademlia[]) => {
-    const actors = nodes.map(
-      node => new SP2P({ PeerCreater: new PeerCreater(PeerMockModule) }, node)
-    );
+  const job = async (nodes: Kademlia[], PeerCreater: PeerCreater) => {
+    const actors = nodes.map(node => new SP2P({ PeerCreater }, node));
 
     const actorStore = actors.pop()!;
 
@@ -20,27 +18,26 @@ describe("static/find", () => {
 
     await new Promise(r => setTimeout(r));
 
-    await Promise.all(
-      actors.map(async actor => {
-        const res = await actor.user.connectSubNet(url);
+    for (let actor of actors) {
+      const res = await actor.user.connectSubNet(url);
 
-        expect(res).not.toBeUndefined();
-        const { subNet, meta } = res!;
+      expect(res).not.toBeUndefined();
+      const { subNet, meta } = res!;
 
-        const ab = await subNet.findStaticMetaTarget(meta as StaticMeta);
-        expect(Buffer.from(ab!)).toEqual(Buffer.from("hello"));
-      })
-    );
+      const ab = await subNet.findStaticMetaTarget(meta as StaticMeta);
+      expect(Buffer.from(ab!)).toEqual(Buffer.from("hello"));
+    }
+
     expect(true).toBe(true);
   };
 
   test("mock", async () => {
-    const nodes = await testSetupNodes(4, PeerMockModule, { timeout: 1_000 });
-    await job(nodes);
+    const nodes = await testSetupNodes(10, PeerMockModule, { timeout: 5_000 });
+    await job(nodes, new PeerCreater(PeerMockModule));
   }, 600_000);
 
-  // test("webrtc", async () => {
-  //   const nodes = await testSetupNodes(10, PeerModule, { timeout: 15_000 });
-  //   await job(nodes);
-  // }, 600_000);
+  test("webrtc", async () => {
+    const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
+    await job(nodes, new PeerCreater(PeerModule));
+  }, 600_000);
 });
