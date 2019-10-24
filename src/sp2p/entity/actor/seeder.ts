@@ -1,59 +1,74 @@
 import {
-  RPCCreatePeerAnswer,
-  RPCCreatePeerOffer
-} from "../../service/peer/createPeer";
+  RPCNavigatorBackAnswerByUser,
+  RPCNavigatorBackOfferBySeeder,
+  RPCNavigatorReqSeederOfferByUser
+} from "./navigator";
+import {
+  RPCUserAnswerSeederOverNavigator,
+  RPCUserReqSeederOffer2Navigator
+} from "../../usecase/actor/user";
 
 import Event from "rx.mini";
+import { InjectServices } from "../../service";
 import { MainNetwork } from "../network/main";
 import { Peer } from "../../../vendor/kademlia";
-import { PeerCreater } from "../../module/peerCreater";
-import { RPCNavigatorCallAnswer } from "./navigator";
+import { RPC } from "../../../vendor/kademlia/modules/peer/base";
 import { Signal } from "webrtc4me";
 import { SubNetwork } from "../network/sub";
 import sha1 from "sha1";
 
 export class Seeder {
+  navigators: { [kid: string]: Peer } = {};
   onCreatePeerOffer = new Event<string>();
 
   onNavigatorCallAnswer = new Event<string>();
 
   constructor(
+    private services: InjectServices,
     private url: string,
     mainNet: MainNetwork,
-    private subNet: SubNetwork,
-    private peerCreater: PeerCreater
+    private subNet: SubNetwork
   ) {
+    const { CreatePeer, RpcManager } = services;
+
     mainNet.eventManager
-      .selectListen<RPCCreatePeerOffer>("RPCCreatePeerOffer")
+      .selectListen<RPCUserReqSeederOffer2Navigator & RPC>(
+        "RPCUserReqSeederOffer2Navigator"
+      )
       .subscribe(async ({ rpc, peer }) => {
-        const { offer, id, url, kid } = rpc;
-        if (this.url === url) {
-          await this.connectPeer(offer, kid, peer, id);
-          this.onCreatePeerOffer.execute(peer.kid);
-        }
-      });
-    mainNet.eventManager
-      .selectListen<RPCNavigatorCallAnswer>("RPCNavigatorCallAnswer")
-      .subscribe(async ({ rpc, peer }) => {
-        const { offer, id, url, kid } = rpc;
-        if (this.url === url) {
-          await this.connectPeer(offer, kid, peer, id);
-          // todo : handle
-        }
+        //emulate navigator behave
+        const userPeer = CreatePeer.peerCreater.create(rpc.userKid);
+        const offer = await userPeer.createOffer();
+        const res = await RpcManager.getWait<RPCUserAnswerSeederOverNavigator>(
+          peer,
+          RPCNavigatorBackOfferBySeeder(offer, mainNet.kid),
+          rpc.id
+        )().catch(() => {});
+        if (!res) return;
+        await userPeer.setAnswer(res.answer);
+        this.subNet.addPeer(userPeer);
       });
   }
 
-  private async connectPeer(
-    offer: Signal,
-    kid: string,
-    peer: Peer,
-    id: string
-  ) {
-    const connect = this.peerCreater.create(kid);
-    const answer = await connect.setOffer(offer);
-    peer.rpc(RPCCreatePeerAnswer(answer, id));
-    await connect.onConnect.asPromise();
-    this.subNet.addPeer(connect);
+  addNavigatorPeer(peer: Peer) {
+    const { RpcManager, CreatePeer } = this.services;
+    this.navigators[peer.kid] = peer;
+    RpcManager.asObservable<RPCNavigatorReqSeederOfferByUser>(
+      "RPCNavigatorReqSeederOfferByUser",
+      peer
+    ).subscribe(async rpc => {
+      const userPeer = CreatePeer.peerCreater.create(rpc.userKid);
+      const offer = await userPeer.createOffer();
+      const res = await RpcManager.getWait<RPCNavigatorBackAnswerByUser>(
+        peer,
+        RPCSeederOffer2UserOverNavigator(offer),
+        rpc.id
+      )().catch(() => {});
+      if (!res) return;
+
+      await userPeer.setAnswer(res.answer);
+      this.subNet.addPeer(userPeer);
+    });
   }
 
   setAsset(ab: ArrayBuffer) {
@@ -75,3 +90,12 @@ export class Seeder {
     }
   }
 }
+
+const RPCSeederOffer2UserOverNavigator = (offer: Signal) => ({
+  type: "RPCSeederOffer2UserOverNavigator" as const,
+  offer
+});
+
+export type RPCSeederOffer2UserOverNavigator = ReturnType<
+  typeof RPCSeederOffer2UserOverNavigator
+>;

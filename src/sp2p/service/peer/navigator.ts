@@ -1,9 +1,9 @@
-import { Meta, meta2URL } from "../../../entity/data/meta";
+import { Meta, meta2URL } from "../../entity/data/meta";
 
-import { InjectServices } from "../..";
-import { MainNetwork } from "../../../entity/network/main";
-import { Navigator } from "../../../entity/actor/navigator";
-import { Peer } from "../../../../vendor/kademlia";
+import { InjectServices } from "..";
+import { MainNetwork } from "../../entity/network/main";
+import { Navigator } from "../../entity/actor/navigator";
+import { Peer } from "../../../vendor/kademlia";
 
 export class NavigatorManager {
   private list: { [url: string]: Navigator } = {};

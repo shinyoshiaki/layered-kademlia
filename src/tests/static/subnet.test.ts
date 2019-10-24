@@ -6,7 +6,7 @@ import { testSetupNodes } from "../setupnetwork";
 describe("static/subnet", () => {
   test("", async () => {
     const nodes = await testSetupNodes(4, PeerModule, {
-      timeout: 5_000
+      timeout: 1_000
     });
     const actors = nodes.map(
       v => new SP2P({ PeerCreater: new PeerCreater(PeerModule) }, v, {})

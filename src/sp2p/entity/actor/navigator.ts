@@ -1,55 +1,84 @@
 import { Meta, meta2URL } from "../data/meta";
+import { Peer, RPC } from "../../../vendor/kademlia/modules/peer/base";
 import {
-  RPCCreatePeerAnswer,
-  RPCCreatePeerOffer
-} from "../../service/peer/createPeer";
+  RPCUserAnswerSeederOverNavigator,
+  RPCUserReqSeederOffer2Navigator
+} from "../../usecase/actor/user";
 
-import { FindNodeProxyOpen } from "../../../vendor/kademlia/actions/findnode/listen/node";
+import { InjectServices } from "../../service";
 import { MainNetwork } from "../network/main";
-import { RPC } from "../../../vendor/kademlia/modules/peer/base";
-import { SubNetwork } from "../network/sub";
+import { RPCSeederOffer2UserOverNavigator } from "./seeder";
+import { Signal } from "webrtc4me";
 
 export class Navigator {
   url = meta2URL(this.meta);
 
-  constructor(private meta: Meta, mainNet: MainNetwork, subNet: SubNetwork) {
+  constructor(
+    services: InjectServices,
+    private meta: Meta,
+    mainNet: MainNetwork,
+    seederPeer: Peer
+  ) {
+    const { RpcManager } = services;
     // from user find
     mainNet.eventManager
-      .selectListen<RPCCreatePeerOffer>("RPCCreatePeerOffer")
+      .selectListen<RPCUserReqSeederOffer2Navigator & RPC>(
+        "RPCUserReqSeederOffer2Navigator"
+      )
       .subscribe(async ({ rpc, peer }) => {
-        const { offer, id, url } = rpc;
-        if (this.url === url) {
-          const seederPeer = subNet.kTable.findNode(peer.kid).shift();
-          if (!seederPeer) return;
+        const seederRes = await RpcManager.getWait<
+          RPCSeederOffer2UserOverNavigator
+        >(seederPeer, RPCNavigatorReqSeederOfferByUser(rpc.userKid))().catch(
+          () => {}
+        );
+        if (!seederRes) return;
 
-          seederPeer.rpc(RPCNavigatorCallAnswer(offer, url, subNet.kid, id));
+        //for user
+        const userRes = await RpcManager.getWait<
+          RPCUserAnswerSeederOverNavigator
+        >(
+          peer,
+          RPCNavigatorBackOfferBySeeder(seederRes.offer, seederPeer.kid),
+          rpc.id
+        )().catch(() => {});
+        if (!userRes) return;
 
-          const { answer } = await peer
-            .eventRpc<RPCCreatePeerAnswer>("RPCCreatePeerAnswer", id)
-            .asPromise();
-          peer.rpc(RPCCreatePeerAnswer(answer, id));
-        }
-      });
-
-    subNet.kad.di.eventManager
-      .selectListen<FindNodeProxyOpen & RPC>("FindNodeProxyOpen")
-      .subscribe(v => {
-        this;
+        //for seeder
+        seederPeer.rpc({
+          ...RPCNavigatorBackAnswerByUser(userRes.answer),
+          id: seederRes.id
+        });
       });
   }
 }
 
-const RPCNavigatorCallAnswer = (
-  offer: any,
-  url: string,
-  kid: string,
-  id: string
-) => ({
-  type: "RPCNavigatorCallAnswer" as const,
-  url,
-  offer,
-  kid,
-  id
+const RPCNavigatorReqSeederOfferByUser = (userKid: string) => ({
+  type: "RPCNavigatorReqSeederOfferByUser" as const,
+  userKid
 });
 
-export type RPCNavigatorCallAnswer = ReturnType<typeof RPCNavigatorCallAnswer>;
+export type RPCNavigatorReqSeederOfferByUser = ReturnType<
+  typeof RPCNavigatorReqSeederOfferByUser
+>;
+
+export const RPCNavigatorBackOfferBySeeder = (
+  offer: Signal,
+  seederKid: string
+) => ({
+  type: "RPCNavigatorBackOfferBySeeder" as const,
+  offer,
+  seederKid
+});
+
+export type RPCNavigatorBackOfferBySeeder = ReturnType<
+  typeof RPCNavigatorBackOfferBySeeder
+>;
+
+const RPCNavigatorBackAnswerByUser = (answer: Signal) => ({
+  type: "RPCNavigatorBackAnswerByUser" as const,
+  answer
+});
+
+export type RPCNavigatorBackAnswerByUser = ReturnType<
+  typeof RPCNavigatorBackAnswerByUser
+>;

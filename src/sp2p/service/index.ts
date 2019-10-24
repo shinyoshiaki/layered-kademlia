@@ -1,5 +1,5 @@
 import { CreatePeer } from "./peer/createPeer";
-import { NavigatorManager } from "./actor/manager/navigator";
+import { NavigatorManager } from "./peer/navigator";
 import RpcManager from "../../vendor/kademlia/services/rpcmanager";
 import { SeederManager } from "./actor/manager/seeder";
 import { SubNetworkManager } from "./network/submanager";

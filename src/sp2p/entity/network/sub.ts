@@ -12,7 +12,7 @@ export class SubNetwork {
 
   constructor(private peerCreater: PeerCreater, private existKid: string) {}
 
-  kad = genKad(this.peerCreater, this.existKid, { timeout: 15_000 });
+  kad = genKad(this.peerCreater, this.existKid, { timeout: 5_000 });
   kid = this.kad.kid;
   store = this.kad.store;
 

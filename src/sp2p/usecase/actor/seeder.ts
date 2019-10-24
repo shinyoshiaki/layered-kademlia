@@ -4,26 +4,28 @@ import {
   createStreamMeta
 } from "../../entity/data/meta";
 
-import { CreatePeer } from "../../service/peer/createPeer";
 import Event from "rx.mini";
+import { InjectServices } from "../../service";
 import { MainNetwork } from "../../entity/network/main";
 import { Options } from "../../adapter/actor";
-import { SeederManager } from "../../service/actor/manager/seeder";
-import { SubNetworkManager } from "../../service/network/submanager";
+import { Peer } from "../../../vendor/kademlia";
+import { RPCNavigatorOffer2Seeder } from "./navigator";
+import { Signal } from "webrtc4me";
 
 export class SeederContainer {
   constructor(
-    private services: {
-      SubNetworkManager: SubNetworkManager;
-      SeederManager: SeederManager;
-      CreatePeer: CreatePeer;
-    },
+    private services: InjectServices,
     private mainNet: MainNetwork,
     private options: Options = {}
   ) {}
 
   connect = async (meta: Meta) => {
-    const { SeederManager, SubNetworkManager, CreatePeer } = this.services;
+    const {
+      SeederManager,
+      SubNetworkManager,
+      CreatePeer,
+      RpcManager
+    } = this.services;
 
     const { url, peers } = await this.mainNet.store(meta);
     const subNet = SubNetworkManager.createNetwork(
@@ -35,26 +37,32 @@ export class SeederContainer {
       url,
       this.mainNet,
       subNet,
-      CreatePeer.peerCreater
+      this.services
     );
 
-    peers.forEach(peer => {
-      peer.rpc(RPCSeederStoreDone(url, Math.random().toString()));
-    });
-
-    await Promise.all(
+    const navigatorPeers = (await Promise.all(
       peers.map(
-        ({ kid }) =>
-          new Promise(r => {
-            const { unSubscribe } = seeder.onCreatePeerOffer.subscribe(id => {
-              if (kid === id) {
-                unSubscribe();
-                r();
-              }
-            });
+        peer =>
+          new Promise<Peer | undefined>(async r => {
+            const wait = RpcManager.getWait<RPCNavigatorOffer2Seeder>(
+              peer,
+              RPCSeederStoreDone(url)
+            );
+            const res = await wait().catch(() => {});
+            if (!res) {
+              r();
+              return;
+            }
+            const navigatorPeer = CreatePeer.peerCreater.create(peer.kid);
+            const answer = await navigatorPeer.setOffer(res.offer);
+            peer.rpc({ ...RPCSeederAnswer2Navigator(answer), id: res.id });
+            await navigatorPeer.onConnect.asPromise();
+            r(navigatorPeer);
           })
       )
-    );
+    )).filter(v => v) as Peer[];
+
+    navigatorPeers.forEach(peer => seeder.addNavigatorPeer(peer));
 
     return { seeder, url };
   };
@@ -88,10 +96,18 @@ export class SeederContainer {
   }
 }
 
-const RPCSeederStoreDone = (url: string, id: string) => ({
+const RPCSeederStoreDone = (url: string) => ({
   type: "RPCSeederStoreDone" as const,
-  url,
-  id
+  url
 });
 
 export type RPCSeederStoreDone = ReturnType<typeof RPCSeederStoreDone>;
+
+const RPCSeederAnswer2Navigator = (answer: Signal) => ({
+  type: "RPCSeederAnswer2Navigator",
+  answer
+});
+
+export type RPCSeederAnswer2Navigator = ReturnType<
+  typeof RPCSeederAnswer2Navigator
+>;
