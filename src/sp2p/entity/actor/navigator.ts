@@ -40,7 +40,7 @@ export class Navigator {
 }
 
 const RPCNavigatorCallAnswer = (
-  offer: string,
+  offer: any,
   url: string,
   kid: string,
   id: string

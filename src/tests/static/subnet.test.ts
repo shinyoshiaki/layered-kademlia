@@ -9,7 +9,7 @@ describe("static/subnet", () => {
       timeout: 5_000
     });
     const actors = nodes.map(
-      v => new SP2P({ PeerCreater: new PeerCreater(PeerModule) }, v)
+      v => new SP2P({ PeerCreater: new PeerCreater(PeerModule) }, v, {})
     );
 
     const seederNode = actors.shift()!;
@@ -21,9 +21,7 @@ describe("static/subnet", () => {
     for (let actor of actors) {
       await actor.user.connectSubNet(url);
     }
-    console.log(
-      actors[0].services.SubNetworkManager.getSubNetwork(url).allPeers.length
-    );
+
     expect(
       actors[0].services.SubNetworkManager.getSubNetwork(url).allPeers.length >
         1

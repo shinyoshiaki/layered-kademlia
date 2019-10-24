@@ -8,6 +8,7 @@ import { MainNetwork } from "../network/main";
 import { Peer } from "../../../vendor/kademlia";
 import { PeerCreater } from "../../module/peerCreater";
 import { RPCNavigatorCallAnswer } from "./navigator";
+import { Signal } from "webrtc4me";
 import { SubNetwork } from "../network/sub";
 import sha1 from "sha1";
 
@@ -43,7 +44,7 @@ export class Seeder {
   }
 
   private async connectPeer(
-    offer: string,
+    offer: Signal,
     kid: string,
     peer: Peer,
     id: string

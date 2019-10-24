@@ -7,7 +7,7 @@ test("store", async () => {
   const num = 4;
   const nodes = await testSetupNodes(num, PeerMockModule, { timeout: 1000 });
   const actors = nodes.map(
-    node => new SP2P({ PeerCreater: new PeerCreater() }, node)
+    node => new SP2P({ PeerCreater: new PeerCreater(PeerMockModule) }, node)
   );
 
   const actor = actors.pop()!;

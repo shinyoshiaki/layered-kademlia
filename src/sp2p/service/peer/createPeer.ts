@@ -27,7 +27,7 @@ export class CreatePeer {
 }
 
 const RPCCreatePeerOffer = (
-  offer: string,
+  offer: any,
   url: string,
   kid: string,
   id: string
@@ -41,7 +41,7 @@ const RPCCreatePeerOffer = (
 
 export type RPCCreatePeerOffer = ReturnType<typeof RPCCreatePeerOffer>;
 
-export const RPCCreatePeerAnswer = (answer: string, id: string) => ({
+export const RPCCreatePeerAnswer = (answer: any, id: string) => ({
   type: "RPCCreatePeerAnswer" as const,
   answer,
   id

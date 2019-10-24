@@ -1,6 +1,7 @@
 import { CreatePeer } from "../../service/peer/createPeer";
 import { MainNetwork } from "../../entity/network/main";
 import { NavigatorManager } from "../../service/actor/manager/navigator";
+import { Options } from "../../adapter/actor";
 import { RPCSeederStoreDone } from "./seeder";
 import { SubNetworkManager } from "../../service/network/submanager";
 import { meta2URL } from "../../entity/data/meta";
@@ -12,7 +13,8 @@ export class NavigatorContainer {
       SubNetworkManager: SubNetworkManager;
       CreatePeer: CreatePeer;
     },
-    mainNet: MainNetwork
+    mainNet: MainNetwork,
+    private options: Options = {}
   ) {
     const { SubNetworkManager, CreatePeer, NavigatorManager } = services;
 

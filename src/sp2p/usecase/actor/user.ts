@@ -1,5 +1,6 @@
 import { CreatePeer } from "../../service/peer/createPeer";
 import { MainNetwork } from "../../entity/network/main";
+import { Options } from "../../adapter/actor";
 import { Peer } from "../../../vendor/kademlia";
 import { SubNetworkManager } from "../../service/network/submanager";
 
@@ -14,7 +15,8 @@ export class User {
       SubNetworkManager: SubNetworkManager;
       CreatePeer: CreatePeer;
     },
-    private mainNet: MainNetwork
+    private mainNet: MainNetwork,
+    private options: Options = {}
   ) {}
 
   connectSubNet = async (url: string) => {

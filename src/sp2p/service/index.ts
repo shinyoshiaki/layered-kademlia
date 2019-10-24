@@ -1,5 +1,6 @@
 import { CreatePeer } from "./peer/createPeer";
 import { NavigatorManager } from "./actor/manager/navigator";
+import RpcManager from "../../vendor/kademlia/services/rpcmanager";
 import { SeederManager } from "./actor/manager/seeder";
 import { SubNetworkManager } from "./network/submanager";
 
@@ -17,7 +18,8 @@ export const injectServices = () =>
     NavigatorManager,
     SeederManager,
     SubNetworkManager,
-    CreatePeer
+    CreatePeer,
+    RpcManager
   });
 
 export type InjectServices = ReturnType<typeof injectServices>;

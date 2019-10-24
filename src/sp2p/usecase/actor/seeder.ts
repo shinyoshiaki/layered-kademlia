@@ -7,6 +7,7 @@ import {
 import { CreatePeer } from "../../service/peer/createPeer";
 import Event from "rx.mini";
 import { MainNetwork } from "../../entity/network/main";
+import { Options } from "../../adapter/actor";
 import { SeederManager } from "../../service/actor/manager/seeder";
 import { SubNetworkManager } from "../../service/network/submanager";
 
@@ -17,7 +18,8 @@ export class SeederContainer {
       SeederManager: SeederManager;
       CreatePeer: CreatePeer;
     },
-    private mainNet: MainNetwork
+    private mainNet: MainNetwork,
+    private options: Options = {}
   ) {}
 
   connect = async (meta: Meta) => {

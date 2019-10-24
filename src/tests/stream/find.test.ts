@@ -8,7 +8,7 @@ import { testSetupNodes } from "../setupnetwork";
 describe("stream/find", () => {
   const job = async (nodes: Kademlia[]) => {
     const actors = nodes.map(
-      node => new SP2P({ PeerCreater: new PeerCreater() }, node)
+      node => new SP2P({ PeerCreater: new PeerCreater(PeerMockModule) }, node)
     );
 
     let count = 0;
