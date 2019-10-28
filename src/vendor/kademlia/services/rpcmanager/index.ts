@@ -6,11 +6,11 @@ import Uuid from "../../util/uuid";
 export default class RpcManager {
   private uuid = new Uuid();
 
-  getWait = <T extends RPCBase>(peer: Peer, rpc: RPCBase) => {
+  getWait = <T extends RPCBase>(peer: Peer, rpc: RPCBase, id?: string) => {
     this.uuid.setPrefix(peer.kid);
-    const id = this.uuid.get() + rpc.type;
+    id = id || this.uuid.get() + rpc.type;
 
-    const event = new Event<T>();
+    const event = new Event<T & ID>();
 
     const { unSubscribe } = peer.onRpc.subscribe(v => {
       if (v.id === id) {

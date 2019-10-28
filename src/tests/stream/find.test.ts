@@ -1,12 +1,13 @@
 import Kademlia, { PeerMockModule, PeerModule } from "../../vendor/kademlia";
 
-import { SP2P } from "../../adapter/actor";
-import { StreamMeta } from "../../entity/data/meta";
+import { PeerCreater } from "../../sp2p/module/peerCreater";
+import { SP2P } from "../../sp2p/adapter/actor";
+import { StreamMeta } from "../../sp2p/entity/data/meta";
 import { testSetupNodes } from "../setupnetwork";
 
 describe("stream/find", () => {
-  const job = async (nodes: Kademlia[]) => {
-    const actors = nodes.map(node => new SP2P(node));
+  const job = async (nodes: Kademlia[], PeerCreater: PeerCreater) => {
+    const actors = nodes.map(node => new SP2P({ PeerCreater }, node));
 
     let count = 0;
     const { url, event } = await actors[0].seeder.storeStream(
@@ -45,11 +46,11 @@ describe("stream/find", () => {
     expect(res).toBe(true);
   };
   test("mock", async () => {
-    const nodes = await testSetupNodes(10, PeerMockModule, { timeout: 1_000 });
-    await job(nodes);
+    const nodes = await testSetupNodes(10, PeerMockModule, { timeout: 5_000 });
+    await job(nodes, new PeerCreater(PeerMockModule));
   }, 60_000_0);
   test("webrtc", async () => {
-    const nodes = await testSetupNodes(10, PeerMockModule, { timeout: 5_000 });
-    await job(nodes);
+    const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
+    await job(nodes, new PeerCreater(PeerModule));
   }, 60_000_0);
 });

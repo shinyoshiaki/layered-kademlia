@@ -1,0 +1,113 @@
+import {
+  Meta,
+  createStaticMeta,
+  createStreamMeta
+} from "../../entity/data/meta";
+
+import Event from "rx.mini";
+import { InjectServices } from "../../service";
+import { MainNetwork } from "../../entity/network/main";
+import { Options } from "../../adapter/actor";
+import { Peer } from "../../../vendor/kademlia";
+import { RPCNavigatorOffer2Seeder } from "./navigator";
+import { Signal } from "webrtc4me";
+
+export class SeederContainer {
+  constructor(
+    private services: InjectServices,
+    private mainNet: MainNetwork,
+    private options: Options = {}
+  ) {}
+
+  connect = async (meta: Meta) => {
+    const {
+      SeederManager,
+      SubNetworkManager,
+      CreatePeer,
+      RpcManager
+    } = this.services;
+
+    const { url, peers } = await this.mainNet.store(meta);
+    const subNet = SubNetworkManager.createNetwork(
+      url,
+      CreatePeer.peerCreater,
+      this.mainNet.kid
+    );
+    const seeder = SeederManager.createSeeder(
+      url,
+      this.mainNet,
+      subNet,
+      this.services
+    );
+
+    const navigatorPeers = (await Promise.all(
+      peers.map(
+        peer =>
+          new Promise<Peer | undefined>(async r => {
+            const wait = RpcManager.getWait<RPCNavigatorOffer2Seeder>(
+              peer,
+              RPCSeederStoreDone(url)
+            );
+            const res = await wait().catch(() => {});
+            if (!res) {
+              r();
+              return;
+            }
+            const navigatorPeer = CreatePeer.peerCreater.create(peer.kid);
+            const answer = await navigatorPeer.setOffer(res.offer);
+            peer.rpc({ ...RPCSeederAnswer2Navigator(answer), id: res.id });
+            await navigatorPeer.onConnect.asPromise();
+            r(navigatorPeer);
+          })
+      )
+    )).filter(v => v) as Peer[];
+
+    navigatorPeers.forEach(peer => seeder.addNavigatorPeer(peer));
+
+    return { seeder, url };
+  };
+
+  storeStatic = async (name: string, ab: ArrayBuffer) => {
+    const { meta, chunks } = createStaticMeta(name, ab);
+    const { seeder, url } = await this.connect(meta);
+
+    chunks.forEach(ab => seeder.setAsset(ab));
+
+    return { url, meta };
+  };
+
+  async storeStream(name: string, first: ArrayBuffer) {
+    const meta = createStreamMeta(name, first);
+    const { seeder, url } = await this.connect(meta);
+
+    const event = new Event<ArrayBuffer | undefined>();
+    let prev = first;
+
+    const { unSubscribe } = event.subscribe(ab => {
+      seeder.setChunk(prev, ab);
+      if (!ab) {
+        unSubscribe();
+        return;
+      }
+      prev = ab;
+    });
+
+    return { event: event.returnTrigger, url };
+  }
+}
+
+const RPCSeederStoreDone = (url: string) => ({
+  type: "RPCSeederStoreDone" as const,
+  url
+});
+
+export type RPCSeederStoreDone = ReturnType<typeof RPCSeederStoreDone>;
+
+const RPCSeederAnswer2Navigator = (answer: Signal) => ({
+  type: "RPCSeederAnswer2Navigator",
+  answer
+});
+
+export type RPCSeederAnswer2Navigator = ReturnType<
+  typeof RPCSeederAnswer2Navigator
+>;
