@@ -1,5 +1,5 @@
 import { Item, Peer } from "../../../vendor/kademlia";
-import { StaticMeta, StreamMeta } from "../data/meta";
+import { Meta, StaticMeta, StreamMeta } from "../data/meta";
 
 import { Chunk } from "../data/stream";
 import Event from "rx.mini";
@@ -10,7 +10,11 @@ import { mergeArraybuffer } from "../../../util/arraybuffer";
 export class SubNetwork {
   state: { onFinding?: Event } = { onFinding: undefined };
 
-  constructor(private peerCreater: PeerCreater, private existKid: string) {}
+  constructor(
+    private peerCreater: PeerCreater,
+    private existKid: string,
+    private meta: Meta
+  ) {}
 
   kad = genKad(this.peerCreater, this.existKid, { timeout: 5_000 });
   kid = this.kad.kid;
@@ -38,9 +42,9 @@ export class SubNetwork {
     return res;
   }
 
-  findStaticMetaTarget = async (meta: StaticMeta) => {
+  findStaticMetaTarget = async () => {
     const res = await Promise.all(
-      meta.payload.keys.map(async key => {
+      (this.meta as StaticMeta).payload.keys.map(async key => {
         const res = await this.kad.findValue(key);
         if (!res) return false;
         return res.item;

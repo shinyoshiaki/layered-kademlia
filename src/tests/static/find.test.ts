@@ -22,9 +22,9 @@ describe("static/find", () => {
       const res = await actor.user.connectSubNet(url);
 
       expect(res).not.toBeUndefined();
-      const { subNet, meta } = res!;
+      const { subNet } = res!;
 
-      const ab = await subNet.findStaticMetaTarget(meta as StaticMeta);
+      const ab = await subNet.findStaticMetaTarget();
       expect(Buffer.from(ab!)).toEqual(Buffer.from("hello"));
     }
 

@@ -43,7 +43,7 @@ export class User {
         throw new Error("connectSubNet fail RPCUserReqSeederOffer2Navigator");
 
       const subNet = SubNetworkManager.createNetwork(
-        url,
+        meta,
         CreatePeer.peerCreater,
         this.mainNet.kid
       );
