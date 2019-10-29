@@ -14,7 +14,7 @@ export class SP2P {
   constructor(
     private modules: { PeerCreater: PeerCreater },
     private existKad: Kademlia,
-    private options?: Options
+    private options: Options = { subNetTimeout: 5000 }
   ) {}
   services: InjectServices = {
     ...injectServices(),

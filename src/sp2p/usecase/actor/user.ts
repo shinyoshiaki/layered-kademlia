@@ -14,14 +14,20 @@ export class User {
   constructor(
     private services: InjectServices,
     private mainNet: MainNetwork,
-    private options: Options = {}
+    private options: Options
   ) {}
 
   connectSubNet = async (url: string) => {
-    const { SubNetworkManager, CreatePeer, RpcManager } = this.services;
+    const { subNetTimeout } = this.options;
+    const {
+      SubNetworkManager,
+      CreatePeer,
+      RpcManager,
+      SeederManager
+    } = this.services;
 
     const res = await this.mainNet.findValue(url);
-    if (!res) return;
+    if (!res) throw new Error("fail meta");
 
     const { peer, meta } = res;
 
@@ -30,10 +36,11 @@ export class User {
 
       const navigatorRes = await RpcManager.getWait<
         RPCNavigatorBackOfferBySeeder
-      >(peer, RPCUserReqSeederOffer2Navigator(this.mainNet.kid))().catch(
-        () => {}
-      );
-      if (!navigatorRes) return;
+      >(peer, RPCUserReqSeederOffer2Navigator(this.mainNet.kid, url))(
+        subNetTimeout
+      ).catch(() => {});
+      if (!navigatorRes)
+        throw new Error("connectSubNet fail RPCUserReqSeederOffer2Navigator");
 
       const subNet = SubNetworkManager.createNetwork(
         url,
@@ -42,42 +49,68 @@ export class User {
       );
 
       const seederPeer = CreatePeer.peerCreater.create(navigatorRes.seederKid);
-      const answer = await seederPeer.setOffer(navigatorRes.offer);
+      const answer = await seederPeer
+        .setOffer(navigatorRes.sdp)
+        .catch(() => {});
+      if (!answer) throw new Error("connectSubNet fail setOffer");
 
       peer.rpc({
         ...RPCUserAnswerSeederOverNavigator(answer),
         id: navigatorRes.id
       });
 
-      await seederPeer.onConnect.asPromise();
+      const err = await seederPeer.onConnect
+        .asPromise(subNetTimeout)
+        .catch(() => "err");
+      if (err) throw new Error("connectSubNet fail connect");
+
       subNet.addPeer(seederPeer);
 
       await subNet.findNode();
-
+      SeederManager.createSeeder(url, this.mainNet, subNet, this.services);
       return { subNet, meta };
     } else {
       const subNet = SubNetworkManager.getSubNetwork(url);
       if (subNet.state.onFinding) {
-        await subNet.state.onFinding.asPromise();
+        const err = await subNet.state.onFinding
+          .asPromise(subNetTimeout)
+          .catch(() => "err");
+        if (err) throw new Error("timeout onFinding");
       }
       await subNet.findNode();
+
       return { subNet, meta };
     }
   };
+
+  // Navigatorのエントリーポイントを作る
+  // setupNavigator(url: string, subNet: SubNetwork) {
+  //   const { SeederManager } = this.services;
+
+  //   const seeder = SeederManager.createSeeder(
+  //     url,
+  //     this.mainNet,
+  //     subNet,
+  //     this.services
+  //   );
+
+  //   SeederContainer.setupNavigators(url);
+  // }
 }
 
-const RPCUserReqSeederOffer2Navigator = (userKid: string) => ({
+const RPCUserReqSeederOffer2Navigator = (userKid: string, url: string) => ({
   type: "RPCUserReqSeederOffer2Navigator" as const,
-  userKid
+  userKid,
+  url
 });
 
 export type RPCUserReqSeederOffer2Navigator = ReturnType<
   typeof RPCUserReqSeederOffer2Navigator
 >;
 
-const RPCUserAnswerSeederOverNavigator = (answer: Signal) => ({
+const RPCUserAnswerSeederOverNavigator = (sdp: Signal) => ({
   type: "RPCUserAnswerSeederOverNavigator" as const,
-  answer
+  sdp
 });
 
 export type RPCUserAnswerSeederOverNavigator = ReturnType<

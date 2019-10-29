@@ -74,6 +74,8 @@ export class SubNetwork {
       }
       target = order.next;
       cb({ type: "chunk", chunk: item.value as ArrayBuffer });
+
+      await new Promise(r => setTimeout(r, payload.cycle));
     }
   }
 }

@@ -1,12 +1,16 @@
+import Event from "rx.mini";
 import { PeerCreater } from "../../module/peerCreater";
 import { SubNetwork } from "../../entity/network/sub";
 
 export class SubNetworkManager {
-  private list: { [url: string]: SubNetwork } = {};
+  list: { [url: string]: SubNetwork } = {};
+
+  event = new Event();
 
   createNetwork(url: string, peerCrater: PeerCreater, kid: string) {
-    if (this.isExist(url)) this.list[url];
+    if (this.isExist(url)) return this.list[url];
     this.list[url] = new SubNetwork(peerCrater, kid);
+    this.event.execute(null);
     return this.list[url];
   }
 
