@@ -82,8 +82,14 @@ export class User {
   async findStatic(url: string, seederConrainer: SeederContainer) {
     const { subNet, meta } = await this.connectSubNet(url);
     const res = await subNet.findStaticMetaTarget();
+
     if (res) {
-      await seederConrainer.storeStatic(meta.name, res);
+      console.log("staitic meta target found", res);
+      const { url } = await seederConrainer.storeStatic(
+        meta.name,
+        Buffer.from(res)
+      );
+      console.log("re store", url, seederConrainer);
     }
     return res;
   }

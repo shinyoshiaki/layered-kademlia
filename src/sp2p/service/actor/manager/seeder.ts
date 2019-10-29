@@ -1,11 +1,10 @@
 import { InjectServices } from "../..";
 import { MainNetwork } from "../../../entity/network/main";
-import { PeerCreater } from "../../../module/peerCreater";
 import { Seeder } from "../../../entity/actor/seeder";
 import { SubNetwork } from "../../../entity/network/sub";
 
 export class SeederManager {
-  private list: { [url: string]: Seeder } = {};
+  list: { [url: string]: Seeder } = {};
 
   createSeeder(
     url: string,

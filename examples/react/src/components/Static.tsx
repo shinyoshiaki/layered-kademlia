@@ -19,8 +19,10 @@ const Static: React.FC = () => {
   };
 
   const onClickFind = async () => {
-    const { subNet } = await sP2PClient.actor.user.connectSubNet(key);
-    const res = await subNet.findStaticMetaTarget();
+    const res = await sP2PClient.actor.user.findStatic(
+      key,
+      sP2PClient.actor.seeder
+    );
     setMsg(Buffer.from(res).toString());
   };
 
