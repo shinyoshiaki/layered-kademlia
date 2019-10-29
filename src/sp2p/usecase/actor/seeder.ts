@@ -41,25 +41,13 @@ export class SeederContainer {
       this.services
     );
 
-    await SeederContainer.setupNavigators(
-      url,
-      peers,
-      seeder,
-      this.services,
-      this.options
-    );
+    await this.setupNavigators(url, peers, seeder);
     return { seeder, url };
   };
 
-  static async setupNavigators(
-    url: string,
-    peers: Peer[],
-    seeder: Seeder,
-    services: InjectServices,
-    options: Options
-  ) {
-    const { CreatePeer, RpcManager } = services;
-    const { subNetTimeout } = options;
+  private async setupNavigators(url: string, peers: Peer[], seeder: Seeder) {
+    const { CreatePeer, RpcManager } = this.services;
+    const { subNetTimeout } = this.options;
 
     const navigatorPeers = (await Promise.all(
       peers.map(

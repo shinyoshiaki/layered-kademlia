@@ -3,6 +3,7 @@ import { MainNetwork } from "../../entity/network/main";
 import { Options } from "../../adapter/actor";
 import { Peer } from "../../../vendor/kademlia";
 import { RPCNavigatorBackOfferBySeeder } from "../../entity/actor/navigator";
+import { SeederContainer } from "./seeder";
 import { Signal } from "webrtc4me";
 
 export type Network = {
@@ -19,12 +20,7 @@ export class User {
 
   connectSubNet = async (url: string) => {
     const { subNetTimeout } = this.options;
-    const {
-      SubNetworkManager,
-      CreatePeer,
-      RpcManager,
-      SeederManager
-    } = this.services;
+    const { SubNetworkManager, CreatePeer, RpcManager } = this.services;
 
     const res = await this.mainNet.findValue(url);
     if (!res) throw new Error("fail meta");
@@ -67,7 +63,7 @@ export class User {
       subNet.addPeer(seederPeer);
 
       await subNet.findNode();
-      SeederManager.createSeeder(url, this.mainNet, subNet, this.services);
+
       return { subNet, meta };
     } else {
       const subNet = SubNetworkManager.getSubNetwork(url);
@@ -83,19 +79,14 @@ export class User {
     }
   };
 
-  // Navigatorのエントリーポイントを作る
-  // setupNavigator(url: string, subNet: SubNetwork) {
-  //   const { SeederManager } = this.services;
-
-  //   const seeder = SeederManager.createSeeder(
-  //     url,
-  //     this.mainNet,
-  //     subNet,
-  //     this.services
-  //   );
-
-  //   SeederContainer.setupNavigators(url);
-  // }
+  async findStatic(url: string, seederConrainer: SeederContainer) {
+    const { subNet, meta } = await this.connectSubNet(url);
+    const res = await subNet.findStaticMetaTarget();
+    if (res) {
+      await seederConrainer.storeStatic(meta.name, res);
+    }
+    return res;
+  }
 }
 
 const RPCUserReqSeederOffer2Navigator = (userKid: string, url: string) => ({
