@@ -84,12 +84,9 @@ export class User {
     const res = await subNet.findStaticMetaTarget();
 
     if (res) {
-      console.log("staitic meta target found", res);
-      const { url } = await seederConrainer.storeStatic(
-        meta.name,
-        Buffer.from(res)
-      );
-      console.log("re store", url, seederConrainer);
+      // console.log("staitic meta target found", res);
+      await seederConrainer.storeStatic(meta.name, Buffer.from(res));
+      // console.log("re store", url, seederConrainer);
     }
     return res;
   }

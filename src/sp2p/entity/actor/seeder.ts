@@ -57,10 +57,10 @@ export class Seeder {
   addNavigatorPeer(peer: Peer) {
     const { RpcManager, CreatePeer } = this.services;
     this.navigators[peer.kid] = peer;
-    RpcManager.asObservable<RPCNavigatorReqSeederOfferByUser>(
-      "RPCNavigatorReqSeederOfferByUser",
-      peer
-    ).subscribe(async rpc => {
+
+    const { unSubscribe } = RpcManager.asObservable<
+      RPCNavigatorReqSeederOfferByUser
+    >("RPCNavigatorReqSeederOfferByUser", peer).subscribe(async rpc => {
       const userPeer = CreatePeer.peerCreater.create(rpc.userKid);
       const offer = await userPeer.createOffer();
       const res = await RpcManager.getWait<RPCNavigatorBackAnswerByUser>(
@@ -72,6 +72,11 @@ export class Seeder {
 
       await userPeer.setAnswer(res.sdp);
       this.subNet.addPeer(userPeer);
+    });
+
+    peer.onDisconnect.once(() => {
+      unSubscribe();
+      delete this.navigators[peer.kid];
     });
   }
 

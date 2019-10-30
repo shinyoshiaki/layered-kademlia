@@ -91,7 +91,7 @@ export class SeederContainer {
     navigatorPeers.forEach(peer => seeder.addNavigatorPeer(peer));
   }
 
-  storeStatic = async (name: string, ab: ArrayBuffer) => {
+  storeStatic = async (name: string, ab: Buffer) => {
     const { meta, chunks } = createStaticMeta(name, ab);
     const { seeder, url } = await this.connect(meta);
 

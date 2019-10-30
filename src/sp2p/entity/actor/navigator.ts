@@ -17,11 +17,11 @@ export class Navigator {
     services: InjectServices,
     private meta: Meta,
     mainNet: MainNetwork,
-    seederPeer: Peer
+    public seederPeer: Peer
   ) {
     const { RpcManager } = services;
     // from user find
-    mainNet.eventManager
+    const { unSubscribe } = mainNet.eventManager
       .selectListen<RPCUserReqSeederOffer2Navigator & RPC>(
         "RPCUserReqSeederOffer2Navigator"
       )
@@ -53,6 +53,11 @@ export class Navigator {
           });
         }
       });
+
+    seederPeer.onDisconnect.once(() => {
+      unSubscribe();
+      this.seederPeer = null as any;
+    });
   }
 }
 

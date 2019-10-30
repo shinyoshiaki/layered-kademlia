@@ -24,4 +24,8 @@ export class NavigatorManager {
   isExist(url: string) {
     return this.list[url] ? true : false;
   }
+
+  get allNavigator() {
+    return Object.values(this.list);
+  }
 }

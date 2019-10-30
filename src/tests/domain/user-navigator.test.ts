@@ -1,35 +1,43 @@
-import { PeerMockModule, PeerModule } from "../../vendor/kademlia";
+import Kademlia, { PeerMockModule, PeerModule } from "../../vendor/kademlia";
 
 import { PeerCreater } from "../../sp2p/module/peerCreater";
 import { SP2P } from "../../sp2p/adapter/actor";
 import { testSetupNodes } from "../setupnetwork";
 
 describe("domain/user-navigator", () => {
-  test("", async () => {
-    const nodes = await testSetupNodes(8, PeerMockModule, {});
-    const actors = nodes.map(
-      v => new SP2P({ PeerCreater: new PeerCreater(PeerMockModule) }, v)
-    );
+  const job = async (nodes: Kademlia[], PeerCreater: PeerCreater) => {
+    const actors = nodes.map(v => new SP2P({ PeerCreater }, v));
     const seeder = actors.shift()!;
     const { url } = await seeder.seeder.storeStatic(
       "test",
       Buffer.from("test")
     );
 
-    const user = actors.shift()!;
-    await user.user.connectSubNet(url);
-
     expect(
-      Object.keys(user.services.SeederManager.list[url].navigators).length > 0
+      Object.keys(seeder.services.SeederManager.list[url].navigators).length > 0
     ).toBe(true);
 
-    // seeder.dispose();
+    const user = actors.shift()!;
+    await user.user.findStatic(url, user.seeder);
 
-    // await new Promise(r => setTimeout(r, 3000));
+    seeder.dispose();
 
-    // const { subNet } = await actors[0].user.connectSubNet(url);
-    // const ab = await subNet.findStaticMetaTarget();
+    await new Promise(r => setTimeout(r, 3000));
 
-    // expect(Buffer.from(ab!)).toEqual(Buffer.from("test"));
+    const finder = actors.shift()!;
+
+    const ab = await finder.user.findStatic(url, finder.seeder);
+
+    expect(Buffer.from(ab!)).toEqual(Buffer.from("test"));
+  };
+
+  // test("mock", async () => {
+  //   const nodes = await testSetupNodes(3, PeerMockModule, { timeout: 5_000 });
+  //   await job(nodes, new PeerCreater(PeerMockModule));
+  // }, 600_000);
+
+  test("webrtc", async () => {
+    const nodes = await testSetupNodes(3, PeerModule, { timeout: 5_000 });
+    await job(nodes, new PeerCreater(PeerModule));
   }, 600_000);
 });

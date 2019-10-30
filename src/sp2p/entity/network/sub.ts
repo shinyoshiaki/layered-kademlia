@@ -47,7 +47,7 @@ export class SubNetwork {
       (this.meta as StaticMeta).payload.keys.map(async key => {
         const res = await this.kad.findValue(key);
         if (!res) return false;
-        console.log({ res });
+        // console.log({ res });
         return res.item;
       })
     );
