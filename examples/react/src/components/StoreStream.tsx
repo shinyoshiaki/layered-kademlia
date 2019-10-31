@@ -2,13 +2,16 @@ import React, { useContext, useRef, useState } from "react";
 
 import Event from "rx.mini";
 import { SP2PClientContext } from "../App";
+import { StreamPool } from "../domain/stream/pool";
+import { VideoCanvas } from "../atoms/VideoCanvas";
 import { encode } from "@msgpack/msgpack";
 import { libvpxEnc } from "../domain/libvpx";
 import useFile from "../hooks/useFile";
 
 const StoreStream: React.FC = () => {
-  const framesPerPacket = 2048;
+  const [resolution, setResolution] = useState({ x: 400, y: 400 });
   const localRef = useRef<any>();
+  const canvasRef = useRef<HTMLCanvasElement>();
   const [url, setUrl] = useState("");
   const sp2pClient = useContext(SP2PClientContext);
   const [_, setfile, onSetfile] = useFile();
@@ -19,67 +22,87 @@ const StoreStream: React.FC = () => {
     startStreamer(stream);
   });
 
-  const startStreamer = (stream: MediaStream) => {
-    const video = localRef.current;
+  const startStreamer = async (stream: MediaStream) => {
+    const videoRef = localRef.current;
+    if (!videoRef) return;
 
-    if (video) {
-      let audioChunks: Uint8Array[] = [];
+    const { width, height } = await new Promise<{
+      width: number;
+      height: number;
+    }>(
+      r =>
+        (videoRef.onloadedmetadata = async (ev: any) => {
+          const { videoHeight, videoWidth } = ev.target;
+          r({ width: videoWidth, height: videoHeight });
+        })
+    );
 
-      localRef.current.onloadedmetadata = async (ev: any) => {
-        const audioCtx = new AudioContext();
-        const source = audioCtx.createMediaStreamSource(stream);
-        const processor = audioCtx.createScriptProcessor(framesPerPacket, 1, 1);
-        source.connect(processor);
-        const destinationNode = audioCtx.createMediaStreamDestination();
-        processor.onaudioprocess = e => {
-          const channelData = e.inputBuffer.getChannelData(0);
-          audioChunks.push(new Uint8Array(channelData.buffer));
-        };
-        processor.connect(destinationNode);
+    setResolution({ x: width, y: height });
 
-        const { videoHeight, videoWidth } = ev.target;
-        const { listener } = await libvpxEnc(stream, {
-          codec: "VP8",
-          width: videoWidth,
-          height: videoHeight,
-          fps: 30,
-          bitrate: 10000,
-          packetSize: 1
-        });
+    const { listener, start, rawListener } = await libvpxEnc(stream, {
+      codec: "VP8",
+      width,
+      height,
+      fps: 30,
+      bitrate: 10000,
+      packetSize: 16
+    });
 
-        let eventStore: Event<ArrayBuffer>;
+    rawListener.subscribe(ab => {
+      const ctx = canvasRef.current.getContext("2d");
+      const frame = ctx.createImageData(width, height);
+      frame.data.set(new Uint8Array(ab), 0);
+      ctx.putImageData(frame, 0, 0);
+    });
 
-        const video = await listener.asPromise();
-        console.log({ video });
-        const encoded = encode({ video });
-        const eventStoreFirst = new Event<Event<ArrayBuffer>>();
-        listener.subscribe(async video => {
-          const encoded = encode({ video });
-          console.log({ encoded });
-          if (eventStore) {
-            eventStore.execute(encoded);
-          } else {
-            const event = await eventStoreFirst.asPromise();
-            event.execute(encoded);
-          }
-        });
-        const { url, event } = await sp2pClient.actor.seeder.storeStream(
-          "test",
-          encoded,
-          { width: videoWidth, height: videoHeight }
-        );
-        eventStore = event as any;
-        eventStoreFirst.execute(event as any);
-        setUrl(url);
-      };
-    }
+    let eventStore: Event<ArrayBuffer>;
+    setTimeout(() => start());
+    const uint8 = await listener.asPromise();
+    const encoded = encode({ video: [encode({ v: uint8, t: 0 })] });
+    const eventStoreFirst = new Event<Event<ArrayBuffer>>();
+
+    const { url, event } = await sp2pClient.actor.seeder.storeStream(
+      "test",
+      encoded,
+      { width, height, cycle: 1000 }
+    );
+    eventStore = event as any;
+
+    console.log(sp2pClient.actor.services.NavigatorManager);
+
+    const pool = new StreamPool(1000);
+
+    listener.subscribe(video => {
+      pool.push(video);
+    });
+
+    pool.event.subscribe(abs => {
+      eventStore.execute(encode({ video: abs }));
+    });
+
+    console.log({ url });
+
+    eventStoreFirst.execute(event as any);
+    setUrl(url);
   };
+
+  const { x, y } = resolution;
 
   return (
     <div>
       <input type="file" onChange={setfile} />
       <p>{url}</p>
-      <video ref={localRef} autoPlay={true} muted style={{ width: 300 }} />
+      <video
+        ref={localRef}
+        autoPlay={true}
+        muted
+        style={{ width: 0, height: 0 }}
+      />
+      <VideoCanvas
+        canvasRef={canvasRef}
+        style={{ width: 400, height: 400 }}
+        source={{ width: x, height: y }}
+      />
     </div>
   );
 };

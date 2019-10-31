@@ -1,4 +1,5 @@
 import React, { FC, MutableRefObject } from "react";
+
 import styled from "styled-components";
 
 export const VideoCanvas: FC<{
@@ -27,8 +28,8 @@ export const VideoCanvas: FC<{
         <canvas
           ref={canvasRef}
           style={{ width: h, height: v }}
-          width={h}
-          height={v}
+          width={sw}
+          height={sh}
         />
       )}
     </Container>

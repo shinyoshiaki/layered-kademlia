@@ -11,8 +11,9 @@ export class NavigatorContainer {
   constructor(
     services: InjectServices,
     private mainNet: MainNetwork,
-    private options: Options = {}
+    private options: Options
   ) {
+    const { subNetTimeout } = options;
     const { CreatePeer, NavigatorManager, RpcManager } = services;
 
     //from seeder store
@@ -23,14 +24,14 @@ export class NavigatorContainer {
 
       const seederPeer = CreatePeer.peerCreater.create(peer.kid);
       const offer = await seederPeer.createOffer();
-      const wait = RpcManager.getWait<RPCSeederAnswer2Navigator>(
+      const res = await RpcManager.getWait<RPCSeederAnswer2Navigator>(
         peer,
-        RPCNavigatorOffer2Seeder(offer, url),
+        RPCNavigatorOffer2Seeder(offer),
         id
-      );
-      const res = await wait().catch(() => {});
-      if (!res) return;
-      await seederPeer.setAnswer(res.answer);
+      )(subNetTimeout).catch(() => {});
+      if (!res) throw new Error("timeout RPCSeederAnswer2Navigator");
+
+      await seederPeer.setAnswer(res.sdp);
 
       NavigatorManager.createNavigator(services, meta, mainNet, seederPeer);
     });
@@ -49,9 +50,9 @@ export class NavigatorContainer {
     });
 }
 
-const RPCNavigatorOffer2Seeder = (offer: Signal, url: string) => ({
+const RPCNavigatorOffer2Seeder = (sdp: Signal) => ({
   type: "RPCNavigatorOffer2Seeder" as const,
-  offer
+  sdp
 });
 
 export type RPCNavigatorOffer2Seeder = ReturnType<

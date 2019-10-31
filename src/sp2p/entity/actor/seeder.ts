@@ -25,7 +25,7 @@ export class Seeder {
 
   constructor(
     private services: InjectServices,
-    private url: string,
+    url: string,
     mainNet: MainNetwork,
     private subNet: SubNetwork
   ) {
@@ -36,27 +36,31 @@ export class Seeder {
         "RPCUserReqSeederOffer2Navigator"
       )
       .subscribe(async ({ rpc, peer }) => {
-        //emulate navigator behave
-        const userPeer = CreatePeer.peerCreater.create(rpc.userKid);
-        const offer = await userPeer.createOffer();
-        const res = await RpcManager.getWait<RPCUserAnswerSeederOverNavigator>(
-          peer,
-          RPCNavigatorBackOfferBySeeder(offer, mainNet.kid),
-          rpc.id
-        )().catch(() => {});
-        if (!res) return;
-        await userPeer.setAnswer(res.answer);
-        this.subNet.addPeer(userPeer);
+        if (url === rpc.url) {
+          //emulate navigator behave
+          const userPeer = CreatePeer.peerCreater.create(rpc.userKid);
+          const offer = await userPeer.createOffer();
+          const res = await RpcManager.getWait<
+            RPCUserAnswerSeederOverNavigator
+          >(
+            peer,
+            RPCNavigatorBackOfferBySeeder(offer, mainNet.kid),
+            rpc.id
+          )().catch(() => {});
+          if (!res) return;
+          await userPeer.setAnswer(res.sdp);
+          this.subNet.addPeer(userPeer);
+        }
       });
   }
 
   addNavigatorPeer(peer: Peer) {
     const { RpcManager, CreatePeer } = this.services;
     this.navigators[peer.kid] = peer;
-    RpcManager.asObservable<RPCNavigatorReqSeederOfferByUser>(
-      "RPCNavigatorReqSeederOfferByUser",
-      peer
-    ).subscribe(async rpc => {
+
+    const { unSubscribe } = RpcManager.asObservable<
+      RPCNavigatorReqSeederOfferByUser
+    >("RPCNavigatorReqSeederOfferByUser", peer).subscribe(async rpc => {
       const userPeer = CreatePeer.peerCreater.create(rpc.userKid);
       const offer = await userPeer.createOffer();
       const res = await RpcManager.getWait<RPCNavigatorBackAnswerByUser>(
@@ -66,8 +70,13 @@ export class Seeder {
       )().catch(() => {});
       if (!res) return;
 
-      await userPeer.setAnswer(res.answer);
+      await userPeer.setAnswer(res.sdp);
       this.subNet.addPeer(userPeer);
+    });
+
+    peer.onDisconnect.once(() => {
+      unSubscribe();
+      delete this.navigators[peer.kid];
     });
   }
 
@@ -91,9 +100,9 @@ export class Seeder {
   }
 }
 
-const RPCSeederOffer2UserOverNavigator = (offer: Signal) => ({
+const RPCSeederOffer2UserOverNavigator = (sdp: Signal) => ({
   type: "RPCSeederOffer2UserOverNavigator" as const,
-  offer
+  sdp
 });
 
 export type RPCSeederOffer2UserOverNavigator = ReturnType<

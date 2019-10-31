@@ -14,7 +14,7 @@ export class SP2P {
   constructor(
     private modules: { PeerCreater: PeerCreater },
     private existKad: Kademlia,
-    private options?: Options
+    private options: Options = { subNetTimeout: 5000 }
   ) {}
   services: InjectServices = {
     ...injectServices(),
@@ -24,4 +24,12 @@ export class SP2P {
   user = new User(this.services, this.mainNet, this.options);
   navigator = new NavigatorContainer(this.services, this.mainNet, this.options);
   seeder = new SeederContainer(this.services, this.mainNet, this.options);
+
+  dispose() {
+    this.mainNet.kad.di.kTable.allPeers.forEach(peer => peer.disconnect());
+
+    this.services.NavigatorManager.allNavigator.forEach(nav =>
+      nav.seederPeer.disconnect()
+    );
+  }
 }

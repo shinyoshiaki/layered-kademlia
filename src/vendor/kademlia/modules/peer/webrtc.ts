@@ -75,14 +75,13 @@ export default class PeerWebRTC implements Peer {
   createOffer = async () => {
     this.peer.makeOffer();
     const offer = await this.peer.onSignal.asPromise();
-    await new Promise(r => setTimeout(r, 0));
     return offer;
   };
 
-  setOffer = async (offer: Signal) => {
+  setOffer = async (offer: Signal, timeout = 10000) => {
     this.peer.setSdp(offer);
-    const answer = await this.peer.onSignal.asPromise();
-    await new Promise(r => setTimeout(r, 0));
+    const answer = await this.peer.onSignal.asPromise(timeout).catch(() => {});
+    if (!answer) throw new Error("timeout");
     return answer;
   };
 

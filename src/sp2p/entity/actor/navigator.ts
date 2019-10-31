@@ -17,38 +17,47 @@ export class Navigator {
     services: InjectServices,
     private meta: Meta,
     mainNet: MainNetwork,
-    seederPeer: Peer
+    public seederPeer: Peer
   ) {
     const { RpcManager } = services;
     // from user find
-    mainNet.eventManager
+    const { unSubscribe } = mainNet.eventManager
       .selectListen<RPCUserReqSeederOffer2Navigator & RPC>(
         "RPCUserReqSeederOffer2Navigator"
       )
       .subscribe(async ({ rpc, peer }) => {
-        const seederRes = await RpcManager.getWait<
-          RPCSeederOffer2UserOverNavigator
-        >(seederPeer, RPCNavigatorReqSeederOfferByUser(rpc.userKid))().catch(
-          () => {}
-        );
-        if (!seederRes) return;
+        if (rpc.url === this.url) {
+          const seederRes = await RpcManager.getWait<
+            RPCSeederOffer2UserOverNavigator
+          >(seederPeer, RPCNavigatorReqSeederOfferByUser(rpc.userKid))().catch(
+            () => {}
+          );
+          if (!seederRes)
+            throw new Error("navigator fail RPCNavigatorReqSeederOfferByUser");
 
-        //for user
-        const userRes = await RpcManager.getWait<
-          RPCUserAnswerSeederOverNavigator
-        >(
-          peer,
-          RPCNavigatorBackOfferBySeeder(seederRes.offer, seederPeer.kid),
-          rpc.id
-        )().catch(() => {});
-        if (!userRes) return;
+          //for user
+          const userRes = await RpcManager.getWait<
+            RPCUserAnswerSeederOverNavigator
+          >(
+            peer,
+            RPCNavigatorBackOfferBySeeder(seederRes.sdp, seederPeer.kid),
+            rpc.id
+          )().catch(() => {});
+          if (!userRes)
+            throw new Error("navigator fail RPCNavigatorBackOfferBySeeder");
 
-        //for seeder
-        seederPeer.rpc({
-          ...RPCNavigatorBackAnswerByUser(userRes.answer),
-          id: seederRes.id
-        });
+          //for seeder
+          seederPeer.rpc({
+            ...RPCNavigatorBackAnswerByUser(userRes.sdp),
+            id: seederRes.id
+          });
+        }
       });
+
+    seederPeer.onDisconnect.once(() => {
+      unSubscribe();
+      this.seederPeer = null as any;
+    });
   }
 }
 
@@ -62,11 +71,11 @@ export type RPCNavigatorReqSeederOfferByUser = ReturnType<
 >;
 
 export const RPCNavigatorBackOfferBySeeder = (
-  offer: Signal,
+  sdp: Signal,
   seederKid: string
 ) => ({
   type: "RPCNavigatorBackOfferBySeeder" as const,
-  offer,
+  sdp,
   seederKid
 });
 
@@ -74,9 +83,9 @@ export type RPCNavigatorBackOfferBySeeder = ReturnType<
   typeof RPCNavigatorBackOfferBySeeder
 >;
 
-const RPCNavigatorBackAnswerByUser = (answer: Signal) => ({
+const RPCNavigatorBackAnswerByUser = (sdp: Signal) => ({
   type: "RPCNavigatorBackAnswerByUser" as const,
-  answer
+  sdp
 });
 
 export type RPCNavigatorBackAnswerByUser = ReturnType<

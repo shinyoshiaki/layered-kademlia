@@ -11,27 +11,39 @@ export type VpxConfig = {
 
 export async function libvpxEnc(stream: MediaStream, config: VpxConfig) {
   const listener = new Event<Uint8Array>();
+  const rawListener = new Event<ArrayBuffer>();
   const vpxenc_ = new Worker("src/domain/libvpx/vpx-worker.js");
   vpxenc_.postMessage({ type: "init", data: config });
 
-  const cvs = document.createElement("canvas");
+  const canvas = document.createElement("canvas");
   const video = document.createElement("video");
   video.srcObject = stream;
   video.muted = true;
   video.play();
   await nextEvent(video, "playing");
   const { width, height, fps } = config;
-  [cvs.width, cvs.height] = [width, height];
-  const ctx = cvs.getContext("2d");
+  [canvas.width, canvas.height] = [width, height];
+  const ctx = canvas.getContext("2d");
   const frameTimeout = 1000 / fps;
+
   let encoding = false;
-  (async () => {
-    await new Promise(r => setTimeout(r, 1000));
+
+  vpxenc_.onmessage = ({ data }) => {
+    encoding = false;
+    if (data.res) {
+      const encoded = new Uint8Array(data.res);
+      listener.execute(encoded);
+    }
+  };
+
+  const start = async () => {
     setInterval(() => {
       if (encoding) return;
       encoding = true;
+
       ctx.drawImage(video, 0, 0, width, height);
       const frame = ctx.getImageData(0, 0, width, height);
+      rawListener.execute(frame.data.buffer);
       vpxenc_.postMessage(
         {
           id: "enc",
@@ -42,15 +54,9 @@ export async function libvpxEnc(stream: MediaStream, config: VpxConfig) {
         [frame.data.buffer]
       );
     }, frameTimeout);
-  })();
-  vpxenc_.onmessage = e => {
-    encoding = false;
-    if (e.data.res) {
-      const encoded = new Uint8Array(e.data.res);
-      listener.execute(encoded);
-    }
   };
-  return { listener };
+
+  return { listener, start, rawListener };
 }
 
 export async function libvpxDec(config: VpxConfig) {
@@ -60,7 +66,6 @@ export async function libvpxDec(config: VpxConfig) {
   vpxdec_.postMessage({ type: "init", data: config });
 
   sender.subscribe(ab => {
-    console.log({ ab });
     vpxdec_.postMessage(
       {
         id: "dec",

@@ -1,7 +1,8 @@
 import Kademlia from "../../../../../src/vendor/kademlia";
 import KeyValueStore from "../../../../../src/vendor/kademlia/modules/kvs/base";
+import { PeerCreater } from "../../../../../src/sp2p/module/peerCreater";
 import PeerModule from "../../../../../src/vendor/kademlia/modules/peer";
-import { SP2P } from "../../../../../src/adapter/actor";
+import { SP2P } from "../../../../../src/sp2p/adapter/actor";
 import axios from "axios";
 import genKid from "../../../../../src/vendor/kademlia/util/kid";
 
@@ -14,7 +15,7 @@ export class SP2PClient {
     },
     { timeout: 5000 }
   );
-  actor = new SP2P(this.kad);
+  actor = new SP2P({ PeerCreater: new PeerCreater(PeerModule) }, this.kad);
 
   constructor() {}
 
