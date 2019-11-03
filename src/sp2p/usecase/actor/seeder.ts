@@ -88,7 +88,9 @@ export class SeederContainer {
       )
     )).filter(v => v) as Peer[];
 
-    navigatorPeers.forEach(peer => seeder.addNavigatorPeer(peer));
+    navigatorPeers.forEach(navigatorPeer =>
+      seeder.addNavigatorPeer(navigatorPeer)
+    );
   }
 
   storeStatic = async (name: string, ab: Buffer) => {

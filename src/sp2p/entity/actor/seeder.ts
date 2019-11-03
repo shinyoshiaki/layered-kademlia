@@ -18,7 +18,7 @@ import { SubNetwork } from "../network/sub";
 import sha1 from "sha1";
 
 export class Seeder {
-  navigators: { [kid: string]: Peer } = {};
+  navigatorPeers: { [kid: string]: Peer } = {};
   onCreatePeerOffer = new Event<string>();
 
   onNavigatorCallAnswer = new Event<string>();
@@ -54,29 +54,31 @@ export class Seeder {
       });
   }
 
-  addNavigatorPeer(peer: Peer) {
+  addNavigatorPeer(navigatorPeer: Peer) {
     const { RpcManager, CreatePeer } = this.services;
-    this.navigators[peer.kid] = peer;
+    this.navigatorPeers[navigatorPeer.kid] = navigatorPeer;
 
     const { unSubscribe } = RpcManager.asObservable<
       RPCNavigatorReqSeederOfferByUser
-    >("RPCNavigatorReqSeederOfferByUser", peer).subscribe(async rpc => {
-      const userPeer = CreatePeer.peerCreater.create(rpc.userKid);
-      const offer = await userPeer.createOffer();
-      const res = await RpcManager.getWait<RPCNavigatorBackAnswerByUser>(
-        peer,
-        RPCSeederOffer2UserOverNavigator(offer),
-        rpc.id
-      )().catch(() => {});
-      if (!res) return;
+    >("RPCNavigatorReqSeederOfferByUser", navigatorPeer).subscribe(
+      async rpc => {
+        const userPeer = CreatePeer.peerCreater.create(rpc.userKid);
+        const offer = await userPeer.createOffer();
+        const res = await RpcManager.getWait<RPCNavigatorBackAnswerByUser>(
+          navigatorPeer,
+          RPCSeederOffer2UserOverNavigator(offer),
+          rpc.id
+        )().catch(() => {});
+        if (!res) return;
 
-      await userPeer.setAnswer(res.sdp);
-      this.subNet.addPeer(userPeer);
-    });
+        await userPeer.setAnswer(res.sdp);
+        this.subNet.addPeer(userPeer);
+      }
+    );
 
-    peer.onDisconnect.once(() => {
+    navigatorPeer.onDisconnect.once(() => {
       unSubscribe();
-      delete this.navigators[peer.kid];
+      delete this.navigatorPeers[navigatorPeer.kid];
     });
   }
 
