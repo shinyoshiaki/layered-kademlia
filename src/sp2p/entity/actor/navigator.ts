@@ -19,7 +19,8 @@ export class Navigator {
     mainNet: MainNetwork,
     public seederPeer: Peer
   ) {
-    const { RpcManager } = services;
+    const { RpcManager, NavigatorManager } = services;
+
     // from user find
     const { unSubscribe } = mainNet.eventManager
       .selectListen<RPCUserReqSeederOffer2Navigator & RPC>(
@@ -57,6 +58,7 @@ export class Navigator {
     seederPeer.onDisconnect.once(() => {
       unSubscribe();
       this.seederPeer = null as any;
+      NavigatorManager.deleteNavigator(this.url);
     });
   }
 }

@@ -25,6 +25,10 @@ export class NavigatorManager {
     return this.list[url] ? true : false;
   }
 
+  deleteNavigator(url: string) {
+    delete this.list[url];
+  }
+
   get allNavigator() {
     return Object.values(this.list);
   }

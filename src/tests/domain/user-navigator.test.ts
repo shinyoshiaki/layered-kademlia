@@ -14,7 +14,8 @@ describe("domain/user-navigator", () => {
     );
 
     expect(
-      Object.keys(seeder.services.SeederManager.list[url].navigators).length > 0
+      Object.keys(seeder.services.SeederManager.list[url].navigatorPeers)
+        .length > 0
     ).toBe(true);
 
     const user = actors.shift()!;

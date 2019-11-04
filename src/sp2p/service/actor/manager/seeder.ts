@@ -20,4 +20,8 @@ export class SeederManager {
   isExist(url: string) {
     return this.list[url] ? true : false;
   }
+
+  get allSeeder() {
+    return Object.values(this.list);
+  }
 }
