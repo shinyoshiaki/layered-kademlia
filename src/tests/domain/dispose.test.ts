@@ -18,7 +18,7 @@ describe("domain/user-navigator", () => {
 
     seeder.dispose();
 
-    await new Promise(r => setTimeout(r, 1_000));
+    await new Promise(r => setTimeout(r, 5_000));
 
     expect(navigator.services.NavigatorManager.allNavigator.length).toBe(0);
   };

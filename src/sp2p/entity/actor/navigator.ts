@@ -36,8 +36,10 @@ export class Navigator {
           >(seederPeer, RPCNavigatorReqSeederOfferByUser(rpc.userKid))(
             subNetTimeout
           ).catch(() => {});
-          if (!seederRes)
-            throw new Error("navigator fail RPCNavigatorReqSeederOfferByUser");
+          if (!seederRes) {
+            console.log("navigator fail RPCNavigatorReqSeederOfferByUser");
+            return;
+          }
 
           //for user
           const userRes = await RpcManager.getWait<
