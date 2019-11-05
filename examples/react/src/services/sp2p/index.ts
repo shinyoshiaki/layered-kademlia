@@ -34,8 +34,6 @@ export class SP2PClient {
     this.kad.add(peer);
     await new Promise(r => setTimeout(r));
 
-    this.kad.di.eventManager.event.subscribe(log => console.log({ log }));
-
     await this.kad.findNode(this.kad.kid);
     console.log("connect");
   }
