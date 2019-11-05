@@ -38,7 +38,8 @@ export class SeederContainer {
       url,
       this.mainNet,
       subNet,
-      this.services
+      this.services,
+      this.options
     );
 
     await this.setupNavigators(url, peers, seeder);

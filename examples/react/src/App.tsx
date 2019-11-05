@@ -1,7 +1,7 @@
-import React, { createContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useEffect, useRef } from "react";
 
 import PeerList from "./components/PeerList";
-import { SP2PClient } from "./services/kademlia";
+import { SP2PClient } from "./services/sp2p";
 import SeederList from "./components/SeederList";
 import Static from "./components/Static";
 import StoreStream from "./components/StoreStream";

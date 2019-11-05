@@ -11,6 +11,7 @@ import {
 import Event from "rx.mini";
 import { InjectServices } from "../../service";
 import { MainNetwork } from "../network/main";
+import { Options } from "../../adapter/actor";
 import { Peer } from "../../../vendor/kademlia";
 import { RPC } from "../../../vendor/kademlia/modules/peer/base";
 import { Signal } from "webrtc4me";
@@ -27,7 +28,8 @@ export class Seeder {
     private services: InjectServices,
     url: string,
     mainNet: MainNetwork,
-    private subNet: SubNetwork
+    private subNet: SubNetwork,
+    private options: Options
   ) {
     const { CreatePeer, RpcManager } = services;
 
@@ -56,6 +58,8 @@ export class Seeder {
 
   addNavigatorPeer(navigatorPeer: Peer) {
     const { RpcManager, CreatePeer } = this.services;
+    const { subNetTimeout } = this.options;
+
     this.navigatorPeers[navigatorPeer.kid] = navigatorPeer;
 
     const { unSubscribe } = RpcManager.asObservable<
@@ -68,8 +72,8 @@ export class Seeder {
           navigatorPeer,
           RPCSeederOffer2UserOverNavigator(offer),
           rpc.id
-        )().catch(() => {});
-        if (!res) return;
+        )(subNetTimeout).catch(() => {});
+        if (!res) throw new Error("RPCNavigatorReqSeederOfferByUser");
 
         await userPeer.setAnswer(res.sdp);
         this.subNet.addPeer(userPeer);
@@ -77,6 +81,7 @@ export class Seeder {
     );
 
     navigatorPeer.onDisconnect.once(() => {
+      console.warn("navigatorPeer.onDisconnect");
       unSubscribe();
       delete this.navigatorPeers[navigatorPeer.kid];
     });
