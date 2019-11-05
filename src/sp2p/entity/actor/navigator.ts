@@ -7,6 +7,7 @@ import {
 
 import { InjectServices } from "../../service";
 import { MainNetwork } from "../network/main";
+import { Options } from "../../adapter/actor";
 import { RPCSeederOffer2UserOverNavigator } from "./seeder";
 import { Signal } from "webrtc4me";
 
@@ -17,9 +18,11 @@ export class Navigator {
     services: InjectServices,
     private meta: Meta,
     mainNet: MainNetwork,
-    public seederPeer: Peer
+    public seederPeer: Peer,
+    options: Options
   ) {
     const { RpcManager, NavigatorManager } = services;
+    const { subNetTimeout } = options;
 
     // from user find
     const { unSubscribe } = mainNet.eventManager
@@ -30,9 +33,9 @@ export class Navigator {
         if (rpc.url === this.url) {
           const seederRes = await RpcManager.getWait<
             RPCSeederOffer2UserOverNavigator
-          >(seederPeer, RPCNavigatorReqSeederOfferByUser(rpc.userKid))().catch(
-            () => {}
-          );
+          >(seederPeer, RPCNavigatorReqSeederOfferByUser(rpc.userKid))(
+            subNetTimeout
+          ).catch(() => {});
           if (!seederRes)
             throw new Error("navigator fail RPCNavigatorReqSeederOfferByUser");
 
@@ -43,7 +46,7 @@ export class Navigator {
             peer,
             RPCNavigatorBackOfferBySeeder(seederRes.sdp, seederPeer.kid),
             rpc.id
-          )().catch(() => {});
+          )(subNetTimeout).catch(() => {});
           if (!userRes)
             throw new Error("navigator fail RPCNavigatorBackOfferBySeeder");
 

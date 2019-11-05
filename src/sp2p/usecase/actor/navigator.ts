@@ -11,7 +11,7 @@ export class NavigatorContainer {
   constructor(
     services: InjectServices,
     private mainNet: MainNetwork,
-    private options: Options
+    options: Options
   ) {
     const { subNetTimeout } = options;
     const { CreatePeer, NavigatorManager, RpcManager } = services;
@@ -33,7 +33,13 @@ export class NavigatorContainer {
 
       await seederPeer.setAnswer(res.sdp);
 
-      NavigatorManager.createNavigator(services, meta, mainNet, seederPeer);
+      NavigatorManager.createNavigator(
+        services,
+        meta,
+        mainNet,
+        seederPeer,
+        options
+      );
     });
   }
 
