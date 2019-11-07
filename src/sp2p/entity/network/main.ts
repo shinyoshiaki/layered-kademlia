@@ -37,4 +37,10 @@ export class MainNetwork {
     const { peer, item } = res;
     return { peer, meta: JSON.parse(item.value as string) as Meta };
   };
+
+  deleteData(url: string) {
+    const { kvs } = this.kad.di.modules;
+
+    kvs.delete(url);
+  }
 }

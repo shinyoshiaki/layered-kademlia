@@ -21,7 +21,7 @@ export class Navigator {
     public seederPeer: Peer,
     options: Options
   ) {
-    const { RpcManager, NavigatorManager } = services;
+    const { RpcManager, NavigatorManager, SubNetworkManager } = services;
     const { subNetTimeout } = options;
 
     // from user find
@@ -36,8 +36,10 @@ export class Navigator {
           >(seederPeer, RPCNavigatorReqSeederOfferByUser(rpc.userKid))(
             subNetTimeout
           ).catch(() => {});
-          if (!seederRes)
-            throw new Error("navigator fail RPCNavigatorReqSeederOfferByUser");
+          if (!seederRes) {
+            // console.log("navigator fail RPCNavigatorReqSeederOfferByUser");
+            return;
+          }
 
           //for user
           const userRes = await RpcManager.getWait<
@@ -47,8 +49,10 @@ export class Navigator {
             RPCNavigatorBackOfferBySeeder(seederRes.sdp, seederPeer.kid),
             rpc.id
           )(subNetTimeout).catch(() => {});
-          if (!userRes)
-            throw new Error("navigator fail RPCNavigatorBackOfferBySeeder");
+          if (!userRes) {
+            // console.log("navigator fail RPCNavigatorBackOfferBySeeder");
+            return;
+          }
 
           //for seeder
           seederPeer.rpc({
@@ -62,6 +66,10 @@ export class Navigator {
       unSubscribe();
       this.seederPeer = null as any;
       NavigatorManager.deleteNavigator(this.url);
+
+      if (!SubNetworkManager.isExist(this.url)) {
+        mainNet.deleteData(this.url);
+      }
     });
   }
 }

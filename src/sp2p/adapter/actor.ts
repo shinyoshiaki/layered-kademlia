@@ -26,7 +26,7 @@ export class SP2P {
   seeder = new SeederContainer(this.services, this.mainNet, this.options);
 
   dispose() {
-    this.mainNet.kad.di.kTable.allPeers.forEach(peer => peer.disconnect());
+    this.mainNet.kad.dispose();
 
     this.services.NavigatorManager.allNavigator.forEach(nav =>
       nav.seederPeer.disconnect()

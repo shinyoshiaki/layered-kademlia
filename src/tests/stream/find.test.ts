@@ -24,7 +24,9 @@ describe("stream/find", () => {
     }, 1);
 
     const res = await new Promise<boolean>(async r => {
-      const res = await actors[actors.length - 1].user.connectSubNet(url);
+      const res = await actors[actors.length - 1].user
+        .connectSubNet(url)
+        .catch(console.warn);
       if (!res) {
         r(false);
         return;
@@ -45,13 +47,15 @@ describe("stream/find", () => {
       });
     });
     expect(res).toBe(true);
+
+    // actors.forEach(actor => actor.dispose());
   };
   test("mock", async () => {
     const nodes = await testSetupNodes(10, PeerMockModule, { timeout: 5_000 });
     await job(nodes, new PeerCreater(PeerMockModule));
   }, 60_000_0);
-  test("webrtc", async () => {
-    const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
-    await job(nodes, new PeerCreater(PeerModule));
-  }, 60_000_0);
+  // test("webrtc", async () => {
+  //   const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
+  //   await job(nodes, new PeerCreater(PeerModule));
+  // }, 60_000_0);
 });

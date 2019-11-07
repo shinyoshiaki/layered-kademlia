@@ -2,7 +2,6 @@ import Kademlia, { PeerMockModule, PeerModule } from "../../vendor/kademlia";
 
 import { PeerCreater } from "../../sp2p/module/peerCreater";
 import { SP2P } from "../../sp2p/adapter/actor";
-import { StaticMeta } from "../../sp2p/entity/data/meta";
 import { testSetupNodes } from "../setupnetwork";
 
 describe("static/find", () => {
@@ -19,7 +18,7 @@ describe("static/find", () => {
     await new Promise(r => setTimeout(r));
 
     for (let actor of actors) {
-      const res = await actor.user.connectSubNet(url);
+      const res = await actor.user.connectSubNet(url).catch(() => undefined);
 
       expect(res).not.toBeUndefined();
       const { subNet } = res!;
@@ -28,7 +27,8 @@ describe("static/find", () => {
       expect(Buffer.from(ab!)).toEqual(Buffer.from("hello"));
     }
 
-    expect(true).toBe(true);
+    // actors.forEach(actor => actor.dispose());
+    // actorStore.dispose();
   };
 
   test("mock", async () => {

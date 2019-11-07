@@ -19,12 +19,15 @@ describe("domain/subnet", () => {
     );
 
     for (let actor of actors) {
-      await actor.user.connectSubNet(url);
+      await actor.user.connectSubNet(url).catch(console.warn);
     }
 
     expect(
       actors[0].services.SubNetworkManager.getSubNetwork(url).allPeers.length >
         1
     ).toBe(true);
+
+    // seederNode.dispose();
+    // actors.forEach(actor => actor.dispose());
   }, 600_000);
 });

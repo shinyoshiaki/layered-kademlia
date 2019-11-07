@@ -1,6 +1,6 @@
 import { DependencyInjection, dependencyInjection } from "./di";
 
-import Modules from "./modules";
+import { Modules } from "./modules";
 import { Option as OptTable } from "./ktable";
 import { Peer } from "./modules/peer/base";
 import findNode from "./actions/findnode";
@@ -44,10 +44,22 @@ export default class Kademlia {
     return res;
   };
 
-  findValue = async (key: string, opt?: { preferTimeout?: number }) =>
-    await findValue(key, this.di, opt);
+  findValue = async (key: string, opt?: { preferTimeout?: number }) => {
+    const { kvs } = this.di.modules;
+    const res = await findValue(key, this.di, opt);
+    if (res && res.item) {
+      kvs.set(key, res.item.value, res.item.msg || "");
+    }
+    return res;
+  };
 
   add = (connect: Peer) => {
     listeners(connect, this.di);
   };
+
+  dispose() {
+    const { kTable } = this.di;
+
+    kTable.allPeers.forEach(peer => peer.disconnect());
+  }
 }

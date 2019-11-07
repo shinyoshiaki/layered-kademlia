@@ -68,12 +68,17 @@ export class Seeder {
       async rpc => {
         const userPeer = CreatePeer.peerCreater.create(rpc.userKid);
         const offer = await userPeer.createOffer();
+
         const res = await RpcManager.getWait<RPCNavigatorBackAnswerByUser>(
           navigatorPeer,
           RPCSeederOffer2UserOverNavigator(offer),
           rpc.id
         )(subNetTimeout).catch(() => {});
-        if (!res) throw new Error("RPCNavigatorReqSeederOfferByUser");
+
+        if (!res) {
+          // console.log("RPCNavigatorBackAnswerByUser");
+          return;
+        }
 
         await userPeer.setAnswer(res.sdp);
         this.subNet.addPeer(userPeer);
@@ -81,28 +86,22 @@ export class Seeder {
     );
 
     navigatorPeer.onDisconnect.once(() => {
-      console.warn("navigatorPeer.onDisconnect");
+      // console.log("navigatorPeer.onDisconnect");
       unSubscribe();
       delete this.navigatorPeers[navigatorPeer.kid];
     });
   }
 
   setAsset(ab: ArrayBuffer) {
-    const { kvs } = this.subNet;
-
-    const key = sha1(Buffer.from(ab)).toString();
-    kvs.set(key, ab, "");
+    this.subNet.store(ab);
   }
 
   setChunk(ab: ArrayBuffer, nextAb?: ArrayBuffer) {
-    const { kvs } = this.subNet;
-
-    const key = sha1(Buffer.from(ab)).toString();
     if (nextAb) {
       const next = sha1(Buffer.from(nextAb)).toString();
-      kvs.set(key, ab, JSON.stringify({ type: "chunk", next }));
+      this.subNet.store(ab, JSON.stringify({ type: "chunk", next }));
     } else {
-      kvs.set(key, ab, JSON.stringify({ type: "chunk", next: "end" }));
+      this.subNet.store(ab, JSON.stringify({ type: "chunk", next: "end" }));
     }
   }
 }
