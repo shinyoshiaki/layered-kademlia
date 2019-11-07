@@ -19,7 +19,7 @@ describe("domain/subnet", () => {
     );
 
     for (let actor of actors) {
-      await actor.user.connectSubNet(url);
+      await actor.user.connectSubNet(url).catch(console.warn);
     }
 
     expect(

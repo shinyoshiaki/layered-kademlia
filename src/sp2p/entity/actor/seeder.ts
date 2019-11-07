@@ -74,7 +74,11 @@ export class Seeder {
           RPCSeederOffer2UserOverNavigator(offer),
           rpc.id
         )(subNetTimeout).catch(() => {});
-        if (!res) throw new Error("RPCNavigatorBackAnswerByUser");
+
+        if (!res) {
+          // console.log("RPCNavigatorBackAnswerByUser");
+          return;
+        }
 
         await userPeer.setAnswer(res.sdp);
         this.subNet.addPeer(userPeer);
@@ -82,7 +86,7 @@ export class Seeder {
     );
 
     navigatorPeer.onDisconnect.once(() => {
-      console.warn("navigatorPeer.onDisconnect");
+      // console.log("navigatorPeer.onDisconnect");
       unSubscribe();
       delete this.navigatorPeers[navigatorPeer.kid];
     });

@@ -19,17 +19,19 @@ describe("domain/user-navigator", () => {
     ).toBe(true);
 
     const user = actors.shift()!;
-    await user.user.findStatic(url, user.seeder);
+    await user.user.findStatic(url);
 
     seeder.dispose();
 
-    await new Promise(r => setTimeout(r, 3000));
+    await new Promise(r => setTimeout(r, 3_000));
 
     const finder = actors.shift()!;
 
-    const ab = await finder.user.findStatic(url, finder.seeder);
+    const ab = await finder.user.findStatic(url).catch(() => undefined);
 
     expect(Buffer.from(ab!)).toEqual(Buffer.from("test"));
+
+    expect(true).toBe(true);
   };
 
   // test("mock", async () => {

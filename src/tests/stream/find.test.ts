@@ -24,7 +24,9 @@ describe("stream/find", () => {
     }, 1);
 
     const res = await new Promise<boolean>(async r => {
-      const res = await actors[actors.length - 1].user.connectSubNet(url);
+      const res = await actors[actors.length - 1].user
+        .connectSubNet(url)
+        .catch(console.warn);
       if (!res) {
         r(false);
         return;

@@ -19,7 +19,7 @@ describe("static/find", () => {
     await new Promise(r => setTimeout(r));
 
     for (let actor of actors) {
-      const res = await actor.user.connectSubNet(url);
+      const res = await actor.user.connectSubNet(url).catch(() => undefined);
 
       expect(res).not.toBeUndefined();
       const { subNet } = res!;

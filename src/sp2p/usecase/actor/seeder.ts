@@ -72,8 +72,9 @@ export class SeederContainer {
               .setOffer(res.sdp)
               .catch(() => {});
             if (!answer) {
+              // console.log("timeout setoffer");
               r();
-              throw new Error("timeout setoffer");
+              return;
             }
 
             peer.rpc({ ...RPCSeederAnswer2Navigator(answer), id: res.id });
@@ -92,10 +93,9 @@ export class SeederContainer {
       )
     )).filter(v => v) as Peer[];
 
-    navigatorPeers.forEach(navigatorPeer =>
-      seeder.addNavigatorPeer(navigatorPeer)
-    );
-    console.log({ seeder });
+    navigatorPeers.forEach(navigatorPeer => {
+      seeder.addNavigatorPeer(navigatorPeer);
+    });
   }
 
   storeStatic = async (name: string, ab: Buffer) => {

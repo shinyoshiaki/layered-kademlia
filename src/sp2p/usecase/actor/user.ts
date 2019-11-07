@@ -79,19 +79,26 @@ export class User {
       this.options
     );
 
-    const { seeder } = await seederContainer.connect(meta, subNet);
-    console.log({ seeder });
+    await seederContainer.connect(meta, subNet);
 
     return { subNet, meta };
   };
 
-  async findStatic(url: string, seederConrainer: SeederContainer) {
-    const { subNet, meta } = await this.connectSubNet(url);
+  async findStatic(url: string) {
+    const connect = await this.connectSubNet(url).catch(e => {
+      console.log(e);
+    });
+    if (!connect) {
+      throw new Error("connect failed");
+    }
+
+    const { subNet } = connect;
+
     const res = await subNet.findStaticMetaTarget();
 
-    if (res) {
-      await seederConrainer.storeStatic(meta.name, Buffer.from(res));
-    }
+    // if (res) {
+    //   await seederConrainer.storeStatic(meta.name, Buffer.from(res));
+    // }
     return res;
   }
 }

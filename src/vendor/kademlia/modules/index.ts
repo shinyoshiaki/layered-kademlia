@@ -3,7 +3,7 @@ import { Peer } from "./peer/base";
 
 export type PeerCreater = (kid: string) => Peer;
 
-export default interface Modules {
+export type Modules = {
   peerCreate: PeerCreater;
   kvs: KeyValueStore;
-}
+};

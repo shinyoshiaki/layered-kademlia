@@ -29,7 +29,11 @@ export class NavigatorContainer {
         RPCNavigatorOffer2Seeder(offer),
         id
       )(subNetTimeout).catch(() => {});
-      if (!res) throw new Error("timeout RPCSeederAnswer2Navigator");
+
+      if (!res) {
+        // console.log("timeout RPCSeederAnswer2Navigator");
+        return;
+      }
 
       await seederPeer.setAnswer(res.sdp);
 

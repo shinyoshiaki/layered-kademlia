@@ -13,5 +13,7 @@ export default class KeyValueStore {
 
   get = (key: string): Item | undefined => this.db[key];
 
-  delete = (key: string) => delete this.db[key];
+  delete = (key: string) => {
+    delete this.db[key];
+  };
 }
