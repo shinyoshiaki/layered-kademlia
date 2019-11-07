@@ -8,16 +8,16 @@ export async function testSetupNodes(
   PeerModule: PeerCreater,
   opt: Options
 ) {
-  const modules = { peerCreate: PeerModule, kvs: new KeyValueStore() };
+  const modules = () => ({ peerCreate: PeerModule, kvs: new KeyValueStore() });
   const nodes: Kademlia[] = [];
 
   for (let i = 0; i < num; i++) {
     if (nodes.length === 0) {
-      const node = new Kademlia(sha1(i.toString()), modules, opt);
+      const node = new Kademlia(sha1(i.toString()), modules(), opt);
       nodes.push(node);
     } else {
       const pre = nodes.slice(-1)[0];
-      const push = new Kademlia(sha1(i.toString()), modules, opt);
+      const push = new Kademlia(sha1(i.toString()), modules(), opt);
 
       const pushOffer = PeerModule(pre.di.kTable.kid);
       const offerSdp = await pushOffer.createOffer();
