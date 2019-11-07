@@ -22,7 +22,7 @@ describe("domain/user-navigator", () => {
 
     expect(navigator.services.NavigatorManager.allNavigator.length).toBe(0);
 
-    actors.forEach(actor => actor.dispose());
+    // actors.forEach(actor => actor.dispose());
   };
 
   test("mock", async () => {

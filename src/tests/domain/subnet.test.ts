@@ -27,7 +27,7 @@ describe("domain/subnet", () => {
         1
     ).toBe(true);
 
-    seederNode.dispose();
-    actors.forEach(actor => actor.dispose());
+    // seederNode.dispose();
+    // actors.forEach(actor => actor.dispose());
   }, 600_000);
 });

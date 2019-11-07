@@ -48,7 +48,7 @@ describe("stream/find", () => {
     });
     expect(res).toBe(true);
 
-    actors.forEach(actor => actor.dispose());
+    // actors.forEach(actor => actor.dispose());
   };
   test("mock", async () => {
     const nodes = await testSetupNodes(10, PeerMockModule, { timeout: 5_000 });

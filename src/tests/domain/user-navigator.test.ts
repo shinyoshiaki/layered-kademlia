@@ -31,9 +31,9 @@ describe("domain/user-navigator", () => {
 
     expect(Buffer.from(ab!)).toEqual(Buffer.from("test"));
 
-    actors.forEach(actor => actor.dispose());
-    user.dispose();
-    finder.dispose();
+    // actors.forEach(actor => actor.dispose());
+    // user.dispose();
+    // finder.dispose();
   };
 
   test("mock", async () => {
