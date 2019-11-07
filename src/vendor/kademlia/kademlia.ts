@@ -56,4 +56,10 @@ export default class Kademlia {
   add = (connect: Peer) => {
     listeners(connect, this.di);
   };
+
+  dispose() {
+    const { kTable } = this.di;
+
+    kTable.allPeers.forEach(peer => peer.disconnect());
+  }
 }

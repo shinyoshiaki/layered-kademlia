@@ -26,5 +26,8 @@ describe("domain/subnet", () => {
       actors[0].services.SubNetworkManager.getSubNetwork(url).allPeers.length >
         1
     ).toBe(true);
+
+    seederNode.dispose();
+    actors.forEach(actor => actor.dispose());
   }, 600_000);
 });

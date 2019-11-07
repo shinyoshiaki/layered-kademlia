@@ -28,7 +28,8 @@ describe("static/find", () => {
       expect(Buffer.from(ab!)).toEqual(Buffer.from("hello"));
     }
 
-    expect(true).toBe(true);
+    actors.forEach(actor => actor.dispose());
+    actorStore.dispose();
   };
 
   test("mock", async () => {

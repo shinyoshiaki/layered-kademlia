@@ -21,6 +21,8 @@ describe("domain/user-navigator", () => {
     await new Promise(r => setTimeout(r, 5_000));
 
     expect(navigator.services.NavigatorManager.allNavigator.length).toBe(0);
+
+    actors.forEach(actor => actor.dispose());
   };
 
   test("webrtc", async () => {
