@@ -44,8 +44,12 @@ export default class Kademlia {
     return res;
   };
 
-  findValue = async (key: string, opt?: { preferTimeout?: number }) =>
-    await findValue(key, this.di, opt);
+  findValue = async (key: string, opt?: { preferTimeout?: number }) => {
+    const { kvs } = this.di.modules;
+    const res = await findValue(key, this.di, opt);
+    if (res) kvs.set(key, res.item.value, res.item.msg || "");
+    return res;
+  };
 
   add = (connect: Peer) => {
     listeners(connect, this.di);

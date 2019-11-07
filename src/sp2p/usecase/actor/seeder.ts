@@ -13,6 +13,7 @@ import { Peer } from "../../../vendor/kademlia";
 import { RPCNavigatorOffer2Seeder } from "./navigator";
 import { Seeder } from "../../entity/actor/seeder";
 import { Signal } from "webrtc4me";
+import { SubNetwork } from "../../entity/network/sub";
 
 export class SeederContainer {
   constructor(
@@ -26,14 +27,16 @@ export class SeederContainer {
     return this.services.SubNetworkManager.list;
   }
 
-  private connect = async (meta: Meta) => {
+  connect = async (meta: Meta, subNet?: SubNetwork) => {
     const { SeederManager, SubNetworkManager, CreatePeer } = this.services;
     const { url, peers } = await this.mainNet.store(meta);
-    const subNet = SubNetworkManager.createNetwork(
-      meta,
-      CreatePeer.peerCreater,
-      this.mainNet.kid
-    );
+    subNet =
+      subNet ||
+      SubNetworkManager.createNetwork(
+        meta,
+        CreatePeer.peerCreater,
+        this.mainNet.kid
+      );
     const seeder = SeederManager.createSeeder(
       url,
       this.mainNet,
@@ -92,6 +95,7 @@ export class SeederContainer {
     navigatorPeers.forEach(navigatorPeer =>
       seeder.addNavigatorPeer(navigatorPeer)
     );
+    console.log({ seeder });
   }
 
   storeStatic = async (name: string, ab: Buffer) => {

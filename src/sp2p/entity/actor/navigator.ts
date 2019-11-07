@@ -64,6 +64,7 @@ export class Navigator {
       unSubscribe();
       this.seederPeer = null as any;
       NavigatorManager.deleteNavigator(this.url);
+      mainNet.deleteData(this.url);
     });
   }
 }

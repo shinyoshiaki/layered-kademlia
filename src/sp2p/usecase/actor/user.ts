@@ -27,45 +27,7 @@ export class User {
 
     const { peer, meta } = res;
 
-    if (!SubNetworkManager.isExist(url)) {
-      // connect to seeder via navigator
-
-      const navigatorRes = await RpcManager.getWait<
-        RPCNavigatorBackOfferBySeeder
-      >(peer, RPCUserReqSeederOffer2Navigator(this.mainNet.kid, url))(
-        subNetTimeout
-      ).catch(() => {});
-      if (!navigatorRes)
-        throw new Error("connectSubNet fail RPCUserReqSeederOffer2Navigator");
-
-      const subNet = SubNetworkManager.createNetwork(
-        meta,
-        CreatePeer.peerCreater,
-        this.mainNet.kid
-      );
-
-      const seederPeer = CreatePeer.peerCreater.create(navigatorRes.seederKid);
-      const answer = await seederPeer
-        .setOffer(navigatorRes.sdp)
-        .catch(() => {});
-      if (!answer) throw new Error("connectSubNet fail setOffer");
-
-      peer.rpc({
-        ...RPCUserAnswerSeederOverNavigator(answer),
-        id: navigatorRes.id
-      });
-
-      const err = await seederPeer.onConnect
-        .asPromise(subNetTimeout)
-        .catch(() => "err");
-      if (err) throw new Error("connectSubNet fail connect");
-
-      subNet.addPeer(seederPeer);
-
-      await subNet.findNode();
-
-      return { subNet, meta };
-    } else {
+    if (SubNetworkManager.isExist(url)) {
       const subNet = SubNetworkManager.getSubNetwork(url);
       if (subNet.state.onFinding) {
         const err = await subNet.state.onFinding
@@ -73,10 +35,54 @@ export class User {
           .catch(() => "err");
         if (err) throw new Error("timeout onFinding");
       }
+
       await subNet.findNode();
 
       return { subNet, meta };
     }
+
+    const navigatorRes = await RpcManager.getWait<
+      RPCNavigatorBackOfferBySeeder
+    >(peer, RPCUserReqSeederOffer2Navigator(this.mainNet.kid, url))(
+      subNetTimeout
+    ).catch(() => {});
+    if (!navigatorRes)
+      throw new Error("connectSubNet fail RPCUserReqSeederOffer2Navigator");
+
+    const seederPeer = CreatePeer.peerCreater.create(navigatorRes.seederKid);
+    const answer = await seederPeer.setOffer(navigatorRes.sdp).catch(() => {});
+    if (!answer) throw new Error("connectSubNet fail setOffer");
+
+    peer.rpc({
+      ...RPCUserAnswerSeederOverNavigator(answer),
+      id: navigatorRes.id
+    });
+
+    const err = await seederPeer.onConnect
+      .asPromise(subNetTimeout)
+      .catch(() => "err");
+    if (err) throw new Error("connectSubNet fail connect");
+
+    const subNet = SubNetworkManager.createNetwork(
+      meta,
+      CreatePeer.peerCreater,
+      this.mainNet.kid
+    );
+
+    subNet.addPeer(seederPeer);
+
+    await subNet.findNode();
+
+    const seederContainer = new SeederContainer(
+      this.services,
+      this.mainNet,
+      this.options
+    );
+
+    const { seeder } = await seederContainer.connect(meta, subNet);
+    console.log({ seeder });
+
+    return { subNet, meta };
   };
 
   async findStatic(url: string, seederConrainer: SeederContainer) {
@@ -84,9 +90,7 @@ export class User {
     const res = await subNet.findStaticMetaTarget();
 
     if (res) {
-      // console.log("staitic meta target found", res);
       await seederConrainer.storeStatic(meta.name, Buffer.from(res));
-      // console.log("re store", url, seederConrainer);
     }
     return res;
   }
