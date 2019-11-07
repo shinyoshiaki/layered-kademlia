@@ -54,8 +54,8 @@ describe("stream/find", () => {
     const nodes = await testSetupNodes(10, PeerMockModule, { timeout: 5_000 });
     await job(nodes, new PeerCreater(PeerMockModule));
   }, 60_000_0);
-  test("webrtc", async () => {
-    const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
-    await job(nodes, new PeerCreater(PeerModule));
-  }, 60_000_0);
+  // test("webrtc", async () => {
+  //   const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
+  //   await job(nodes, new PeerCreater(PeerModule));
+  // }, 60_000_0);
 });

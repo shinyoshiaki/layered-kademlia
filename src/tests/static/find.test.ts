@@ -2,7 +2,6 @@ import Kademlia, { PeerMockModule, PeerModule } from "../../vendor/kademlia";
 
 import { PeerCreater } from "../../sp2p/module/peerCreater";
 import { SP2P } from "../../sp2p/adapter/actor";
-import { StaticMeta } from "../../sp2p/entity/data/meta";
 import { testSetupNodes } from "../setupnetwork";
 
 describe("static/find", () => {
