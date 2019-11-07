@@ -85,9 +85,7 @@ export class User {
   };
 
   async findStatic(url: string) {
-    const connect = await this.connectSubNet(url).catch(e => {
-      console.log(e);
-    });
+    const connect = await this.connectSubNet(url).catch(() => undefined);
     if (!connect) {
       throw new Error("connect failed");
     }
