@@ -7,7 +7,8 @@
     "node": ">=11"
   },
   "scripts": {
-    "start": "ts-node --project ./tsconfig.json ./index.ts"
+    "kad": "ts-node --project ./tsconfig.json ./kad.ts",
+    "layered": "ts-node --project ./tsconfig.json ./layered.ts"
   },
   "dependencies": {
     "typescript": "^3.7.2"
