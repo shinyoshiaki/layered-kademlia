@@ -26,9 +26,6 @@ describe("static/find", () => {
       const ab = await subNet.findStaticMetaTarget();
       expect(Buffer.from(ab!)).toEqual(Buffer.from("hello"));
     }
-
-    // actors.forEach(actor => actor.dispose());
-    // actorStore.dispose();
   };
 
   test("mock", async () => {

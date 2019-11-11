@@ -1,9 +1,9 @@
-import { PeerMockModule } from "../vendor/kademlia";
+import { PeerModule } from "../vendor/kademlia";
 import { testSetupNodes } from "./setupnetwork";
 
 describe("setup network", () => {
   test("mock", async () => {
-    const nodes = await testSetupNodes(10, PeerMockModule, {
+    const nodes = await testSetupNodes(10, PeerModule, {
       kBucketSize: 8,
       timeout: 200
     });

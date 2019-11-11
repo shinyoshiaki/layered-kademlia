@@ -32,13 +32,13 @@ describe("domain/user-navigator", () => {
     expect(Buffer.from(ab!)).toEqual(Buffer.from("test"));
   };
 
-  // test("mock", async () => {
-  //   const nodes = await testSetupNodes(3, PeerMockModule, { timeout: 5_000 });
-  //   await job(nodes, new PeerCreater(PeerMockModule));
-  // }, 600_000);
-
-  test("webrtc", async () => {
-    const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
-    await job(nodes, new PeerCreater(PeerModule));
+  test("mock", async () => {
+    const nodes = await testSetupNodes(3, PeerMockModule, { timeout: 5_000 });
+    await job(nodes, new PeerCreater(PeerMockModule));
   }, 600_000);
+
+  // test("webrtc", async () => {
+  //   const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
+  //   await job(nodes, new PeerCreater(PeerModule));
+  // }, 600_000);
 });
