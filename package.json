@@ -10,6 +10,7 @@
   "scripts": {
     "build": "tsc",
     "test": "npm run type && jest --forceExit",
+    "ci": "npm run type && jest --runInBand --forceExit",
     "type": "tsc --noEmit --project ./tsconfig.json",
     "publish": "npm publish --access=public",
     "start": "ts-node --project ./tsconfig.json ./src/index.ts",

@@ -12,6 +12,7 @@ describe("domain/user-navigator", () => {
       "test",
       Buffer.from("test")
     );
+    const shouldDispose: SP2P[] = [];
 
     expect(
       Object.keys(seeder.services.SeederManager.list[url].navigatorPeers)
@@ -19,6 +20,7 @@ describe("domain/user-navigator", () => {
     ).toBe(true);
 
     const user = actors.shift()!;
+    shouldDispose.push(user);
     await user.user.findStatic(url);
 
     seeder.dispose();
@@ -26,10 +28,14 @@ describe("domain/user-navigator", () => {
     await new Promise(r => setTimeout(r, 3_000));
 
     const finder = actors.pop()!;
+    shouldDispose.push(finder);
 
     const ab = await finder.user.findStatic(url).catch(() => undefined);
 
     expect(Buffer.from(ab!)).toEqual(Buffer.from("test"));
+
+    actors.forEach(v => v.dispose());
+    shouldDispose.forEach(v => v.dispose());
   };
 
   test("mock", async () => {
@@ -37,8 +43,8 @@ describe("domain/user-navigator", () => {
     await job(nodes, new PeerCreater(PeerMockModule));
   }, 600_000);
 
-  // test("webrtc", async () => {
-  //   const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
-  //   await job(nodes, new PeerCreater(PeerModule));
-  // }, 600_000);
+  test("webrtc", async () => {
+    const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
+    await job(nodes, new PeerCreater(PeerModule));
+  }, 600_000);
 });

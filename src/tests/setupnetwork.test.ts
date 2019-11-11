@@ -8,5 +8,6 @@ describe("setup network", () => {
       timeout: 200
     });
     expect(nodes.length).toBe(10);
+    nodes.forEach(v => v.dispose());
   }, 60_000_0);
 });
