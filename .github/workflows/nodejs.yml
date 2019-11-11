@@ -27,6 +27,6 @@ jobs:
           sudo bash -c 'ulimit -n 4096'
           ulimit -a
           sudo yarn
-          sudo yarn ci
+          sudo yarn test
         env:
           CI: true
