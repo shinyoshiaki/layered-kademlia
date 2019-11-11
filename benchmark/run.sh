@@ -1,9 +1,10 @@
 #!/bin/sh
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
+BRANCH=$(echo ${GITHUB_REF##*/})
 TARGET="feature/benchmark"
 
 echo $BRANCH
 
 if [ $BRANCH = $TARGET ]; then
+    yarn
     yarn start
 fi
