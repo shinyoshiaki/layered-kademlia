@@ -23,7 +23,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: yarn install, build, and test
         run: |
-          sudo ulimit -n unlimited
+          ulimit -a
+          sudo sh -c "ulimit -n unlimited && exec su $LOGNAME"
+          ulimit -a
           yarn          
           yarn ci
         env:
