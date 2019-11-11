@@ -24,4 +24,9 @@ export class SubNetworkManager {
   getSubNetwork(url: string) {
     return this.list[url];
   }
+
+  dispose() {
+    Object.values(this.list).forEach(v => v.kad.dispose());
+    this.list = {};
+  }
 }

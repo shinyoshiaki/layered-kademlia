@@ -10,6 +10,7 @@
   "scripts": {
     "build": "tsc",
     "test": "npm run type && jest --forceExit",
+    "ci": "npm run type && jest --runInBand --forceExit",
     "type": "tsc --noEmit --project ./tsconfig.json",
     "publish": "npm publish --access=public",
     "start": "ts-node --project ./tsconfig.json ./src/index.ts",
@@ -36,17 +37,15 @@
     "typescript": "^3.7.2"
   },
   "jest": {
+    "preset": "ts-jest",
     "moduleFileExtensions": [
       "ts",
       "tsx",
       "js"
     ],
-    "transform": {
-      "^.+\\.(ts|tsx)$": "ts-jest"
-    },
     "globals": {
       "ts-jest": {
-        "tsConfigFile": "tsconfig.json"
+        "tsConfig": "tsconfig.json"
       }
     },
     "testMatch": [

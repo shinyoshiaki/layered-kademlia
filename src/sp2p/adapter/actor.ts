@@ -35,5 +35,7 @@ export class SP2P {
     this.services.SeederManager.allSeeder.forEach(seeder => {
       Object.values(seeder.navigatorPeers).forEach(peer => peer.disconnect());
     });
+
+    this.services.SubNetworkManager.dispose();
   }
 }
