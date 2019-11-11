@@ -24,9 +24,9 @@ jobs:
       - name: yarn install, build, and test
         run: |
           ulimit -a
-          sudo sh -c "ulimit -n unlimited && exec su $LOGNAME"
+          sudo bash -c 'ulimit -n 4096'
           ulimit -a
-          yarn          
-          yarn ci
+          sudo yarn
+          sudo yarn ci
         env:
           CI: true
