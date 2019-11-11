@@ -30,3 +30,7 @@ jobs:
           sudo yarn test
         env:
           CI: true
+      - name: benchmark
+        run: |
+          cd benchmark
+          ./run.sh
