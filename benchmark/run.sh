@@ -1,5 +1,5 @@
 #!/bin/sh
-BRANCH=$(echo ${GITHUB_HEAD_REF##*/})
+BRANCH=$(echo ${GITHUB_HEAD##*/})
 TARGET="feature/benchmark"
 
 echo $BRANCH
