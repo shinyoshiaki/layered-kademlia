@@ -29,10 +29,11 @@
     "@types/node": "^11.13.6",
     "@types/sha1": "^1.1.2",
     "jest": "^23.6.0",
+    "prettier": "^1.19.1",
     "ts-jest": "^23.10.5",
     "ts-node": "^8.3.0",
     "tslib": "^1.9.3",
-    "typescript": "^3.7.0-beta"
+    "typescript": "^3.7.2"
   },
   "jest": {
     "moduleFileExtensions": [

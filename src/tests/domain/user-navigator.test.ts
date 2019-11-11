@@ -25,24 +25,20 @@ describe("domain/user-navigator", () => {
 
     await new Promise(r => setTimeout(r, 3_000));
 
-    const finder = actors.shift()!;
+    const finder = actors.pop()!;
 
     const ab = await finder.user.findStatic(url).catch(() => undefined);
 
     expect(Buffer.from(ab!)).toEqual(Buffer.from("test"));
-
-    // actors.forEach(actor => actor.dispose());
-    // user.dispose();
-    // finder.dispose();
   };
 
-  test("mock", async () => {
-    const nodes = await testSetupNodes(3, PeerMockModule, { timeout: 5_000 });
-    await job(nodes, new PeerCreater(PeerMockModule));
-  }, 600_000);
-
-  // test("webrtc", async () => {
-  //   const nodes = await testSetupNodes(3, PeerModule, { timeout: 5_000 });
-  //   await job(nodes, new PeerCreater(PeerModule));
+  // test("mock", async () => {
+  //   const nodes = await testSetupNodes(3, PeerMockModule, { timeout: 5_000 });
+  //   await job(nodes, new PeerCreater(PeerMockModule));
   // }, 600_000);
+
+  test("webrtc", async () => {
+    const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
+    await job(nodes, new PeerCreater(PeerModule));
+  }, 600_000);
 });
