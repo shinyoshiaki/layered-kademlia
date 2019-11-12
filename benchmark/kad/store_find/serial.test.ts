@@ -41,5 +41,5 @@ test(
 
     log("kad end bench", (Date.now() - start) / 1000 + "s");
   },
-  Infinity
+  60_000 * 120
 );
