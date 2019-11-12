@@ -3,7 +3,7 @@ import { PeerMockModule } from "../src/vendor/kademlia";
 import { SP2P } from "../src/sp2p/adapter/actor";
 import { testSetupNodes } from "../src/tests/setupnetwork";
 
-const NODE_NUM = 200;
+const NODE_NUM = 400;
 
 async function layerdKadBenchmark() {
   console.log("layerd Kad");
