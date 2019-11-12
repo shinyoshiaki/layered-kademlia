@@ -1,11 +1,12 @@
-import { PeerCreater } from "../src/sp2p/module/peerCreater";
-import { PeerMockModule } from "../src/vendor/kademlia";
-import { SP2P } from "../src/sp2p/adapter/actor";
-import { testSetupNodes } from "../src/tests/setupnetwork";
+import { PeerCreater } from "../../../src/sp2p/module/peerCreater";
+import { PeerMockModule } from "../../../src/vendor/kademlia";
+import { SP2P } from "../../../src/sp2p/adapter/actor";
+import { testSetupNodes } from "../../../src/tests/setupnetwork";
 
-const NODE_NUM = 100;
+const NODE_NUM = 50;
+const log = (...s: any[]) => console.log(`layered/store_find `, ...s);
 
-async function layerdKadBenchmark() {
+test("layered/store_find", async () => {
   console.log("layerd Kad");
   const start = Date.now();
   const nodes = await testSetupNodes(NODE_NUM, PeerMockModule, {
@@ -24,7 +25,7 @@ async function layerdKadBenchmark() {
       })
     )
   ).filter(v => !!v) as string[];
-  console.log("store", urls.length);
+  log("store", urls.length);
 
   const values = (
     await Promise.all(
@@ -37,9 +38,7 @@ async function layerdKadBenchmark() {
     )
   ).filter(v => !!v) as ArrayBuffer[];
 
-  console.log("findvalue", values.length);
+  log("findvalue", values.length);
 
-  console.log("layerd Kad end bench", (Date.now() - start) / 1000 + "s");
-}
-
-layerdKadBenchmark();
+  log("layerd Kad end bench", (Date.now() - start) / 1000 + "s");
+});

@@ -7,13 +7,30 @@
     "node": ">=11"
   },
   "scripts": {
-    "kad": "ts-node --project ./tsconfig.json ./kad.ts",
-    "layered": "ts-node --project ./tsconfig.json ./layered.ts"
+    "test": "jest --forceExit"
   },
   "dependencies": {
     "typescript": "^3.7.2"
   },
   "devDependencies": {
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
     "ts-node": "^8.1.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.json"
+      }
+    },
+    "testMatch": [
+      "**/*.test.ts"
+    ]
   }
 }

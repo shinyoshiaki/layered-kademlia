@@ -1,16 +1,17 @@
-import { PeerMockModule } from "../src/vendor/kademlia";
-import { testSetupNodes } from "../src/tests/setupnetwork";
+import { PeerMockModule } from "../../../src/vendor/kademlia";
+import { testSetupNodes } from "../../../src/tests/setupnetwork";
 
 const NODE_NUM = 50;
+const log = (...s: any[]) => console.log(`kad/store_find/serial `, ...s);
 
-async function kadBenchmark() {
+test("kad/store_find/serial", async () => {
   const start = Date.now();
-  console.log("kad bench");
+  log("kad bench");
 
   const nodes = await testSetupNodes(NODE_NUM, PeerMockModule, {
     timeout: 10_000
   });
-  console.log("node setup");
+  log("node setup");
 
   const urls = await (async () => {
     const arr: string[] = [];
@@ -20,7 +21,7 @@ async function kadBenchmark() {
     }
     return arr;
   })();
-  console.log("store", urls.length);
+  log("store", urls.length);
 
   const values = await (async () => {
     let arr: any[] = [],
@@ -34,9 +35,7 @@ async function kadBenchmark() {
     }
     return arr;
   })();
-  console.log("findvalue", values.length);
+  log("findvalue", values.length);
 
-  console.log("kad end bench", (Date.now() - start) / 1000 + "s");
-}
-
-kadBenchmark();
+  log("kad end bench", (Date.now() - start) / 1000 + "s");
+});
