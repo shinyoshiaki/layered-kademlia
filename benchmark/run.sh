@@ -7,5 +7,5 @@ echo $BRANCH
 if [ $BRANCH = $TARGET ]; then
     yarn
     yarn kad
-    yarn layered
+    # yarn layered
 fi
