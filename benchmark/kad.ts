@@ -1,7 +1,7 @@
 import { PeerMockModule } from "../src/vendor/kademlia";
 import { testSetupNodes } from "../src/tests/setupnetwork";
 
-const NODE_NUM = 100;
+const NODE_NUM = 200;
 
 async function kadBenchmark() {
   const start = Date.now();
