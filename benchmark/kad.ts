@@ -1,9 +1,7 @@
-import { PeerCreater } from "../src/sp2p/module/peerCreater";
 import { PeerMockModule } from "../src/vendor/kademlia";
-import { SP2P } from "../src/sp2p/adapter/actor";
 import { testSetupNodes } from "../src/tests/setupnetwork";
 
-const NODE_NUM = 50;
+const NODE_NUM = 100;
 
 async function kadBenchmark() {
   const start = Date.now();
