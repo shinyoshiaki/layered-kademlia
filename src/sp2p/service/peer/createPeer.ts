@@ -1,9 +1,9 @@
-import { PeerCreater } from "../../module/peerCreater";
+import { PeerCreator } from "../../module/peerCreator";
 
 export class CreatePeer {
-  constructor(private modules: { PeerCreater: PeerCreater } = {} as any) {}
+  constructor(private modules: { PeerCreator: PeerCreator } = {} as any) {}
 
-  get peerCreater() {
-    return this.modules.PeerCreater;
+  get peerCreator() {
+    return this.modules.PeerCreator;
   }
 }

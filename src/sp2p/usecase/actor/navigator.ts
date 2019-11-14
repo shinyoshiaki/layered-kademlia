@@ -22,7 +22,7 @@ export class NavigatorContainer {
 
       const id = await this.waitForSeeder(url);
 
-      const seederPeer = CreatePeer.peerCreater.create(peer.kid);
+      const seederPeer = CreatePeer.peerCreator.create(peer.kid);
       const offer = await seederPeer.createOffer();
       const res = await RpcManager.getWait<RPCSeederAnswer2Navigator>(
         peer,

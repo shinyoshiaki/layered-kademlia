@@ -1,5 +1,5 @@
 import { PeerModule } from "../vendor/kademlia";
-import { testSetupNodes } from "./setupnetwork";
+import { testSetupNodes } from "./setupNetwork";
 
 describe("setup network", () => {
   test("mock", async () => {

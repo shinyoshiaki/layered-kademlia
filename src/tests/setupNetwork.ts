@@ -1,11 +1,11 @@
-import Kademlia, { KeyValueStore, PeerCreater } from "../vendor/kademlia";
+import Kademlia, { KeyValueStore, PeerCreator } from "../vendor/kademlia";
 
 import { Options } from "../vendor/kademlia";
 import sha1 from "sha1";
 
 export async function testSetupNodes(
   num: number,
-  PeerModule: PeerCreater,
+  PeerModule: PeerCreator,
   opt: Options
 ) {
   const modules = () => ({ peerCreate: PeerModule, kvs: new KeyValueStore() });

@@ -3,7 +3,7 @@ import { Meta, StaticMeta, StreamMeta } from "../data/meta";
 
 import { Chunk } from "../data/stream";
 import Event from "rx.mini";
-import { PeerCreater } from "../../module/peerCreater";
+import { PeerCreator } from "../../module/peerCreator";
 import { genKad } from "./util";
 import { mergeArraybuffer } from "../../../util/arraybuffer";
 
@@ -11,12 +11,12 @@ export class SubNetwork {
   state: { onFinding?: Event } = { onFinding: undefined };
 
   constructor(
-    private peerCreater: PeerCreater,
+    private peerCreator: PeerCreator,
     private existKid: string,
     private meta: Meta
   ) {}
 
-  kad = genKad(this.peerCreater, this.existKid, { timeout: 5_000 });
+  kad = genKad(this.peerCreator, this.existKid, { timeout: 5_000 });
   kid = this.kad.kid;
   store = this.kad.store;
 

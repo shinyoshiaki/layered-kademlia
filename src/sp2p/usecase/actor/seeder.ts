@@ -34,7 +34,7 @@ export class SeederContainer {
       subNet ||
       SubNetworkManager.createNetwork(
         meta,
-        CreatePeer.peerCreater,
+        CreatePeer.peerCreator,
         this.mainNet.kid
       );
     const seeder = SeederManager.createSeeder(
@@ -53,45 +53,47 @@ export class SeederContainer {
     const { CreatePeer, RpcManager } = this.services;
     const { subNetTimeout } = this.options;
 
-    const navigatorPeers = (await Promise.all(
-      peers.map(
-        peer =>
-          new Promise<Peer | undefined>(async r => {
-            const wait = RpcManager.getWait<RPCNavigatorOffer2Seeder>(
-              peer,
-              RPCSeederStoreDone(url)
-            );
-            const res = await wait(subNetTimeout).catch(() => {});
-            if (!res) {
-              r();
-              return;
-            }
+    const navigatorPeers = (
+      await Promise.all(
+        peers.map(
+          peer =>
+            new Promise<Peer | undefined>(async r => {
+              const wait = RpcManager.getWait<RPCNavigatorOffer2Seeder>(
+                peer,
+                RPCSeederStoreDone(url)
+              );
+              const res = await wait(subNetTimeout).catch(() => {});
+              if (!res) {
+                r();
+                return;
+              }
 
-            const navigatorPeer = CreatePeer.peerCreater.create(peer.kid);
-            const answer = await navigatorPeer
-              .setOffer(res.sdp)
-              .catch(() => {});
-            if (!answer) {
-              // console.log("timeout setoffer");
-              r();
-              return;
-            }
+              const navigatorPeer = CreatePeer.peerCreator.create(peer.kid);
+              const answer = await navigatorPeer
+                .setOffer(res.sdp)
+                .catch(() => {});
+              if (!answer) {
+                // console.log("timeout setOffer");
+                r();
+                return;
+              }
 
-            peer.rpc({ ...RPCSeederAnswer2Navigator(answer), id: res.id });
+              peer.rpc({ ...RPCSeederAnswer2Navigator(answer), id: res.id });
 
-            const err = await navigatorPeer.onConnect
-              .asPromise(subNetTimeout)
-              .catch(() => "err");
+              const err = await navigatorPeer.onConnect
+                .asPromise(subNetTimeout)
+                .catch(() => "err");
 
-            if (err) {
-              r();
-              return;
-            }
+              if (err) {
+                r();
+                return;
+              }
 
-            r(navigatorPeer);
-          })
+              r(navigatorPeer);
+            })
+        )
       )
-    )).filter(v => v) as Peer[];
+    ).filter(v => v) as Peer[];
 
     navigatorPeers.forEach(navigatorPeer => {
       seeder.addNavigatorPeer(navigatorPeer);

@@ -40,7 +40,7 @@ export class Seeder {
       .subscribe(async ({ rpc, peer }) => {
         if (url === rpc.url) {
           //emulate navigator behave
-          const userPeer = CreatePeer.peerCreater.create(rpc.userKid);
+          const userPeer = CreatePeer.peerCreator.create(rpc.userKid);
           const offer = await userPeer.createOffer();
           const res = await RpcManager.getWait<
             RPCUserAnswerSeederOverNavigator
@@ -66,7 +66,7 @@ export class Seeder {
       RPCNavigatorReqSeederOfferByUser
     >("RPCNavigatorReqSeederOfferByUser", navigatorPeer).subscribe(
       async rpc => {
-        const userPeer = CreatePeer.peerCreater.create(rpc.userKid);
+        const userPeer = CreatePeer.peerCreator.create(rpc.userKid);
         const offer = await userPeer.createOffer();
 
         const res = await RpcManager.getWait<RPCNavigatorBackAnswerByUser>(
