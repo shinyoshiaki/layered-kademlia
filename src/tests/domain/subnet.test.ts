@@ -1,7 +1,7 @@
-import { PeerCreater } from "../../sp2p/module/peerCreater";
+import { PeerCreator } from "../../sp2p/module/peerCreator";
 import { PeerModule } from "../../vendor/kademlia";
 import { SP2P } from "../../sp2p/adapter/actor";
-import { testSetupNodes } from "../setupnetwork";
+import { testSetupNodes } from "../setupNetwork";
 
 describe("domain/subnet", () => {
   test("", async () => {
@@ -9,7 +9,7 @@ describe("domain/subnet", () => {
       timeout: 1_000
     });
     const actors = nodes.map(
-      v => new SP2P({ PeerCreater: new PeerCreater(PeerModule) }, v, {})
+      v => new SP2P({ PeerCreator: new PeerCreator(PeerModule) }, v, {})
     );
 
     const seederNode = actors.shift()!;

@@ -43,13 +43,14 @@ export class User {
 
     const navigatorRes = await RpcManager.getWait<
       RPCNavigatorBackOfferBySeeder
-    >(peer, RPCUserReqSeederOffer2Navigator(this.mainNet.kid, url))(
-      subNetTimeout
-    ).catch(() => {});
+    >(
+      peer,
+      RPCUserReqSeederOffer2Navigator(this.mainNet.kid, url)
+    )(subNetTimeout).catch(() => {});
     if (!navigatorRes)
       throw new Error("connectSubNet fail RPCUserReqSeederOffer2Navigator");
 
-    const seederPeer = CreatePeer.peerCreater.create(navigatorRes.seederKid);
+    const seederPeer = CreatePeer.peerCreator.create(navigatorRes.seederKid);
     const answer = await seederPeer.setOffer(navigatorRes.sdp).catch(() => {});
     if (!answer) throw new Error("connectSubNet fail setOffer");
 
@@ -65,7 +66,7 @@ export class User {
 
     const subNet = SubNetworkManager.createNetwork(
       meta,
-      CreatePeer.peerCreater,
+      CreatePeer.peerCreator,
       this.mainNet.kid
     );
 
@@ -95,7 +96,7 @@ export class User {
     const res = await subNet.findStaticMetaTarget();
 
     // if (res) {
-    //   await seederConrainer.storeStatic(meta.name, Buffer.from(res));
+    //   await seederContainer.storeStatic(meta.name, Buffer.from(res));
     // }
     return res;
   }

@@ -1,6 +1,6 @@
 import Event from "rx.mini";
 import { Meta } from "../../entity/data/meta";
-import { PeerCreater } from "../../module/peerCreater";
+import { PeerCreator } from "../../module/peerCreator";
 import { SubNetwork } from "../../entity/network/sub";
 import sha1 from "sha1";
 
@@ -9,7 +9,7 @@ export class SubNetworkManager {
 
   event = new Event();
 
-  createNetwork(meta: Meta, peerCrater: PeerCreater, kid: string) {
+  createNetwork(meta: Meta, peerCrater: PeerCreator, kid: string) {
     const url = sha1(JSON.stringify(meta));
     if (this.isExist(url)) return this.list[url];
     this.list[url] = new SubNetwork(peerCrater, kid, meta);
