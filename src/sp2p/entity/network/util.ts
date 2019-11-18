@@ -1,11 +1,11 @@
 import Kademlia, { Options } from "../../../vendor/kademlia";
 
 import KeyValueStore from "../../../vendor/kademlia/modules/kvs/base";
-import { PeerCreater } from "../../module/peerCreater";
+import { PeerCreator } from "../../module/peerCreator";
 import genKid from "../../../vendor/kademlia/util/kid";
 
 export const genKad = (
-  peerCreate: PeerCreater,
+  peerCreate: PeerCreator,
   kid: string,
   option?: Options
 ) =>
