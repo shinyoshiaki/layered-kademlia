@@ -2,8 +2,6 @@ import Event from "rx.mini";
 import { Peer } from "../../../src/vendor/kademlia";
 import { RPC } from "../../../src/vendor/kademlia/modules/peer/base";
 
-export const TrafficKeyword = "traffic benchmark";
-
 export const PeerTrafficMockModule = (kid: string) => new PeerTraffickMock(kid);
 const context = { traffic: 0 };
 export function resetTrafficContext() {
@@ -15,7 +13,7 @@ export function getTrafficContextTraffic() {
 }
 export class PeerTraffickMock implements Peer {
   type = "mock";
-  onData = new Event<RPC>();
+  onData = new Event<{ data: RPC; mock: any }>();
 
   onRpc = new Event<any>();
   onDisconnect = new Event();
@@ -23,31 +21,45 @@ export class PeerTraffickMock implements Peer {
   targetContext?: PeerTraffickMock;
 
   constructor(public kid: string) {
-    this.onData.subscribe(data => {
-      try {
-        if (data.type) {
-          if (data.TrafficKeyword === TrafficKeyword) {
-            context.traffic += 1;
-          }
-          this.onRpc.execute(data);
+    this.onData.subscribe(({ mock, data }) => {
+      if (data.type) {
+        if (mock.size) {
+          context.traffic += mock.size as any;
         }
-      } catch (error) {}
+        this.onRpc.execute(data);
+      }
     });
   }
 
-  rpc = async (data: { type: string; id: string }) => {
+  rpc = async (data: { type: string; id: string; [key: string]: any }) => {
     await new Promise(r => setTimeout(r));
     if (data.type === "Store" || data.type === "FindValueResult") {
-      (data as any).TrafficKeyword = TrafficKeyword;
+      const mock: any = {};
+      // console.log("rpc", data);
+
+      // for kad
+      if ((data.value as Buffer).toString() === "value") {
+        mock.size = 16000;
+      }
+
+      // 注意 static storeなので、シーダーは初期Store時に誰にもStoreすることはないので、
+      // Spyするさいには、FindValueResultのみを見ればよい
+
+      // layered kad
+      if (data.type === "FindValueResult" && data.value?.item) {
+        mock.size = 16000;
+      }
+      this.targetContext!.onData.execute({ data, mock });
+    } else {
+      this.targetContext!.onData.execute({ data, mock: {} });
     }
-    this.targetContext!.onData.execute(data);
   };
 
   parseRPC = (data: ArrayBuffer) => undefined as any;
 
   eventRpc = (type: string, id: string) => {
     const observer = new Event<any>();
-    const { unSubscribe } = this.onData.subscribe(data => {
+    const { unSubscribe } = this.onData.subscribe(({ data }) => {
       if (data.type === type && data.id === id) {
         observer.execute(data);
         unSubscribe();

@@ -15,7 +15,7 @@ export const benchmarkKadTraffic = async (NODE_NUM: number) => {
   });
 
   const store = nodes.pop()!;
-  const res = await store.store(store.kid).catch(() => {});
+  const res = await store.store(Buffer.from("value")).catch(() => {});
   if (!res) throw new Error("");
   const url = res.item.key;
 

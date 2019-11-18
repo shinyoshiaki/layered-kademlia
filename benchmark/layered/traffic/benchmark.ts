@@ -22,7 +22,7 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
 
   const store = actors.shift()!;
   const res = await store.seeder
-    .storeStatic(store.mainNet.kid, Buffer.from(store.mainNet.kid))
+    .storeStatic(store.mainNet.kid, Buffer.from("value"))
     .catch(() => {});
   if (!res) throw new Error("fail");
   const url = res.url;
