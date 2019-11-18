@@ -26,8 +26,8 @@ export class PeerTraffickMock implements Peer {
     this.onData.subscribe(data => {
       try {
         if (data.type) {
-          if (data.value === TrafficKeyword) {
-            context.traffic += 16000;
+          if (data.TrafficKeyword === TrafficKeyword) {
+            context.traffic += 1;
           }
           this.onRpc.execute(data);
         }
@@ -37,6 +37,9 @@ export class PeerTraffickMock implements Peer {
 
   rpc = async (data: { type: string; id: string }) => {
     await new Promise(r => setTimeout(r));
+    if (data.type === "Store" || data.type === "FindValueResult") {
+      (data as any).TrafficKeyword = TrafficKeyword;
+    }
     this.targetContext!.onData.execute(data);
   };
 

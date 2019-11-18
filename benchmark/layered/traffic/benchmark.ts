@@ -3,21 +3,21 @@ import {
   getTrafficContextTraffic
 } from "../../mock/peer/traffic";
 
-import { PeerCreater } from "../../../src/sp2p/module/peerCreater";
+import { PeerCreator } from "../../../src/sp2p/module/peerCreator";
 import { SP2P } from "../../../src/sp2p/adapter/actor";
-import { testSetupNodes } from "../../../src/tests/setupnetwork";
+import { testSetupNodes } from "../../../src/tests/setupNetwork";
 
-const NODE_NUM = 10;
 const log = (...s: any[]) => console.log(`layered/traffic `, ...s);
 
-export async function benchmarkLayeredTraffic() {
+export async function benchmarkLayeredTraffic(NODE_NUM: number) {
+  log("start");
   const start = Date.now();
   const nodes = await testSetupNodes(NODE_NUM, PeerTrafficMockModule, {
     timeout: 10_000
   });
   const actors = nodes.map(
     node =>
-      new SP2P({ PeerCreater: new PeerCreater(PeerTrafficMockModule) }, node)
+      new SP2P({ PeerCreator: new PeerCreator(PeerTrafficMockModule) }, node)
   );
   const urls = (
     await Promise.all(
@@ -41,7 +41,6 @@ export async function benchmarkLayeredTraffic() {
       })
     )
   ).filter(v => !!v) as ArrayBuffer[];
-
   log("findvalue", values.length);
 
   log(
@@ -49,4 +48,5 @@ export async function benchmarkLayeredTraffic() {
     (Date.now() - start) / 1000 + "s",
     getTrafficContextTraffic()
   );
+  await new Promise(r => setTimeout(r, 1000));
 }

@@ -1,17 +1,18 @@
-import { PeerTrafficMockModule } from "../../mock/peer/traffic";
-import { testSetupNodes } from "../../../src/tests/setupnetwork";
+import {
+  PeerTrafficMockModule,
+  getTrafficContextTraffic
+} from "../../mock/peer/traffic";
 
-const NODE_NUM = 10;
-const log = (...s: any[]) => console.log(`kad/store_find/parallel `, ...s);
+import { testSetupNodes } from "../../../src/tests/setupNetwork";
 
-export const benchmarkKadTraffic = async () => {
+const log = (...s: any[]) => console.log(`kad/traffic `, ...s);
+
+export const benchmarkKadTraffic = async (NODE_NUM: number) => {
+  log("start");
   const start = Date.now();
-  log("kad bench");
-
   const nodes = await testSetupNodes(NODE_NUM, PeerTrafficMockModule, {
     timeout: 10_000
   });
-  log("node setup");
 
   const urls = (
     await Promise.all(
@@ -35,5 +36,9 @@ export const benchmarkKadTraffic = async () => {
   ).filter(v => !!v);
   log("findvalue", values.length);
 
-  log("kad end bench", (Date.now() - start) / 1000 + "s");
+  log(
+    "end bench",
+    (Date.now() - start) / 1000 + "s",
+    getTrafficContextTraffic()
+  );
 };
