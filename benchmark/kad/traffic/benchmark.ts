@@ -14,22 +14,17 @@ export const benchmarkKadTraffic = async (NODE_NUM: number) => {
     timeout: 10_000
   });
 
-  const urls = (
-    await Promise.all(
-      nodes.map(async node => {
-        const res = await node.store(node.kid).catch(() => {});
-        if (res) return res.item.key;
-      })
-    )
-  ).filter(v => !!v) as string[];
-  log("store", urls.length);
+  const store = nodes.pop()!;
+  const res = await store.store(store.kid).catch(() => {});
+  if (!res) throw new Error("");
+  const url = res.item.key;
+
+  await new Promise(r => setTimeout(r, 5000));
 
   const values = (
     await Promise.all(
-      nodes.map(async (node, i) => {
-        const res = await node
-          .findValue(urls[urls.length - i - 1])
-          .catch(() => {});
+      nodes.map(async node => {
+        const res = await node.findValue(url).catch(() => {});
         if (res) return res.item.value;
       })
     )

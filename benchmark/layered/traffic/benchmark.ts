@@ -19,24 +19,18 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
     node =>
       new SP2P({ PeerCreator: new PeerCreator(PeerTrafficMockModule) }, node)
   );
-  const urls = (
-    await Promise.all(
-      actors.map(async actor => {
-        const res = await actor.seeder
-          .storeStatic(actor.mainNet.kid, Buffer.from(actor.mainNet.kid))
-          .catch(() => {});
-        if (res) return res.url;
-      })
-    )
-  ).filter(v => !!v) as string[];
-  log("store", urls.length);
+
+  const store = actors.shift()!;
+  const res = await store.seeder
+    .storeStatic(store.mainNet.kid, Buffer.from(store.mainNet.kid))
+    .catch(() => {});
+  if (!res) throw new Error("fail");
+  const url = res.url;
 
   const values = (
     await Promise.all(
-      actors.map(async (actor, i) => {
-        const res = await actor.user
-          .findStatic(urls[urls.length - i - 1])
-          .catch(() => {});
+      actors.map(async actor => {
+        const res = await actor.user.findStatic(url).catch(() => {});
         if (res) return res;
       })
     )

@@ -60,10 +60,16 @@ export class PeerTraffickMock implements Peer {
 
   setOffer = async (sdp: any) => {
     this.targetContext = sdp as PeerTraffickMock;
+    if (this === undefined) {
+      console;
+    }
     return this as any;
   };
 
   setAnswer = async (sdp: any) => {
+    if (sdp === undefined) {
+      console;
+    }
     const { onConnect } = sdp as PeerTraffickMock;
     this.targetContext = sdp;
 

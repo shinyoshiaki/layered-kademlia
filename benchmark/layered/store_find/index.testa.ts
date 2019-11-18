@@ -1,7 +1,7 @@
-import { PeerCreater } from "../../../src/sp2p/module/peerCreater";
+import { PeerCreator } from "../../../src/sp2p/module/peerCreator";
 import { PeerMockModule } from "../../../src/vendor/kademlia";
 import { SP2P } from "../../../src/sp2p/adapter/actor";
-import { testSetupNodes } from "../../../src/tests/setupnetwork";
+import { testSetupNodes } from "../../../src/tests/setupNetwork";
 
 const NODE_NUM = 50;
 const log = (...s: any[]) => console.log(`layered/store_find `, ...s);
@@ -9,13 +9,13 @@ const log = (...s: any[]) => console.log(`layered/store_find `, ...s);
 test(
   "layered/store_find",
   async () => {
-    console.log("layerd Kad");
+    console.log("layered Kad");
     const start = Date.now();
     const nodes = await testSetupNodes(NODE_NUM, PeerMockModule, {
       timeout: 10_000
     });
     const actors = nodes.map(
-      node => new SP2P({ PeerCreater: new PeerCreater(PeerMockModule) }, node)
+      node => new SP2P({ PeerCreator: new PeerCreator(PeerMockModule) }, node)
     );
     const urls = (
       await Promise.all(

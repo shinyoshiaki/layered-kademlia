@@ -1,5 +1,5 @@
 import { PeerMockModule } from "../../../src/vendor/kademlia";
-import { testSetupNodes } from "../../../src/tests/setupnetwork";
+import { testSetupNodes } from "../../../src/tests/setupNetwork";
 
 const NODE_NUM = 50;
 const log = (...s: any[]) => console.log(`kad/store_find/serial `, ...s);
