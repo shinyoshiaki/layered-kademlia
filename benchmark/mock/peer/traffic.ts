@@ -39,7 +39,7 @@ export class PeerTraffickMock implements Peer {
 
       // for kad
       if ((data.value as Buffer).toString() === "value") {
-        mock.size = 16000;
+        mock.size = 1;
       }
 
       // 注意 static storeなので、シーダーは初期Store時に誰にもStoreすることはないので、
@@ -47,7 +47,7 @@ export class PeerTraffickMock implements Peer {
 
       // layered kad
       if (data.type === "FindValueResult" && data.value?.item) {
-        mock.size = 16000;
+        mock.size = 1;
       }
       this.targetContext!.onData.execute({ data, mock });
     } else {
