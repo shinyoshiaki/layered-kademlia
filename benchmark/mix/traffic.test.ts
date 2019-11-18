@@ -6,7 +6,7 @@ import {
 import { benchmarkKadTraffic } from "../kad/traffic/benchmark";
 import { benchmarkLayeredTraffic } from "../layered/traffic/benchmark";
 
-const NODE_NUM = 20;
+const NODE_NUM = 15;
 
 test(
   "mix/traffic",
