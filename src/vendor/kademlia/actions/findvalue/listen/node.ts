@@ -66,9 +66,9 @@ export default class FindValueProxy {
   };
 }
 
-const FindValueResult = (data: Partial<{ item: Item; offers: Offer[] }>) => ({
+const FindValueResult = (value: Partial<{ item: Item; offers: Offer[] }>) => ({
   type: "FindValueResult" as const,
-  data
+  value
 });
 
 export type Offer = { peerkid: string; sdp: Signal };
