@@ -27,7 +27,8 @@ export class NavigatorContainer {
       const res = await RpcManager.getWait<RPCSeederAnswer2Navigator>(
         peer,
         RPCNavigatorOffer2Seeder(offer),
-        id
+        id,
+        "RPCSeederAnswer2Navigator"
       )(subNetTimeout).catch(() => {});
 
       if (!res) {
