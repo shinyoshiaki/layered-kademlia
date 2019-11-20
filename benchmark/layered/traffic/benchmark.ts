@@ -13,11 +13,13 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
   log("start");
   const start = Date.now();
   const nodes = await testSetupNodes(NODE_NUM, PeerTrafficMockModule, {
-    timeout: 10_000
+    timeout: 60_000 * 60 * 24
   });
   const actors = nodes.map(
     node =>
-      new SP2P({ PeerCreator: new PeerCreator(PeerTrafficMockModule) }, node)
+      new SP2P({ PeerCreator: new PeerCreator(PeerTrafficMockModule) }, node, {
+        subNetTimeout: 60_000 * 60 * 24
+      })
   );
 
   const store = actors.shift()!;
