@@ -19,10 +19,7 @@ const Static: React.FC = () => {
   };
 
   const onClickFind = async () => {
-    const res = await sP2PClient.actor.user.findStatic(
-      key,
-      sP2PClient.actor.seeder
-    );
+    const res = await sP2PClient.actor.user.findStatic(key);
     setMsg(Buffer.from(res).toString());
   };
 
