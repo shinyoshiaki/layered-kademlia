@@ -13,7 +13,8 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
   log("start");
   const start = Date.now();
   const nodes = await testSetupNodes(NODE_NUM, PeerTrafficMockModule, {
-    timeout: 60_000 * 60 * 24
+    timeout: 60_000 * 60 * 24,
+    kBucketSize: 8
   });
   console.log("node setup done", nodes.length);
 
