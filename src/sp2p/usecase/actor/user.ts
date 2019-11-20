@@ -36,8 +36,6 @@ export class User {
         if (err) throw new Error("timeout onFinding");
       }
 
-      await subNet.findNode();
-
       return { subNet, meta };
     }
 
@@ -47,8 +45,10 @@ export class User {
       peer,
       RPCUserReqSeederOffer2Navigator(this.mainNet.kid, url)
     )(subNetTimeout).catch(() => {});
-    if (!navigatorRes)
+
+    if (!navigatorRes) {
       throw new Error("connectSubNet fail RPCUserReqSeederOffer2Navigator");
+    }
 
     const seederPeer = CreatePeer.peerCreator.create(navigatorRes.seederKid);
     const answer = await seederPeer.setOffer(navigatorRes.sdp).catch(() => {});
@@ -74,19 +74,20 @@ export class User {
 
     await subNet.findNode();
 
+    // UserはSeederを兼ねる
     const seederContainer = new SeederContainer(
       this.services,
       this.mainNet,
       this.options
     );
 
-    await seederContainer.connect(meta, subNet);
+    await seederContainer.userConnect(meta, subNet);
 
     return { subNet, meta };
   };
 
   async findStatic(url: string) {
-    const connect = await this.connectSubNet(url).catch(() => undefined);
+    const connect = await this.connectSubNet(url).catch(() => {});
     if (!connect) {
       throw new Error("connect failed");
     }

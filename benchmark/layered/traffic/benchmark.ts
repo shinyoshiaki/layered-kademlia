@@ -15,6 +15,8 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
   const nodes = await testSetupNodes(NODE_NUM, PeerTrafficMockModule, {
     timeout: 60_000 * 60 * 24
   });
+  console.log("node setup done", nodes.length);
+
   const actors = nodes.map(
     node =>
       new SP2P({ PeerCreator: new PeerCreator(PeerTrafficMockModule) }, node, {

@@ -31,7 +31,7 @@
       }
     },
     "testMatch": [
-      "**/*.test.ts"
+      "**/*.bench.ts"
     ]
   }
 }
