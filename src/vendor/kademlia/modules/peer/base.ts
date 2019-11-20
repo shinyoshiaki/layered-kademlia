@@ -19,6 +19,7 @@ class PeerClass {
 
 type PeerProps = {
   type: string;
+  OfferAnswer: "offer" | "answer" | undefined;
   onRpc: Event<RPCBase & ID>;
   onDisconnect: Event;
   onConnect: Event;
@@ -37,6 +38,7 @@ type PeerProps = {
 export class PeerMock implements Peer {
   type = "mock";
   onData = new Event<RPC>();
+  OfferAnswer: "offer" | "answer" | undefined = undefined;
 
   onRpc = new Event<any>();
   onDisconnect = new Event();
@@ -71,9 +73,13 @@ export class PeerMock implements Peer {
     return observer;
   };
 
-  createOffer = async () => this as any;
+  createOffer = async () => {
+    this.OfferAnswer = "offer";
+    return this as any;
+  };
 
   setOffer = async (sdp: any) => {
+    this.OfferAnswer = "answer";
     this.targetContext = sdp as PeerMock;
     return this as any;
   };

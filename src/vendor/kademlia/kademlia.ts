@@ -22,15 +22,15 @@ export default class Kademlia {
     this.di = dependencyInjection(kid, modules, opt);
   }
 
-  findNode = async (searchkid: string) => {
+  findNode = async (searchKid: string) => {
     let target: Peer[] | undefined;
 
     for (
       let pre = "";
-      pre !== this.di.kTable.getHash(searchkid);
-      pre = this.di.kTable.getHash(searchkid)
+      pre !== this.di.kTable.getHash(searchKid);
+      pre = this.di.kTable.getHash(searchKid)
     ) {
-      target = await findNode(searchkid, this.di);
+      target = await findNode(searchKid, this.di);
       if (target) break;
     }
 

@@ -22,13 +22,12 @@ export default async function findValue(
       kTable.allPeers.map(async proxy => {
         const except = kTable.findNode(key).map(({ kid }) => kid);
 
-        const wait = rpcManager.getWait<FindValueResult>(
-          proxy,
-          FindValue(key, except)
-        );
-        const res = await wait(timeout).catch(() => {
-          return undefined;
-        });
+        const res = await rpcManager
+          .getWait<FindValueResult>(
+            proxy,
+            FindValue(key, except)
+          )(timeout)
+          .catch(() => {});
 
         if (res) {
           const { item, offers } = res.value;
@@ -53,7 +52,7 @@ export default async function findValue(
       const { peerkid, sdp } = offer;
       const { peer, candidate } = signaling.create(peerkid);
 
-      if (peer) {
+      const _createAnswer = async (peer: Peer) => {
         const answer = await peer.setOffer(sdp);
 
         rpcManager.run(proxy, FindValueAnswer(answer, peerkid));
@@ -66,11 +65,19 @@ export default async function findValue(
         } else {
           listeners(peer, di);
         }
+      };
+
+      if (peer) {
+        await _createAnswer(peer);
       } else if (candidate) {
-        const peer = await candidate.asPromise(timeout).catch(() => {
-          return undefined;
-        });
-        if (peer) listeners(peer, di);
+        const { peer, event } = candidate;
+        // node.ts側でタイミング悪くPeerを作ってしまった場合の処理
+        // (並行テスト時にしか起きないと思う)
+        if (peer.OfferAnswer === "offer") {
+          await _createAnswer(peer);
+        } else {
+          await event.asPromise(timeout).catch(() => {});
+        }
       }
       // 相手側のlistenが完了するまで待つ
       // TODO : ちゃんと実装する

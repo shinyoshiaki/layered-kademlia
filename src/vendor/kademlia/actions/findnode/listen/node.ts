@@ -17,7 +17,7 @@ export default class FindNodeProxy {
 
     rpcManager
       .asObservable<FindNodeAnswer>("FindNodeAnswer", listen)
-      .subscribe(this.findnodeanswer);
+      .subscribe(this.findNodeAnswer);
   }
 
   findnode = async (data: FindNode & ID) => {
@@ -33,13 +33,13 @@ export default class FindNodeProxy {
 
     await Promise.all(
       peers.map(async peer => {
-        const wait = rpcManager.getWait<FindNodePeerOffer>(
-          peer,
-          FindNodeProxyOpen(this.listen.kid)
-        );
-        const res = await wait(this.timeout).catch(() => {
-          return undefined;
-        });
+        const res = await rpcManager
+          .getWait<FindNodePeerOffer>(
+            peer,
+            FindNodeProxyOpen(this.listen.kid)
+          )(this.timeout)
+          .catch(() => {});
+
         if (res) {
           const { peerkid, sdp } = res;
           if (sdp) offers.push({ peerkid, sdp });
@@ -50,7 +50,7 @@ export default class FindNodeProxy {
     this.listen.rpc({ ...FindNodeProxyOffer(offers), id });
   };
 
-  findnodeanswer = async (data: FindNodeAnswer & ID) => {
+  findNodeAnswer = async (data: FindNodeAnswer & ID) => {
     const { kTable } = this.di;
     const { sdp, peerkid, id } = data;
 
@@ -79,10 +79,10 @@ const FindNodeProxyOpen = (finderkid: string) => ({
 
 export type FindNodeProxyOpen = ReturnType<typeof FindNodeProxyOpen>;
 
-const FindNodeProxyAnswer = (sdp: Signal, finderkid: string) => ({
+const FindNodeProxyAnswer = (sdp: Signal, finderKid: string) => ({
   type: "FindNodeProxyAnswer" as const,
   sdp,
-  finderkid
+  finderkid: finderKid
 });
 
 export type FindNodeProxyAnswer = ReturnType<typeof FindNodeProxyAnswer>;
