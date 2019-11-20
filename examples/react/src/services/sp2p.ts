@@ -1,10 +1,10 @@
-import Kademlia from "../../../../../src/vendor/kademlia";
-import KeyValueStore from "../../../../../src/vendor/kademlia/modules/kvs/base";
-import { PeerCreater } from "../../../../../src/sp2p/module/peerCreater";
-import PeerModule from "../../../../../src/vendor/kademlia/modules/peer";
-import { SP2P } from "../../../../../src/sp2p/adapter/actor";
+import Kademlia from "../../../../src/vendor/kademlia";
+import KeyValueStore from "../../../../src/vendor/kademlia/modules/kvs/base";
+import { PeerCreator } from "../../../../src/sp2p/module/peerCreator";
+import PeerModule from "../../../../src/vendor/kademlia/modules/peer";
+import { SP2P } from "../../../../src/sp2p/adapter/actor";
 import axios from "axios";
-import genKid from "../../../../../src/vendor/kademlia/util/kid";
+import genKid from "../../../../src/vendor/kademlia/util/kid";
 
 export class SP2PClient {
   kad = new Kademlia(
@@ -15,7 +15,7 @@ export class SP2PClient {
     },
     { timeout: 5000 }
   );
-  actor = new SP2P({ PeerCreater: new PeerCreater(PeerModule) }, this.kad);
+  actor = new SP2P({ PeerCreator: new PeerCreator(PeerModule) }, this.kad);
 
   constructor() {}
 

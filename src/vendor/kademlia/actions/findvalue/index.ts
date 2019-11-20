@@ -31,7 +31,7 @@ export default async function findValue(
         });
 
         if (res) {
-          const { item, offers } = res.data;
+          const { item, offers } = res.value;
 
           if (item && !result) {
             result = { item, peer: proxy };
