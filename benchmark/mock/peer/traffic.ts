@@ -13,6 +13,7 @@ export function getTrafficContextTraffic() {
 }
 export class PeerTraffickMock implements Peer {
   type = "mock";
+  OfferAnswer: "offer" | "answer" | undefined = undefined;
   onData = new Event<{ data: RPC; mock: any }>();
 
   onRpc = new Event<any>();
@@ -68,20 +69,18 @@ export class PeerTraffickMock implements Peer {
     return observer;
   };
 
-  createOffer = async () => this as any;
+  createOffer = async () => {
+    this.OfferAnswer = "offer";
+    return this as any;
+  };
 
   setOffer = async (sdp: any) => {
+    this.OfferAnswer = "answer";
     this.targetContext = sdp as PeerTraffickMock;
-    if (this === undefined) {
-      console;
-    }
     return this as any;
   };
 
   setAnswer = async (sdp: any) => {
-    if (sdp === undefined) {
-      console;
-    }
     const { onConnect } = sdp as PeerTraffickMock;
     this.targetContext = sdp;
 
