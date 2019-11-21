@@ -7,18 +7,19 @@ import { testSetupNodes } from "../../../src/tests/setupNetwork";
 
 const log = (...s: any[]) => console.log(`kad/traffic `, ...s);
 
-export const benchmarkKadTraffic = async (NODE_NUM: number) => {
-  log("start");
+export const benchmarkKadTraffic = async (
+  NODE_NUM: number,
+  GROUP_NUM: number,
+  KBUCKET_SIZE: number
+) => {
   const start = Date.now();
   const nodes = await testSetupNodes(NODE_NUM, PeerTrafficMockModule, {
     timeout: 60_000 * 60 * 24,
-    kBucketSize: 20
+    kBucketSize: KBUCKET_SIZE
   });
 
-  const divide = 3;
-
   const urls = await Promise.all(
-    [...Array(divide)].map(async () => {
+    [...Array(GROUP_NUM)].map(async () => {
       const store = nodes.shift()!;
       const res = await store.store(Buffer.from("value")).catch(() => {});
       if (!res) throw new Error("fail");
@@ -27,11 +28,11 @@ export const benchmarkKadTraffic = async (NODE_NUM: number) => {
     })
   );
 
-  const groupe = nodes.length / divide;
+  const group = nodes.length / GROUP_NUM;
   const values = (
     await Promise.all(
       nodes.map(async (node, i) => {
-        const url = urls[Math.floor(i / groupe)];
+        const url = urls[Math.floor(i / group)];
         const res = await node.findValue(url).catch(() => {});
         if (res) return res.item.value;
       })
@@ -42,6 +43,7 @@ export const benchmarkKadTraffic = async (NODE_NUM: number) => {
   log(
     "end bench",
     (Date.now() - start) / 1000 + "s",
+    "traffic",
     getTrafficContextTraffic()
   );
 };

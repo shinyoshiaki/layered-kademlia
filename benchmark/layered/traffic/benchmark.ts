@@ -9,27 +9,27 @@ import { testSetupNodes } from "../../../src/tests/setupNetwork";
 
 const log = (...s: any[]) => console.log(`layered/traffic `, ...s);
 
-export async function benchmarkLayeredTraffic(NODE_NUM: number) {
-  log("start");
+export async function benchmarkLayeredTraffic(
+  NODE_NUM: number,
+  GROUP_NUM: number,
+  KBUCKET_SIZE: number
+) {
   const start = Date.now();
   const nodes = await testSetupNodes(NODE_NUM, PeerTrafficMockModule, {
     timeout: 60_000 * 60 * 24,
-    kBucketSize: 20
+    kBucketSize: KBUCKET_SIZE
   });
-  console.log("node setup done", nodes.length);
 
   const actors = nodes.map(
     node =>
       new SP2P({ PeerCreator: new PeerCreator(PeerTrafficMockModule) }, node, {
         subNetTimeout: 60_000 * 60 * 24,
-        kBucketSize: 20
+        kBucketSize: KBUCKET_SIZE
       })
   );
 
-  const divide = 3;
-
   const urls = await Promise.all(
-    [...Array(divide)].map(async () => {
+    [...Array(GROUP_NUM)].map(async () => {
       const store = actors.shift()!;
       const res = await store.seeder
         .storeStatic(store.mainNet.kid, Buffer.from("value"))
@@ -39,11 +39,11 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
     })
   );
 
-  const groupe = nodes.length / divide;
+  const group = nodes.length / GROUP_NUM;
   const values = (
     await Promise.all(
       actors.map(async (actor, i) => {
-        const url = urls[Math.floor(i / groupe)];
+        const url = urls[Math.floor(i / group)];
         const res = await actor.user.findStatic(url).catch(() => {});
         if (res) return res;
       })
@@ -55,6 +55,7 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
   log(
     "end bench",
     (Date.now() - start) / 1000 + "s",
+    "traffic",
     getTrafficContextTraffic()
   );
   await new Promise(r => setTimeout(r, 1000));
