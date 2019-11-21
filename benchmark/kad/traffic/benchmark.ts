@@ -12,7 +12,7 @@ export const benchmarkKadTraffic = async (NODE_NUM: number) => {
   const start = Date.now();
   const nodes = await testSetupNodes(NODE_NUM, PeerTrafficMockModule, {
     timeout: 60_000 * 60 * 24,
-    kBucketSize: 8
+    kBucketSize: 20
   });
 
   const divide = 3;

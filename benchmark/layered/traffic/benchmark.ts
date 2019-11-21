@@ -14,7 +14,7 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
   const start = Date.now();
   const nodes = await testSetupNodes(NODE_NUM, PeerTrafficMockModule, {
     timeout: 60_000 * 60 * 24,
-    kBucketSize: 8
+    kBucketSize: 20
   });
   console.log("node setup done", nodes.length);
 
@@ -22,7 +22,7 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
     node =>
       new SP2P({ PeerCreator: new PeerCreator(PeerTrafficMockModule) }, node, {
         subNetTimeout: 1_000 * NODE_NUM,
-        kBucketSize: 8
+        kBucketSize: 20
       })
   );
 
