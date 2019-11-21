@@ -18,7 +18,7 @@ export const benchmarkKadTraffic = async (NODE_NUM: number) => {
   const divide = 3;
 
   const urls = await Promise.all(
-    [...Array(divide)].map(async (_, i) => {
+    [...Array(divide)].map(async () => {
       const store = nodes.shift()!;
       const res = await store.store(Buffer.from("value")).catch(() => {});
       if (!res) throw new Error("fail");

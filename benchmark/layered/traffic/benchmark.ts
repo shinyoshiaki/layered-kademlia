@@ -21,7 +21,7 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
   const actors = nodes.map(
     node =>
       new SP2P({ PeerCreator: new PeerCreator(PeerTrafficMockModule) }, node, {
-        subNetTimeout: 1_000 * NODE_NUM,
+        subNetTimeout: 60_000 * 60 * 24,
         kBucketSize: 20
       })
   );
@@ -29,7 +29,7 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
   const divide = 3;
 
   const urls = await Promise.all(
-    [...Array(divide)].map(async (_, i) => {
+    [...Array(divide)].map(async () => {
       const store = actors.shift()!;
       const res = await store.seeder
         .storeStatic(store.mainNet.kid, Buffer.from("value"))
@@ -49,6 +49,7 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
       })
     )
   ).filter(v => !!v) as ArrayBuffer[];
+
   log("findvalue", values.length);
 
   log(
