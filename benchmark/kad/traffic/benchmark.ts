@@ -27,10 +27,11 @@ export const benchmarkKadTraffic = async (NODE_NUM: number) => {
     })
   );
 
+  const groupe = nodes.length / divide;
   const values = (
     await Promise.all(
       nodes.map(async (node, i) => {
-        const url = urls[Math.floor(i / divide)];
+        const url = urls[Math.floor(i / groupe)];
         const res = await node.findValue(url).catch(() => {});
         if (res) return res.item.value;
       })

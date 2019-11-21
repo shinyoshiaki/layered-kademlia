@@ -39,10 +39,11 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
     })
   );
 
+  const groupe = nodes.length / divide;
   const values = (
     await Promise.all(
       actors.map(async (actor, i) => {
-        const url = urls[Math.floor(i / divide)];
+        const url = urls[Math.floor(i / groupe)];
         const res = await actor.user.findStatic(url).catch(() => {});
         if (res) return res;
       })
