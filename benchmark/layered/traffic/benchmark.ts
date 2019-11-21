@@ -26,16 +26,23 @@ export async function benchmarkLayeredTraffic(NODE_NUM: number) {
       })
   );
 
-  const store = actors.shift()!;
-  const res = await store.seeder
-    .storeStatic(store.mainNet.kid, Buffer.from("value"))
-    .catch(() => {});
-  if (!res) throw new Error("fail");
-  const url = res.url;
+  const divide = 3;
+
+  const urls = await Promise.all(
+    [...Array(divide)].map(async (_, i) => {
+      const store = actors.shift()!;
+      const res = await store.seeder
+        .storeStatic(store.mainNet.kid, Buffer.from("value"))
+        .catch(() => {});
+      if (!res) throw new Error("fail");
+      return res.url;
+    })
+  );
 
   const values = (
     await Promise.all(
-      actors.map(async actor => {
+      actors.map(async (actor, i) => {
+        const url = urls[Math.floor(i / divide)];
         const res = await actor.user.findStatic(url).catch(() => {});
         if (res) return res;
       })

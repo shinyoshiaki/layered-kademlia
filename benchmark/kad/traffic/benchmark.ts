@@ -15,16 +15,22 @@ export const benchmarkKadTraffic = async (NODE_NUM: number) => {
     kBucketSize: 8
   });
 
-  const store = nodes.pop()!;
-  const res = await store.store(Buffer.from("value")).catch(() => {});
-  if (!res) throw new Error("");
-  const url = res.item.key;
+  const divide = 3;
 
-  await new Promise(r => setTimeout(r, 5000));
+  const urls = await Promise.all(
+    [...Array(divide)].map(async (_, i) => {
+      const store = nodes.shift()!;
+      const res = await store.store(Buffer.from("value")).catch(() => {});
+      if (!res) throw new Error("fail");
+      const url = res.item.key;
+      return url;
+    })
+  );
 
   const values = (
     await Promise.all(
-      nodes.map(async node => {
+      nodes.map(async (node, i) => {
+        const url = urls[Math.floor(i / divide)];
         const res = await node.findValue(url).catch(() => {});
         if (res) return res.item.value;
       })
