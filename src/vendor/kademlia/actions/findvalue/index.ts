@@ -40,6 +40,8 @@ export default async function findValue(
               return { offers, proxy };
             }
           }
+        } else {
+          console.log("timeout");
         }
 
         return { offers: [], proxy };

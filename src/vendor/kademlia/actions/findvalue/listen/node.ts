@@ -23,9 +23,8 @@ export default class FindValueProxy {
 
   findvalue = async (data: FindValue & ID) => {
     const { kTable, rpcManager } = this.di;
-    const { key, except, id } = data;
-
     const { kvs } = this.di.modules;
+    const { key, except, id } = data;
 
     const item = kvs.get(key);
 
@@ -38,15 +37,18 @@ export default class FindValueProxy {
       await Promise.all(
         peers.map(async peer => {
           if (!(peer.kid === this.listen.kid || except.includes(peer.kid))) {
-            const wait = rpcManager.getWait<FindValuePeerOffer>(
-              peer,
-              FindValueProxyOpen(this.listen.kid)
-            );
-            const res = await wait(this.timeout).catch(() => {});
+            const res = await rpcManager
+              .getWait<FindValuePeerOffer>(
+                peer,
+                FindValueProxyOpen(this.listen.kid)
+              )(this.timeout)
+              .catch(() => {});
 
             if (res) {
               const { peerkid, sdp } = res;
               if (sdp) offers.push({ peerkid, sdp });
+            } else {
+              console.log("timeout");
             }
           }
         })

@@ -84,11 +84,10 @@ export class SeederContainer {
                   JSON.stringify(meta),
                   candidatePeer.kid
                 )
-              )(subNetTimeout).catch(() => {
-                return null;
-              });
+              )(subNetTimeout).catch(() => {});
 
               if (!res) {
+                console.log("timeout");
                 r();
                 return;
               }

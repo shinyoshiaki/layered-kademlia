@@ -33,7 +33,10 @@ export default async function findNode(
       if (res) {
         const { peers } = res;
         if (peers.length > 0) return { peers, peer };
+      } else {
+        console.log("timeout");
       }
+
       return { peers: [], peer };
     })
   );

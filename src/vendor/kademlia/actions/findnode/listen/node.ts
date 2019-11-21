@@ -43,6 +43,8 @@ export default class FindNodeProxy {
         if (res) {
           const { peerkid, sdp } = res;
           if (sdp) offers.push({ peerkid, sdp });
+        } else {
+          console.log("timeout");
         }
       })
     );

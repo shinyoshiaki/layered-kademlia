@@ -21,8 +21,8 @@ export default class FindValuePeer {
   }
 
   findValueProxyOpen = async (data: FindValueProxyOpen & ID) => {
-    const { finderkid, id } = data;
     const { kTable, signaling } = this.di;
+    const { finderkid, id } = data;
 
     const { peer } = signaling.create(finderkid);
 
@@ -50,10 +50,10 @@ export default class FindValuePeer {
   };
 }
 
-const FindValuePeerOffer = (peerkid: string, sdp?: Signal) => ({
+const FindValuePeerOffer = (peerKid: string, sdp?: Signal) => ({
   type: "FindValuePeerOffer" as const,
   sdp,
-  peerkid
+  peerkid: peerKid
 });
 
 export type FindValuePeerOffer = ReturnType<typeof FindValuePeerOffer>;

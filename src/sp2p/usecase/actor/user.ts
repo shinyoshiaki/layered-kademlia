@@ -47,6 +47,7 @@ export class User {
     )(subNetTimeout).catch(() => {});
 
     if (!navigatorRes) {
+      console.log("timeout");
       throw new Error("connectSubNet fail RPCUserReqSeederOffer2Navigator");
     }
 
