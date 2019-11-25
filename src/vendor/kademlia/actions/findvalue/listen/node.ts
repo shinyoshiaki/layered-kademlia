@@ -32,7 +32,7 @@ export default class FindValueProxy {
       this.listen.rpc({ ...FindValueResult({ item }), id });
     } else {
       const peers = kTable.findNode(key);
-      const offers: { peerkid: string; sdp: Signal }[] = [];
+      const offers: { peerKid: string; sdp: Signal }[] = [];
 
       await Promise.all(
         peers.map(async peer => {
@@ -45,8 +45,8 @@ export default class FindValueProxy {
               .catch(() => {});
 
             if (res) {
-              const { peerkid, sdp } = res;
-              if (sdp) offers.push({ peerkid, sdp });
+              const { peerKid, sdp } = res;
+              if (sdp) offers.push({ peerKid, sdp });
             } else {
               console.log("timeout");
             }
@@ -60,34 +60,36 @@ export default class FindValueProxy {
 
   findValueAnswer = (data: FindValueAnswer & ID) => {
     const { kTable } = this.di;
-    const { sdp, peerkid, id } = data;
+    const { sdp, peerKid, id } = data;
 
-    const peer = kTable.getPeer(peerkid);
+    const peer = kTable.getPeer(peerKid);
     if (!peer) return;
     peer.rpc({ ...FindValueProxyAnswer(sdp, this.listen.kid), id });
   };
 }
 
-const FindValueResult = (value: Partial<{ item: Item; offers: Offer[] }>) => ({
+const FindValueResult = (
+  value: Partial<{ item: Item; offers: OfferPayload[] }>
+) => ({
   type: "FindValueResult" as const,
   value
 });
 
-export type Offer = { peerkid: string; sdp: Signal };
+export type OfferPayload = { peerKid: string; sdp: Signal };
 
 export type FindValueResult = ReturnType<typeof FindValueResult>;
 
-const FindValueProxyOpen = (finderkid: string) => ({
+const FindValueProxyOpen = (finderKid: string) => ({
   type: "FindValueProxyOpen" as const,
-  finderkid
+  finderKid
 });
 
 export type FindValueProxyOpen = ReturnType<typeof FindValueProxyOpen>;
 
-const FindValueProxyAnswer = (sdp: Signal, finderkid: string) => ({
+const FindValueProxyAnswer = (sdp: Signal, finderKid: string) => ({
   type: "FindValueProxyAnswer" as const,
   sdp,
-  finderkid
+  finderKid
 });
 
 export type FindValueProxyAnswer = ReturnType<typeof FindValueProxyAnswer>;

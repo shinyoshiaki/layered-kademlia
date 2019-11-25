@@ -1,7 +1,7 @@
 import {
   FindNodeProxyAnswerError,
   FindNodeProxyOffer,
-  Offer
+  OfferPayload
 } from "./listen/node";
 
 import { DependencyInjection } from "../../di";
@@ -34,17 +34,17 @@ export default async function findNode(
         const { peers } = res;
         if (peers.length > 0) return { peers, peer };
       } else {
-        console.log("timeout");
+        console.log("timeout", timeout, peer.type);
       }
 
       return { peers: [], peer };
     })
   );
 
-  const findNodeAnswer = async (node: Peer, offer: Offer) => {
-    const { peerkid, sdp } = offer;
-    const { peer, candidate } = signaling.create(peerkid);
-    const _createAnswer = async (peer: Peer) => {
+  const _findNodeAnswer = async (node: Peer, offer: OfferPayload) => {
+    const { peerKid, sdp } = offer;
+    const { peer, candidate } = signaling.create(peerKid);
+    const __createAnswer = async (peer: Peer) => {
       const answer = await peer.setOffer(sdp);
 
       rpcManager
@@ -56,26 +56,26 @@ export default async function findNode(
           peer.onConnect.error("FindNodeProxyAnswerError");
         });
 
-      rpcManager.run(node, FindNodeAnswer(answer, peerkid));
+      rpcManager.run(node, FindNodeAnswer(answer, peerKid));
 
-      const err = await peer.onConnect.asPromise(timeout).catch(e => {
+      const err = await peer.onConnect.asPromise(timeout).catch(() => {
         return "err";
       });
       if (err) {
-        signaling.delete(peerkid);
+        signaling.delete(peerKid);
       } else {
         listeners(peer, di);
         connected.push(peer);
       }
     };
     if (peer) {
-      await _createAnswer(peer);
+      await __createAnswer(peer);
     } else if (candidate) {
       const { peer, event } = candidate;
       // node.ts側でタイミング悪くPeerを作ってしまった場合の処理
       // (並行テスト時にしか起きないと思う)
-      if (peer.OfferAnswer === "offer") {
-        await _createAnswer(peer);
+      if (peer.SdpType === "offer") {
+        await __createAnswer(peer);
       } else {
         await event.asPromise(timeout).catch(() => {});
       }
@@ -87,7 +87,7 @@ export default async function findNode(
 
   await Promise.all(
     findNodeProxyOfferResult
-      .map(item => item.peers.map(offer => findNodeAnswer(item.peer, offer)))
+      .map(item => item.peers.map(offer => _findNodeAnswer(item.peer, offer)))
       .flatMap(v => v)
   );
 
@@ -96,7 +96,7 @@ export default async function findNode(
 
 const FindNode = (searchKid: string, except: string[]) => ({
   type: "FindNode" as const,
-  searchkid: searchKid,
+  searchKid,
   except
 });
 
@@ -105,7 +105,7 @@ export type FindNode = ReturnType<typeof FindNode>;
 const FindNodeAnswer = (sdp: Signal, peerKid: string) => ({
   type: "FindNodeAnswer" as const,
   sdp,
-  peerkid: peerKid
+  peerKid
 });
 
 export type FindNodeAnswer = ReturnType<typeof FindNodeAnswer>;

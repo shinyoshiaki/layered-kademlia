@@ -1,4 +1,4 @@
-import { FindValueResult, Offer } from "./listen/node";
+import { FindValueResult, OfferPayload } from "./listen/node";
 
 import { DependencyInjection } from "../../di";
 import { Item } from "../../modules/kvs/base";
@@ -41,7 +41,7 @@ export default async function findValue(
             }
           }
         } else {
-          console.log("timeout");
+          console.log("timeout", proxy.type, timeout);
         }
 
         return { offers: [], proxy };
@@ -50,20 +50,20 @@ export default async function findValue(
 
     if (result) return;
 
-    const findValueAnswer = async (offer: Offer, proxy: Peer) => {
-      const { peerkid, sdp } = offer;
-      const { peer, candidate } = signaling.create(peerkid);
+    const findValueAnswer = async (offer: OfferPayload, proxy: Peer) => {
+      const { peerKid, sdp } = offer;
+      const { peer, candidate } = signaling.create(peerKid);
 
       const _createAnswer = async (peer: Peer) => {
         const answer = await peer.setOffer(sdp);
 
-        rpcManager.run(proxy, FindValueAnswer(answer, peerkid));
+        rpcManager.run(proxy, FindValueAnswer(answer, peerKid));
 
         const err = await peer.onConnect.asPromise(timeout).catch(() => {
           return "err";
         });
         if (err) {
-          signaling.delete(peerkid);
+          signaling.delete(peerKid);
         } else {
           listeners(peer, di);
         }
@@ -75,7 +75,7 @@ export default async function findValue(
         const { peer, event } = candidate;
         // node.ts側でタイミング悪くPeerを作ってしまった場合の処理
         // (並行テスト時にしか起きないと思う)
-        if (peer.OfferAnswer === "offer") {
+        if (peer.SdpType === "offer") {
           await _createAnswer(peer);
         } else {
           await event.asPromise(timeout).catch(() => {});
@@ -113,10 +113,10 @@ const FindValue = (key: string, except: string[]) => ({
 
 export type FindValue = ReturnType<typeof FindValue>;
 
-const FindValueAnswer = (sdp: Signal, peerkid: string) => ({
+const FindValueAnswer = (sdp: Signal, peerKid: string) => ({
   type: "FindValueAnswer" as const,
   sdp,
-  peerkid
+  peerKid
 });
 
 export type FindValueAnswer = ReturnType<typeof FindValueAnswer>;

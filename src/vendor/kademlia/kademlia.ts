@@ -10,16 +10,14 @@ import sha1 from "sha1";
 import store from "./actions/store";
 
 export type Options = Partial<OptTable> & { timeout?: number };
+const initialOptions: Required<Options> = { timeout: 10_000, kBucketSize: 20 };
 
 export default class Kademlia {
   di: DependencyInjection;
 
-  constructor(
-    public kid: string,
-    modules: Modules,
-    opt: Options = { timeout: 10000 }
-  ) {
-    this.di = dependencyInjection(kid, modules, opt);
+  constructor(public kid: string, modules: Modules, opt?: Partial<Options>) {
+    const options = { ...initialOptions, ...opt };
+    this.di = dependencyInjection(kid, modules, options);
   }
 
   findNode = async (searchKid: string) => {
