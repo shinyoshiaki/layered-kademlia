@@ -8,23 +8,21 @@ import sha1 from "sha1";
 export type Option = OptBucket;
 
 export default class Ktable {
-  readonly kbuckets: Kbucket[] = [];
+  readonly kBuckets: Kbucket[] = [];
   private k = 20;
   pack = Pack();
   onAdd = this.pack.event<Peer>();
 
-  constructor(public kid: string, opt: Partial<Option> = {}) {
-    const { k } = this;
+  constructor(public kid: string, opt: Option) {
     const { kBucketSize } = opt;
+    this.k = kBucketSize;
 
-    this.k = kBucketSize || k;
-
-    this.kbuckets = [...Array(160)].map(() => new Kbucket(opt));
+    this.kBuckets = [...Array(160)].map(() => new Kbucket(opt));
   }
 
   add(peer: Peer) {
     const length = distance(this.kid, peer.kid);
-    const kbucket = this.kbuckets[length];
+    const kbucket = this.kBuckets[length];
     kbucket.add(peer);
     this.onAdd.execute(peer);
   }
@@ -35,7 +33,7 @@ export default class Ktable {
       .slice(0, this.k);
 
   get allPeers() {
-    return this.kbuckets
+    return this.kBuckets
       .map(kbucket => kbucket.peers.map(bucket => bucket.peer))
       .flatMap(peer => peer);
   }
@@ -62,7 +60,7 @@ export default class Ktable {
 
   rmPeer = (kid: string) => {
     const length = distance(this.kid, kid);
-    const kbucket = this.kbuckets[length];
+    const kbucket = this.kBuckets[length];
     kbucket.rmPeer(kid);
   };
 }
