@@ -4,7 +4,7 @@ import {
 } from "../../mock/peer/traffic";
 
 import { PeerCreator } from "../../../src/sp2p/module/peerCreator";
-import { SP2P } from "../../../src/sp2p/adapter/actor";
+import { SP2P } from "../../../src/sp2p/main";
 import { testSetupNodes } from "../../../src/tests/setupNetwork";
 
 const log = (...s: any[]) => console.log(`layered/traffic `, ...s);

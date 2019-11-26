@@ -1,6 +1,6 @@
 import Event from "rx.mini";
 import { Meta } from "../../entity/data/meta";
-import { Options } from "../../adapter/actor";
+import { Options } from "../../main";
 import { PeerCreator } from "../../module/peerCreator";
 import { SubNetwork } from "../../entity/network/sub";
 import sha1 from "sha1";

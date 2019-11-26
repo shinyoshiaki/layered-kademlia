@@ -1,6 +1,6 @@
 import { InjectServices } from "../../service";
 import { MainNetwork } from "../../entity/network/main";
-import { Options } from "../../adapter/actor";
+import { Options } from "../../main";
 import { Peer } from "../../../vendor/kademlia";
 import { RPCNavigatorBackOfferBySeeder } from "../../entity/actor/navigator";
 import { SeederContainer } from "./seeder";

@@ -1,6 +1,6 @@
 import { PeerCreator } from "../../../src/sp2p/module/peerCreator";
 import { PeerMockModule } from "../../../src/vendor/kademlia";
-import { SP2P } from "../../../src/sp2p/adapter/actor";
+import { SP2P } from "../../../src/sp2p/main";
 import { testSetupNodes } from "../../../src/tests/setupNetwork";
 
 const NODE_NUM = 50;

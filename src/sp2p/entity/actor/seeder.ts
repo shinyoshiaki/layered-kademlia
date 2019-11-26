@@ -11,7 +11,7 @@ import {
 import Event from "rx.mini";
 import { InjectServices } from "../../service";
 import { MainNetwork } from "../network/main";
-import { Options } from "../../adapter/actor";
+import { Options } from "../../main";
 import { Peer } from "../../../vendor/kademlia";
 import { RPC } from "../../../vendor/kademlia/modules/peer/base";
 import { Signal } from "webrtc4me";
