@@ -7,7 +7,7 @@ import { benchmarkKadTraffic } from "../kad/traffic/benchmark";
 import { benchmarkLayeredTraffic } from "../layered/traffic/benchmark";
 
 const NODE_NUM = 20;
-const GROUP_NUM = 20;
+const GROUP_NUM = NODE_NUM / 2;
 const KBUCKET_SIZE = 20;
 
 test(
