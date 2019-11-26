@@ -6,7 +6,7 @@ import {
 import { InjectServices } from "../../service";
 import { MainNetwork } from "../../entity/network/main";
 import { Meta } from "../../entity/data/meta";
-import { Options } from "../../adapter/actor";
+import { Options } from "../../main";
 import { RPC } from "../../../vendor/kademlia/modules/peer/base";
 import { Signal } from "webrtc4me";
 
@@ -44,13 +44,7 @@ export class NavigatorContainer {
 
           await seederPeer.setAnswer(res.sdp);
 
-          NavigatorManager.createNavigator(
-            services,
-            meta,
-            mainNet,
-            seederPeer,
-            options
-          );
+          NavigatorManager.createNavigator(meta, mainNet, seederPeer);
         }
       });
   }

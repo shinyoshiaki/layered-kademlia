@@ -1,30 +1,28 @@
+import { InjectServices, Injectable } from "..";
 import { Meta, meta2URL } from "../../entity/data/meta";
 
-import { InjectServices } from "..";
 import { MainNetwork } from "../../entity/network/main";
 import { Navigator } from "../../entity/actor/navigator";
-import { Options } from "../../adapter/actor";
+import { Options } from "../../main";
 import { Peer } from "../../../vendor/kademlia";
 
-export class NavigatorManager {
+export class NavigatorManager implements Injectable {
   private list: { [url: string]: Navigator } = {};
 
-  createNavigator(
-    services: InjectServices,
-    meta: Meta,
-    mainNet: MainNetwork,
-    seederPeer: Peer,
-    options: Options
-  ) {
+  constructor(private options: Options) {}
+
+  services: InjectServices = true as any;
+
+  createNavigator(meta: Meta, mainNet: MainNetwork, seederPeer: Peer) {
     const url = meta2URL(meta);
     if (this.isExist(url)) return this.list[url];
 
     this.list[url] = new Navigator(
-      services,
+      this.services,
       meta,
       mainNet,
       seederPeer,
-      options
+      this.options
     );
     return this.list[url];
   }

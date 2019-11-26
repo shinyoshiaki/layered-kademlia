@@ -3,11 +3,12 @@ import { testSetupNodes } from "./setupNetwork";
 
 describe("setup network", () => {
   test("mock", async () => {
-    const nodes = await testSetupNodes(10, PeerModule, {
+    const num = 5;
+    const nodes = await testSetupNodes(num, PeerModule, {
       kBucketSize: 8,
       timeout: 200
     });
-    expect(nodes.length).toBe(10);
+    expect(nodes.length).toBe(num);
     nodes.forEach(v => v.dispose());
   }, 60_000_0);
 });

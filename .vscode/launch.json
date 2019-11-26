@@ -27,7 +27,7 @@
         "--runInBand",
         "--forceExit",
         "--detectOpenHandles",
-        "${workspaceRoot}/benchmark/mix/traffic.bench.ts"
+        "${workspaceRoot}/src/tests/static/find.test.ts"
       ],
       "windows": {
         "program": "${workspaceRoot}/node_modules/jest/bin/jest.js"

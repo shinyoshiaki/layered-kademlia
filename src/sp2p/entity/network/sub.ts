@@ -3,7 +3,7 @@ import { Meta, StaticMeta, StreamMeta } from "../data/meta";
 
 import { Chunk } from "../data/stream";
 import Event from "rx.mini";
-import { Options } from "../../adapter/actor";
+import { Options } from "../../main";
 import { PeerCreator } from "../../module/peerCreator";
 import { genKad } from "./util";
 import { mergeArraybuffer } from "../../../util/arraybuffer";

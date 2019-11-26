@@ -7,7 +7,7 @@ import {
 
 import { InjectServices } from "../../service";
 import { MainNetwork } from "../network/main";
-import { Options } from "../../adapter/actor";
+import { Options } from "../../main";
 import { RPCSeederOffer2UserOverNavigator } from "./seeder";
 import { Signal } from "webrtc4me";
 

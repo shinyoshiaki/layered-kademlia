@@ -8,7 +8,7 @@ import {
 import Event from "rx.mini";
 import { InjectServices } from "../../service";
 import { MainNetwork } from "../../entity/network/main";
-import { Options } from "../../adapter/actor";
+import { Options } from "../../main";
 import { Peer } from "../../../vendor/kademlia";
 import { RPCNavigatorCandidateOffer2Seeder } from "./navigator";
 import { Seeder } from "../../entity/actor/seeder";
@@ -35,13 +35,7 @@ export class SeederContainer {
       CreatePeer.peerCreator,
       this.mainNet.kid
     );
-    const seeder = SeederManager.createSeeder(
-      url,
-      this.mainNet,
-      subNet,
-      this.services,
-      this.options
-    );
+    const seeder = SeederManager.createSeeder(url, this.mainNet, subNet);
 
     await this.setupNavigators(meta, peers, seeder);
     return { seeder, url };
@@ -51,13 +45,7 @@ export class SeederContainer {
     const { SeederManager } = this.services;
     const { url, peers } = await this.mainNet.store(meta);
 
-    const seeder = SeederManager.createSeeder(
-      url,
-      this.mainNet,
-      subNet,
-      this.services,
-      this.options
-    );
+    const seeder = SeederManager.createSeeder(url, this.mainNet, subNet);
 
     await this.setupNavigators(meta, peers, seeder);
     return { seeder, url };
