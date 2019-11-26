@@ -39,12 +39,12 @@ describe("domain/user-navigator", () => {
   };
 
   test("mock", async () => {
-    const nodes = await testSetupNodes(3, PeerMockModule, { timeout: 5_000 });
+    const nodes = await testSetupNodes(10, PeerMockModule, { timeout: 5_000 });
     await job(nodes, new PeerCreator(PeerMockModule));
   }, 600_000);
 
   test("webrtc", async () => {
-    const nodes = await testSetupNodes(3, PeerModule, { timeout: 5_000 });
+    const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
     await job(nodes, new PeerCreator(PeerModule));
   }, 600_000);
 });
