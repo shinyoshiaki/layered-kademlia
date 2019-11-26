@@ -6,7 +6,7 @@ describe("setup network", () => {
     const num = 5;
     const nodes = await testSetupNodes(num, PeerModule, {
       kBucketSize: 8,
-      timeout: 200
+      timeout: 5000
     });
     expect(nodes.length).toBe(num);
     nodes.forEach(v => v.dispose());
