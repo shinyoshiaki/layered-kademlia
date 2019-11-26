@@ -36,20 +36,23 @@ export class PeerTraffickMock implements Peer {
     await new Promise(r => setTimeout(r));
     if (data.type === "Store" || data.type === "FindValueResult") {
       const mock: any = {};
-      // console.log("rpc", data);
+      const target = Buffer.from("benchmark");
 
-      // for kad
-      if ((data.value as Buffer).toString() === "value") {
-        mock.size = 1;
-      }
+      try {
+        switch (data.type) {
+          case "Store":
+            if (Buffer.compare(data.value, target) === 0) {
+              mock.size = 1;
+            }
+            break;
+          case "FindValueResult":
+            if (Buffer.compare(data.value?.item.value, target) === 0) {
+              mock.size = 1;
+            }
+            break;
+        }
+      } catch (error) {}
 
-      // 注意 static storeなので、シーダーは初期Store時に誰にもStoreすることはないので、
-      // Spyするさいには、FindValueResultのみを見ればよい
-
-      // layered kad
-      if (data.type === "FindValueResult" && data.value?.item) {
-        mock.size = 1;
-      }
       this.targetContext!.onData.execute({ data, mock });
     } else {
       this.targetContext!.onData.execute({ data, mock: {} });

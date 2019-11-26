@@ -50,7 +50,7 @@
     },
     "testMatch": [
       "**/*.test.ts",
-      "**/*.bench_.ts"
+      "**/*.bench.ts"
     ]
   }
 }

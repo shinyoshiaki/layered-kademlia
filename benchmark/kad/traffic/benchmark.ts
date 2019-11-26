@@ -21,7 +21,7 @@ export const benchmarkKadTraffic = async (
   const urls = await Promise.all(
     [...Array(GROUP_NUM)].map(async () => {
       const store = nodes.shift()!;
-      const res = await store.store(Buffer.from("value")).catch(() => {});
+      const res = await store.store(Buffer.from("benchmark")).catch(() => {});
       if (!res) throw new Error("fail");
       const url = res.item.key;
       return url;

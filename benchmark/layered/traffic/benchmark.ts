@@ -32,7 +32,7 @@ export async function benchmarkLayeredTraffic(
     [...Array(GROUP_NUM)].map(async () => {
       const store = actors.shift()!;
       const res = await store.seeder
-        .storeStatic(store.mainNet.kid, Buffer.from("value"))
+        .storeStatic(store.mainNet.kid, Buffer.from("benchmark"))
         .catch(() => {});
       if (!res) throw new Error("fail");
       return res.url;
