@@ -4,7 +4,7 @@ import RpcManager from "../../vendor/kademlia/services/rpcmanager";
 import { SeederManager } from "./manager/seeder";
 import { SubNetworkManager } from "./manager/submanager";
 
-function dependencyInjection<U extends { [key: string]: any }>(inject: U) {
+function crateInstances<U extends { [key: string]: any }>(inject: U) {
   const di: { [key in keyof U]: InstanceType<U[key]> } = {} as any;
 
   Object.keys(inject).forEach(key => {
@@ -14,7 +14,7 @@ function dependencyInjection<U extends { [key: string]: any }>(inject: U) {
 }
 
 export const createServices = () =>
-  dependencyInjection({
+  crateInstances({
     NavigatorManager,
     SeederManager,
     SubNetworkManager,
