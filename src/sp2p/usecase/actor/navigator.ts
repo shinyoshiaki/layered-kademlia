@@ -38,6 +38,7 @@ export class NavigatorContainer {
           )(subNetTimeout).catch(() => {});
 
           if (!res) {
+            console.log("timeout");
             return;
           }
 

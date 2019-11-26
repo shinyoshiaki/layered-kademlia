@@ -32,6 +32,7 @@ export class Seeder {
     private options: Options
   ) {
     const { CreatePeer, RpcManager } = services;
+    const { subNetTimeout } = options;
 
     mainNet.eventManager
       .selectListen<RPCUserReqSeederOffer2Navigator & RPC>(
@@ -48,8 +49,11 @@ export class Seeder {
             peer,
             RPCNavigatorBackOfferBySeeder(offer, mainNet.kid),
             rpc.id
-          )().catch(() => {});
-          if (!res) return;
+          )(subNetTimeout).catch(() => {});
+          if (!res) {
+            console.log("timeout");
+            return;
+          }
           await userPeer.setAnswer(res.sdp);
           this.subNet.addPeer(userPeer);
         }
@@ -76,7 +80,7 @@ export class Seeder {
         )(subNetTimeout).catch(() => {});
 
         if (!res) {
-          // console.log("RPCNavigatorBackAnswerByUser");
+          console.log("timeout");
           return;
         }
 
@@ -86,14 +90,13 @@ export class Seeder {
     );
 
     navigatorPeer.onDisconnect.once(() => {
-      // console.log("navigatorPeer.onDisconnect");
       unSubscribe();
       delete this.navigatorPeers[navigatorPeer.kid];
     });
   }
 
   setAsset(ab: ArrayBuffer) {
-    this.subNet.store(ab);
+    this.subNet.store(ab); // 他のノードはまだいないので通信はされない
   }
 
   setChunk(ab: ArrayBuffer, nextAb?: ArrayBuffer) {

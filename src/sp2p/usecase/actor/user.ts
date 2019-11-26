@@ -36,8 +36,6 @@ export class User {
         if (err) throw new Error("timeout onFinding");
       }
 
-      await subNet.findNode();
-
       return { subNet, meta };
     }
 
@@ -49,6 +47,7 @@ export class User {
     )(subNetTimeout).catch(() => {});
 
     if (!navigatorRes) {
+      console.log("timeout");
       throw new Error("connectSubNet fail RPCUserReqSeederOffer2Navigator");
     }
 

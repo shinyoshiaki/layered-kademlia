@@ -25,7 +25,7 @@ describe("domain/user-navigator", () => {
 
     seeder.dispose();
 
-    await new Promise(r => setTimeout(r, 3_000));
+    await new Promise(r => setTimeout(r, 5_000));
 
     const finder = actors.pop()!;
     shouldDispose.push(finder);
@@ -44,7 +44,7 @@ describe("domain/user-navigator", () => {
   }, 600_000);
 
   test("webrtc", async () => {
-    const nodes = await testSetupNodes(10, PeerModule, { timeout: 5_000 });
+    const nodes = await testSetupNodes(3, PeerModule, { timeout: 5_000 });
     await job(nodes, new PeerCreator(PeerModule));
   }, 600_000);
 });

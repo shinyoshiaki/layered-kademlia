@@ -33,11 +33,12 @@ export class Navigator {
         if (rpc.url === this.url) {
           const seederRes = await RpcManager.getWait<
             RPCSeederOffer2UserOverNavigator
-          >(seederPeer, RPCNavigatorReqSeederOfferByUser(rpc.userKid))(
-            subNetTimeout
-          ).catch(() => {});
+          >(
+            seederPeer,
+            RPCNavigatorReqSeederOfferByUser(rpc.userKid)
+          )(subNetTimeout).catch(() => {});
           if (!seederRes) {
-            // console.log("navigator fail RPCNavigatorReqSeederOfferByUser");
+            console.log("timeout");
             return;
           }
 
@@ -50,7 +51,7 @@ export class Navigator {
             rpc.id
           )(subNetTimeout).catch(() => {});
           if (!userRes) {
-            // console.log("navigator fail RPCNavigatorBackOfferBySeeder");
+            console.log("timeout");
             return;
           }
 
