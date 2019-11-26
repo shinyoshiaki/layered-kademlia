@@ -96,7 +96,7 @@ export class Seeder {
   }
 
   setAsset(ab: ArrayBuffer) {
-    this.subNet.store(ab);
+    this.subNet.store(ab); // 他のノードはまだいないので通信はされない
   }
 
   setChunk(ab: ArrayBuffer, nextAb?: ArrayBuffer) {
