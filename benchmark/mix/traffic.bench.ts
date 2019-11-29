@@ -2,8 +2,8 @@ import { benchmarkKadTraffic } from "../kad/traffic/benchmark";
 import { benchmarkLayeredTraffic } from "../layered/traffic/benchmark";
 import { resetTrafficContext } from "../mock/peer/traffic";
 
-const NODE_NUM = 90;
-const GROUP_NUM = NODE_NUM / 2;
+const NODE_NUM = 20;
+const GROUP_NUM = 2;
 const KBUCKET_SIZE = 20;
 
 test(
