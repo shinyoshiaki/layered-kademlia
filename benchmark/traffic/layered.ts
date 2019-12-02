@@ -1,11 +1,11 @@
 import {
   PeerTrafficMockModule,
   getTrafficContextTraffic
-} from "../../mock/peer/traffic";
+} from "../mock/peer/traffic";
 
-import { PeerCreator } from "../../../src/sp2p/module/peerCreator";
-import { SP2P } from "../../../src/sp2p/main";
-import { testSetupNodes } from "../../../src/tests/setupNetwork";
+import { PeerCreator } from "../../src/sp2p/module/peerCreator";
+import { SP2P } from "../../src/sp2p/main";
+import { testSetupNodes } from "../../src/tests/setupNetwork";
 
 const log = (...s: any[]) => console.log(`layered/traffic `, ...s);
 

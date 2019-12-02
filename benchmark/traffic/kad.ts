@@ -1,9 +1,9 @@
 import {
   PeerTrafficMockModule,
   getTrafficContextTraffic
-} from "../../mock/peer/traffic";
+} from "../mock/peer/traffic";
 
-import { testSetupNodes } from "../../../src/tests/setupNetwork";
+import { testSetupNodes } from "../../src/tests/setupNetwork";
 
 const log = (...s: any[]) => console.log(`kad/traffic `, ...s);
 

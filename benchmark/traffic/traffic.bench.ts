@@ -3,8 +3,8 @@ import {
   resetTrafficContext
 } from "../mock/peer/traffic";
 
-import { benchmarkKadTraffic } from "../kad/traffic/benchmark";
-import { benchmarkLayeredTraffic } from "../layered/traffic/benchmark";
+import { benchmarkKadTraffic } from "./kad";
+import { benchmarkLayeredTraffic } from "./layered";
 
 const NODE_NUM = 100;
 const GROUP_NUM = NODE_NUM / 2;

@@ -1,7 +1,7 @@
 import { MessageChannel, Worker } from "worker_threads";
 const { port1, port2 } = new MessageChannel();
 
-const root = "./benchmark/mix/";
+const root = "./benchmark/";
 
 test(
   "worker",
