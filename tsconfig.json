@@ -18,5 +18,5 @@
     "strictNullChecks": true,
     "noImplicitAny": true
   },
-  "exclude": ["examples"]
+  "exclude": ["examples", "benchmark"]
 }

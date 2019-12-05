@@ -1,30 +1,27 @@
 import {
   PeerTrafficMockModule,
   getTrafficContextTraffic
-} from "../../mock/peer/traffic";
+} from "../mock/peer/traffic";
 
-import { PeerCreator } from "../../../src/sp2p/module/peerCreator";
-import { SP2P } from "../../../src/sp2p/main";
-import { testSetupNodes } from "../../../src/tests/setupNetwork";
+import { PeerCreator } from "../../src/sp2p/module/peerCreator";
+import { SP2P } from "../../src/sp2p/main";
+import { testSetupNodes } from "../../src/tests/setupNetwork";
 
 const log = (...s: any[]) => console.log(`layered/traffic `, ...s);
 
 export async function benchmarkLayeredTraffic(
   NODE_NUM: number,
-  GROUP_NUM: number,
-  KBUCKET_SIZE: number
+  GROUP_NUM: number
 ) {
   const start = Date.now();
   const nodes = await testSetupNodes(NODE_NUM, PeerTrafficMockModule, {
-    timeout: 60_000 * 60 * 24,
-    kBucketSize: KBUCKET_SIZE
+    timeout: 60_000 * 60 * 24
   });
 
   const actors = nodes.map(
     node =>
       new SP2P({ PeerCreator: new PeerCreator(PeerTrafficMockModule) }, node, {
-        subNetTimeout: 60_000 * 60 * 24,
-        kBucketSize: KBUCKET_SIZE
+        subNetTimeout: 60_000 * 60 * 24
       })
   );
 
