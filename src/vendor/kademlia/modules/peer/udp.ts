@@ -67,7 +67,7 @@ export class PeerUdpMock implements Peer {
 
     await this.bind();
 
-    return this as any;
+    return { host: this.host, port: this.port } as any;
   };
 
   setAnswer = async (sdp: any) => {

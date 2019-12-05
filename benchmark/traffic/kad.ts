@@ -9,13 +9,11 @@ const log = (...s: any[]) => console.log(`kad/traffic `, ...s);
 
 export const benchmarkKadTraffic = async (
   NODE_NUM: number,
-  GROUP_NUM: number,
-  KBUCKET_SIZE: number
+  GROUP_NUM: number
 ) => {
   const start = Date.now();
   const nodes = await testSetupNodes(NODE_NUM, PeerTrafficMockModule, {
-    timeout: 60_000 * 60 * 24,
-    kBucketSize: KBUCKET_SIZE
+    timeout: 60_000 * 60 * 24
   });
 
   const urls = await Promise.all(

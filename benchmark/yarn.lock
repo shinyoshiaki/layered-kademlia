@@ -397,8 +397,8 @@ acorn@^6.0.1:
   integrity sha512-/czfa8BwS88b9gWQVhc8eknunSA2DoJpJyTQkhheIf5E48u1N0R4q/YxxsAeqRrmK9TQ/uYfgLDfZo91UlANIA==
 
 "airpc@https://github.com/shinyoshiaki/airpc#master":
-  version "0.0.2"
-  resolved "https://github.com/shinyoshiaki/airpc#a826dc8cb01f17f6935c39cd02764e803a11596c"
+  version "0.0.3"
+  resolved "https://github.com/shinyoshiaki/airpc#d8d5c60e12ced6cb3dbc3490977c34a2a1b78c36"
   dependencies:
     "@msgpack/msgpack" "^1.9.3"
     rxjs "^6.5.3"
