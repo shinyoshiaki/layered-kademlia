@@ -1,7 +1,7 @@
 import { kadBench } from "./kad";
 import { layeredBench } from "./layered";
 
-const NODE_NUM = 20;
+const NODE_NUM = 14;
 const GROUP_NUM = NODE_NUM / 2;
 
 test(
