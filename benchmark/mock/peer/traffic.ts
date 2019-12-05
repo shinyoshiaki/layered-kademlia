@@ -46,7 +46,7 @@ export class PeerTraffickMock implements Peer {
             }
             break;
           case "FindValueResult":
-            if (Buffer.compare(data.value?.item.value, target) === 0) {
+            if (Buffer.compare(data.value.item.value, target) === 0) {
               mock.size = 1;
             }
             break;
@@ -60,17 +60,6 @@ export class PeerTraffickMock implements Peer {
   };
 
   parseRPC = (data: ArrayBuffer) => undefined as any;
-
-  eventRpc = (type: string, id: string) => {
-    const observer = new Event<any>();
-    const { unSubscribe } = this.onData.subscribe(({ data }) => {
-      if (data.type === type && data.id === id) {
-        observer.execute(data);
-        unSubscribe();
-      }
-    });
-    return observer;
-  };
 
   createOffer = async () => {
     this.SdpType = "offer";
