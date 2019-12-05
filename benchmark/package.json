@@ -8,9 +8,12 @@
   },
   "scripts": {
     "test": "jest --forceExit",
-    "test_target": "jest --forceExit ./mix/traffic.test.ts"
+    "test_target": "jest --forceExit ./playground/worker.test.ts"
   },
   "dependencies": {
+    "airpc": "https://github.com/shinyoshiaki/airpc#master",
+    "comlink": "^4.1.0",
+    "esm": "^3.2.25",
     "typescript": "^3.7.2"
   },
   "devDependencies": {
@@ -31,7 +34,8 @@
       }
     },
     "testMatch": [
-      "**/*.bench.ts"
+      "**/*.bench.ts",
+      "**/*.test.ts"
     ]
   }
 }
