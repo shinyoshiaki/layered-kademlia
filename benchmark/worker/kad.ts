@@ -5,19 +5,28 @@ import { Worker } from "worker_threads";
 
 const log = (...s: any[]) => console.log(`kad/worker `, ...s);
 
-export async function kadBench(NODE_NUM: number, GROUP_NUM: number) {
+export async function kadBench(
+  NODE_NUM: number,
+  GROUP_NUM: number,
+  debug = false
+) {
   const start = Date.now();
+  const path = debug ? "/benchmark/worker/" : "/";
 
   const workers = [...Array(NODE_NUM)].map(() =>
     wrap(
       KadWorker,
       workerThreadsWrapper(
-        new Worker("./worker.js", {
+        new Worker(`.${path}/worker.js`, {
           workerData: { path: "./worker/kad.worker.ts" }
         })
       )
     )
   );
+
+  for (let worker of workers) {
+    await worker.init();
+  }
 
   for (let i = 1; i < workers.length; i++) {
     const offerNode = workers[i - 1];
@@ -44,7 +53,7 @@ export async function kadBench(NODE_NUM: number, GROUP_NUM: number) {
       const worker = workers.shift()!;
       const res = await worker.kadStore(Buffer.from("benchmark"));
       if (!res) throw new Error("fail");
-      return res.key;
+      return res;
     })
   );
 
@@ -53,7 +62,7 @@ export async function kadBench(NODE_NUM: number, GROUP_NUM: number) {
       workers.map(async (worker, i) => {
         const url = urls[Math.floor(i / group)];
         const res = await worker.kadFindValue(url);
-        if (res) return res.value;
+        if (res) return res;
       })
     )
   ).filter(v => !!v) as ArrayBuffer[];
@@ -62,5 +71,5 @@ export async function kadBench(NODE_NUM: number, GROUP_NUM: number) {
 
   log("end bench", (Date.now() - start) / 1000 + "s", "traffic");
 
-  await new Promise(r => setTimeout(r, 1000));
+  await Promise.all(workers.map(async worker => await worker.dispose()));
 }

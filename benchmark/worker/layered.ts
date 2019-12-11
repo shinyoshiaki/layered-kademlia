@@ -5,14 +5,19 @@ import { Worker } from "worker_threads";
 
 const log = (...s: any[]) => console.log(`layered/worker `, ...s);
 
-export async function layeredBench(NODE_NUM: number, GROUP_NUM: number) {
+export async function layeredBench(
+  NODE_NUM: number,
+  GROUP_NUM: number,
+  debug = false
+) {
   const start = Date.now();
+  const path = debug ? "/benchmark/worker/" : "/";
 
   const workers = [...Array(NODE_NUM)].map(() =>
     wrap(
       LayeredWorker,
       workerThreadsWrapper(
-        new Worker("./benchmark/worker.js", {
+        new Worker(`.${path}/worker.js`, {
           workerData: { path: "./worker/layered.worker.ts" }
         })
       )
