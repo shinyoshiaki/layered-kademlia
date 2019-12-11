@@ -12,12 +12,16 @@ export async function layeredBench(NODE_NUM: number, GROUP_NUM: number) {
     wrap(
       LayeredWorker,
       workerThreadsWrapper(
-        new Worker("./worker.js", {
+        new Worker("./benchmark/worker.js", {
           workerData: { path: "./worker/layered.worker.ts" }
         })
       )
     )
   );
+
+  for (let worker of workers) {
+    await worker.init();
+  }
 
   for (let i = 1; i < workers.length; i++) {
     const offerNode = workers[i - 1];
@@ -35,6 +39,10 @@ export async function layeredBench(NODE_NUM: number, GROUP_NUM: number) {
 
     await offerNode.kadFindNode(offerKid);
     await answerNode.kadFindNode(answerKid);
+  }
+
+  for (let worker of workers) {
+    await worker.kadFindNode(await worker.getKid());
   }
 
   const group = workers.length / GROUP_NUM;
@@ -65,5 +73,5 @@ export async function layeredBench(NODE_NUM: number, GROUP_NUM: number) {
 
   log("end bench", (Date.now() - start) / 1000 + "s", "traffic");
 
-  await new Promise(r => setTimeout(r, 1000));
+  await Promise.all(workers.map(async worker => await worker.dispose()));
 }
