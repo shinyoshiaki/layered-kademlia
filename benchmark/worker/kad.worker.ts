@@ -20,7 +20,7 @@ export class KadWorker {
       kvs: new KeyValueStore()
     },
     {
-      timeout: 60_000 * 60 * 24
+      timeout: 5_000
     }
   );
 
