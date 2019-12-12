@@ -51,7 +51,7 @@
     },
     "testMatch": [
       "**/*.test.ts",
-      "**/*.bench.ts"
+      "**/*.bench_.ts"
     ]
   }
 }
