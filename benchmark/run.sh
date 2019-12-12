@@ -5,6 +5,5 @@ TARGET="benchmark"
 echo $BRANCH
 
 if [ $BRANCH = $TARGET ]; then
-    yarn
-    yarn test
+    ./benchmark.sh
 fi

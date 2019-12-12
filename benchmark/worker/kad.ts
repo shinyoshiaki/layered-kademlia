@@ -13,6 +13,8 @@ export async function kadBench(
   const start = Date.now();
   const path = debug ? "/benchmark/worker/" : "/";
 
+  log();
+
   const workers = [...Array(NODE_NUM)].map(() =>
     wrap(
       KadWorker,
@@ -72,4 +74,8 @@ export async function kadBench(
   log("end bench", (Date.now() - start) / 1000 + "s", "traffic");
 
   await Promise.all(workers.map(async worker => await worker.dispose()));
+
+  log("clean up");
+
+  process.exit();
 }

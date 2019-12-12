@@ -13,6 +13,8 @@ export async function layeredBench(
   const start = Date.now();
   const path = debug ? "/benchmark/worker/" : "/";
 
+  log();
+
   const workers = [...Array(NODE_NUM)].map(() =>
     wrap(
       LayeredWorker,
@@ -27,6 +29,8 @@ export async function layeredBench(
   for (let worker of workers) {
     await worker.init();
   }
+
+  log("worker setup done");
 
   for (let i = 1; i < workers.length; i++) {
     const offerNode = workers[i - 1];
@@ -50,6 +54,8 @@ export async function layeredBench(
     await worker.kadFindNode(await worker.getKid());
   }
 
+  log("network setup done");
+
   const group = workers.length / GROUP_NUM;
 
   const urls = await Promise.all(
@@ -63,6 +69,8 @@ export async function layeredBench(
       return url;
     })
   );
+
+  log("store done");
 
   const values = (
     await Promise.all(
@@ -79,4 +87,8 @@ export async function layeredBench(
   log("end bench", (Date.now() - start) / 1000 + "s", "traffic");
 
   await Promise.all(workers.map(async worker => await worker.dispose()));
+
+  log("clean up");
+
+  process.exit();
 }
