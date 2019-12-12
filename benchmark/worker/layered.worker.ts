@@ -21,7 +21,7 @@ export class LayeredWorker {
       kvs: new KeyValueStore()
     },
     {
-      timeout: 5_000
+      timeout: 60_000 * 60 * 24
     }
   );
   private layered = new SP2P(

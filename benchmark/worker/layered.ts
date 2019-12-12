@@ -30,7 +30,6 @@ export async function layeredBench(
   }
 
   log("worker setup done");
-  const start = Date.now();
 
   for (let i = 1; i < workers.length; i++) {
     const offerNode = workers[i - 1];
@@ -51,6 +50,8 @@ export async function layeredBench(
   }
 
   log("network setup done");
+
+  const start = Date.now();
 
   const group = workers.length / GROUP_NUM;
 

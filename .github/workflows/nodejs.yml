@@ -35,4 +35,4 @@ jobs:
           sudo bash -c 'ulimit -n 4096'          
           sudo yarn test
         env:
-          CI: true
+          CI: false
