@@ -10,7 +10,6 @@ export async function layeredBench(
   GROUP_NUM: number,
   debug = false
 ) {
-  const start = Date.now();
   const path = debug ? "/benchmark/worker/" : "/";
 
   log();
@@ -31,6 +30,7 @@ export async function layeredBench(
   }
 
   log("worker setup done");
+  const start = Date.now();
 
   for (let i = 1; i < workers.length; i++) {
     const offerNode = workers[i - 1];
@@ -50,10 +50,6 @@ export async function layeredBench(
     await answerNode.kadFindNode(answerKid);
   }
 
-  for (let worker of workers) {
-    await worker.kadFindNode(await worker.getKid());
-  }
-
   log("network setup done");
 
   const group = workers.length / GROUP_NUM;
@@ -61,10 +57,7 @@ export async function layeredBench(
   const urls = await Promise.all(
     [...Array(GROUP_NUM)].map(async () => {
       const worker = workers.shift()!;
-      const url = await worker.seederStoreStatic(
-        Math.random().toString(),
-        Buffer.from("benchmark")
-      );
+      const url = await worker.seederStoreStatic("", Buffer.from("benchmark"));
       if (!url) throw new Error("fail");
       return url;
     })
@@ -89,6 +82,5 @@ export async function layeredBench(
   await Promise.all(workers.map(async worker => await worker.dispose()));
 
   log("clean up");
-
   process.exit();
 }

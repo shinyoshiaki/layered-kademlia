@@ -19,7 +19,7 @@ export class KadWorker {
       kvs: new KeyValueStore()
     },
     {
-      timeout: 60_000 * 60 * 24
+      timeout: 5_000
     }
   );
 
@@ -73,6 +73,10 @@ export class KadWorker {
   async kadFindValue(key: string) {
     const res = await this.kad.findValue(key);
     return res ? new Uint8Array(res.item.value as ArrayBuffer) : undefined;
+  }
+
+  getAllMainNetPeers() {
+    return this.kad.di.kTable.allKids;
   }
 }
 

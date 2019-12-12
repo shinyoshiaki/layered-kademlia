@@ -10,7 +10,6 @@ export async function kadBench(
   GROUP_NUM: number,
   debug = false
 ) {
-  const start = Date.now();
   const path = debug ? "/benchmark/worker/" : "/";
 
   log();
@@ -30,6 +29,9 @@ export async function kadBench(
     await worker.init();
   }
 
+  log("worker setup done");
+  const start = Date.now();
+
   for (let i = 1; i < workers.length; i++) {
     const offerNode = workers[i - 1];
     const answerNode = workers[i];
@@ -48,16 +50,20 @@ export async function kadBench(
     await answerNode.kadFindNode(answerKid);
   }
 
+  log("network setup done");
+
   const group = workers.length / GROUP_NUM;
 
   const urls = await Promise.all(
     [...Array(GROUP_NUM)].map(async () => {
       const worker = workers.shift()!;
-      const res = await worker.kadStore(Buffer.from("benchmark"));
-      if (!res) throw new Error("fail");
-      return res;
+      const url = await worker.kadStore(Buffer.from("benchmark"));
+      if (!url) throw new Error("fail");
+      return url;
     })
   );
+
+  log("store done");
 
   const values = (
     await Promise.all(
@@ -76,6 +82,5 @@ export async function kadBench(
   await Promise.all(workers.map(async worker => await worker.dispose()));
 
   log("clean up");
-
   process.exit();
 }

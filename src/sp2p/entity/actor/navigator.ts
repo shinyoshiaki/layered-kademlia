@@ -38,7 +38,11 @@ export class Navigator {
             RPCNavigatorReqSeederOfferByUser(rpc.userKid)
           )(subNetTimeout).catch(() => {});
           if (!seederRes) {
-            console.log("timeout");
+            console.log(
+              "timeout",
+              "RPCNavigatorReqSeederOfferByUser",
+              seederPeer.type
+            );
             return;
           }
 
@@ -51,7 +55,11 @@ export class Navigator {
             rpc.id
           )(subNetTimeout).catch(() => {});
           if (!userRes) {
-            console.log("timeout");
+            console.log(
+              "timeout",
+              "RPCNavigatorBackOfferBySeeder",
+              seederPeer.type
+            );
             return;
           }
 

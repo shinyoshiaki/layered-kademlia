@@ -38,7 +38,11 @@ export class NavigatorContainer {
           )(subNetTimeout).catch(() => {});
 
           if (!res) {
-            console.log("timeout");
+            console.log(
+              "timeout",
+              "RPCNavigatorCandidateOffer2Seeder",
+              peer.type
+            );
             return;
           }
 

@@ -75,7 +75,11 @@ export class SeederContainer {
               )(subNetTimeout).catch(() => {});
 
               if (!res) {
-                console.log("timeout");
+                console.log(
+                  "timeout",
+                  "RPCSeederNavigatorCandidate",
+                  candidatePeer.type
+                );
                 r();
                 return;
               }

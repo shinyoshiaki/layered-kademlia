@@ -21,14 +21,14 @@ export class LayeredWorker {
       kvs: new KeyValueStore()
     },
     {
-      timeout: 60_000 * 60 * 24
+      timeout: 5_000
     }
   );
   private layered = new SP2P(
     { PeerCreator: new PeerCreator(PeerUdpModule) },
     this.kad,
     {
-      subNetTimeout: 60_000 * 60 * 24
+      subNetTimeout: 5_000
     }
   );
 

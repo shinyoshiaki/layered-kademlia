@@ -51,7 +51,7 @@ export class Seeder {
             rpc.id
           )(subNetTimeout).catch(() => {});
           if (!res) {
-            console.log("timeout");
+            console.log("timeout", RPCNavigatorBackOfferBySeeder, peer.type);
             return;
           }
           await userPeer.setAnswer(res.sdp);
@@ -80,7 +80,11 @@ export class Seeder {
         )(subNetTimeout).catch(() => {});
 
         if (!res) {
-          console.log("timeout");
+          console.log(
+            "timeout",
+            "RPCSeederOffer2UserOverNavigator",
+            navigatorPeer.type
+          );
           return;
         }
 
