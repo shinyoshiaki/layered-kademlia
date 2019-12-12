@@ -19,7 +19,7 @@ export class SubNetwork {
   ) {}
 
   kad = genKad(this.peerCreator, this.existKid, {
-    timeout: this.opt.subNetTimeout,
+    timeout: this.opt.kadTimeout,
     kBucketSize: this.opt.kBucketSize
   });
   kid = this.kad.kid;

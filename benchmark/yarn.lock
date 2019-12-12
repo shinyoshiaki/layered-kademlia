@@ -10,8 +10,8 @@
     base64-js "^1.3.0"
 
 "airpc@https://github.com/shinyoshiaki/airpc#master":
-  version "0.0.3"
-  resolved "https://github.com/shinyoshiaki/airpc#d8d5c60e12ced6cb3dbc3490977c34a2a1b78c36"
+  version "0.1.3"
+  resolved "https://github.com/shinyoshiaki/airpc#daaae85832aed13d26ee19317d013fda96821f32"
   dependencies:
     "@msgpack/msgpack" "^1.9.3"
     rxjs "^6.5.3"

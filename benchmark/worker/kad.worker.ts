@@ -7,9 +7,10 @@ import {
   closeSocket,
   setUpSocket
 } from "../../src/vendor/kademlia/modules/peer/udp";
-import { expose, workerThreadsExposer } from "airpc";
 
+import { expose } from "airpc";
 import sha1 from "sha1";
+import { workerThreadsExposer } from "airpc/module/workerThreads";
 
 export class KadWorker {
   private kad = new Kademlia(

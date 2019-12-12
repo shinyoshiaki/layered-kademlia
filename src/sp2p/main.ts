@@ -11,8 +11,16 @@ import { SeederManager } from "./service/manager/seeder";
 import { SubNetworkManager } from "./service/manager/submanager";
 import { User } from "./usecase/actor/user";
 
-export type Options = Partial<{ subNetTimeout: number; kBucketSize: number }>;
-const initialOptions: Options = { subNetTimeout: 5000, kBucketSize: 20 };
+export type Options = Partial<{
+  subNetTimeout: number;
+  kBucketSize: number;
+  kadTimeout: number;
+}>;
+const initialOptions: Required<Options> = {
+  subNetTimeout: 5000,
+  kBucketSize: 20,
+  kadTimeout: 5000
+};
 
 export class SP2P {
   constructor(

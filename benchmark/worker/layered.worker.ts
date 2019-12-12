@@ -7,11 +7,12 @@ import {
   closeSocket,
   setUpSocket
 } from "../../src/vendor/kademlia/modules/peer/udp";
-import { expose, workerThreadsExposer } from "airpc";
 
 import { PeerCreator } from "../../src/sp2p/module/peerCreator";
 import { SP2P } from "../../src/sp2p/main";
+import { expose } from "airpc";
 import sha1 from "sha1";
+import { workerThreadsExposer } from "airpc/module/workerThreads";
 
 export class LayeredWorker {
   private kad = new Kademlia(
@@ -28,7 +29,8 @@ export class LayeredWorker {
     { PeerCreator: new PeerCreator(PeerUdpModule) },
     this.kad,
     {
-      subNetTimeout: 5_000
+      subNetTimeout: 5_000,
+      kadTimeout: 5_000
     }
   );
 
