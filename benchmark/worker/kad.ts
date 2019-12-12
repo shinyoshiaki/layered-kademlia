@@ -1,7 +1,7 @@
-import { workerThreadsWrapper, wrap } from "airpc";
-
 import { KadWorker } from "./kad.worker";
 import { Worker } from "worker_threads";
+import { workerThreadsWrapper } from "airpc/module/workerThreads";
+import { wrap } from "airpc";
 
 const log = (...s: any[]) => console.log(`kad/worker `, ...s);
 

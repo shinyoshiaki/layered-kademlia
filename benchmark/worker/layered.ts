@@ -1,7 +1,7 @@
-import { workerThreadsWrapper, wrap } from "airpc";
-
 import { LayeredWorker } from "./layered.worker";
 import { Worker } from "worker_threads";
+import { workerThreadsWrapper } from "airpc/module/workerThreads";
+import { wrap } from "airpc";
 
 const log = (...s: any[]) => console.log(`layered/worker `, ...s);
 
