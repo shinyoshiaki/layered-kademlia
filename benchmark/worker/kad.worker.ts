@@ -3,6 +3,10 @@ import Kademlia, {
   PeerUdpMock,
   PeerUdpModule
 } from "../../src/vendor/kademlia";
+import {
+  closeSocket,
+  setUpSocket
+} from "../../src/vendor/kademlia/modules/peer/udp";
 import { expose, workerThreadsExposer } from "airpc";
 
 import sha1 from "sha1";
@@ -21,7 +25,13 @@ export class KadWorker {
 
   private peer?: PeerUdpMock;
 
-  constructor() {}
+  async init() {
+    await setUpSocket();
+  }
+
+  async dispose() {
+    await closeSocket();
+  }
 
   async offer(targetKid: string) {
     const peer = (this.peer = PeerUdpModule(targetKid));
@@ -55,14 +65,14 @@ export class KadWorker {
   async kadStore(buffer: Buffer) {
     const res = await this.kad.store(buffer).catch(() => {});
     if (res) {
-      return res.item;
+      return res.item.key;
     }
     return undefined;
   }
 
   async kadFindValue(key: string) {
     const res = await this.kad.findValue(key);
-    return res ? res.item : undefined;
+    return res ? new Uint8Array(res.item.value as ArrayBuffer) : undefined;
   }
 }
 

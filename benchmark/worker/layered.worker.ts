@@ -3,6 +3,10 @@ import Kademlia, {
   Peer,
   PeerUdpModule
 } from "../../src/vendor/kademlia";
+import {
+  closeSocket,
+  setUpSocket
+} from "../../src/vendor/kademlia/modules/peer/udp";
 import { expose, workerThreadsExposer } from "airpc";
 
 import { PeerCreator } from "../../src/sp2p/module/peerCreator";
@@ -30,17 +34,23 @@ export class LayeredWorker {
 
   private peer?: Peer;
 
-  constructor() {}
+  async init() {
+    await setUpSocket();
+  }
+
+  async dispose() {
+    await closeSocket();
+  }
 
   async offer(targetKid: string) {
-    const peer = (this.peer = PeerUdpModule(targetKid));
-    const sdp = await peer.createOffer();
+    this.peer = PeerUdpModule(targetKid);
+    const sdp = await this.peer.createOffer();
     return JSON.stringify(sdp);
   }
 
   async setOffer(targetKid: string, offer: string) {
-    const peer = (this.peer = PeerUdpModule(targetKid));
-    const sdp = await peer.setOffer(JSON.parse(offer));
+    this.peer = PeerUdpModule(targetKid);
+    const sdp = await this.peer.setOffer(JSON.parse(offer));
     return JSON.stringify(sdp);
   }
 
@@ -70,7 +80,12 @@ export class LayeredWorker {
   async userFindStatic(url: string) {
     const res = await this.layered.user.findStatic(url).catch(() => {});
     if (!res) return false;
-    return res;
+
+    return new Uint8Array(res);
+  }
+
+  getAllMainNetPeers() {
+    return this.kad.di.kTable.allKids;
   }
 }
 
