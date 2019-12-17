@@ -1,6 +1,6 @@
 import { PeerCreator } from "../../../src/sp2p/module/peerCreator";
 import { PeerModule } from "../../../src/vendor/kademlia";
-import { SP2P } from "../../../src/sp2p/adapter/actor";
+import { SP2P } from "../../../src/sp2p/main";
 import { genKad } from "../../../src/sp2p/entity/network/util";
 import { portalNode } from "./portal";
 import sha1 from "sha1";

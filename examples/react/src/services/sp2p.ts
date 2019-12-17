@@ -2,7 +2,7 @@ import Kademlia from "../../../../src/vendor/kademlia";
 import KeyValueStore from "../../../../src/vendor/kademlia/modules/kvs/base";
 import { PeerCreator } from "../../../../src/sp2p/module/peerCreator";
 import PeerModule from "../../../../src/vendor/kademlia/modules/peer";
-import { SP2P } from "../../../../src/sp2p/adapter/actor";
+import { SP2P } from "../../../../src/sp2p/main";
 import axios from "axios";
 import genKid from "../../../../src/vendor/kademlia/util/kid";
 
