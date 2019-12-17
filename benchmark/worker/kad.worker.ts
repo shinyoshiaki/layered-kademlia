@@ -4,13 +4,15 @@ import {
   PeerUdpModule
 } from "../../src/vendor/kademlia/modules/peer/udp";
 import {
-  closeSocket,
+  closeUdpSocket,
   setUpSocket
 } from "../../src/vendor/kademlia/modules/peer/udp";
 
 import { expose } from "airpc";
 import sha1 from "sha1";
 import { workerThreadsExposer } from "airpc/module/workerThreads";
+
+const timeout = 60_000 * 60 * 24;
 
 export class KadWorker {
   private kad = new Kademlia(
@@ -19,9 +21,7 @@ export class KadWorker {
       peerCreate: PeerUdpModule,
       kvs: new KeyValueStore()
     },
-    {
-      timeout: 60_000 * 60 * 24
-    }
+    { timeout }
   );
 
   private peer?: PeerUdpMock;
@@ -31,7 +31,7 @@ export class KadWorker {
   }
 
   async dispose() {
-    await closeSocket();
+    await closeUdpSocket();
   }
 
   async offer(targetKid: string) {
