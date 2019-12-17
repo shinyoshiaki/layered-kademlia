@@ -5,7 +5,6 @@ on:
     branches:
       - master
       - develop
-      - benchmark
       - "feature/*"
       - "maintain/*"
 jobs:
@@ -35,4 +34,4 @@ jobs:
           sudo bash -c 'ulimit -n 4096'          
           sudo yarn test
         env:
-          CI: false
+          CI: true
