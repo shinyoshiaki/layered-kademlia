@@ -1,8 +1,8 @@
-import Kademlia, {
-  KeyValueStore,
+import Kademlia, { KeyValueStore } from "../../src/vendor/kademlia";
+import {
   PeerUdpMock,
   PeerUdpModule
-} from "../../src/vendor/kademlia";
+} from "../../src/vendor/kademlia/modules/peer/udp";
 import {
   closeSocket,
   setUpSocket

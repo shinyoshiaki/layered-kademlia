@@ -8,12 +8,12 @@ const PeerList: FC = () => {
   const kad = sp2pClient.kad;
 
   const [kBuckets, setKBuckets] = useState(
-    kad.di.kTable.kbuckets.map(o => o.peers.map(v => v.kid))
+    kad.di.kTable.kBuckets.map(o => o.peers.map(v => v.kid))
   );
 
   useEffect(() => {
     const { unSubscribe } = kad.di.eventManager.addPeer.subscribe(() => {
-      setKBuckets(kad.di.kTable.kbuckets.map(o => o.peers.map(v => v.kid)));
+      setKBuckets(kad.di.kTable.kBuckets.map(o => o.peers.map(v => v.kid)));
     });
 
     return () => unSubscribe();

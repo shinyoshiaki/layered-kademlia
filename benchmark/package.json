@@ -8,12 +8,11 @@
   },
   "scripts": {
     "kad": "ts-node ./worker/kad.bench.ts --respawn",
-    "layered": "ts-node ./worker/layered.bench.ts"
+    "layered": "ts-node ./worker/layered.bench.ts",
+    "type": "tsc --noEmit"
   },
   "dependencies": {
     "airpc": "https://github.com/shinyoshiaki/airpc#master",
-    "comlink": "^4.1.0",
-    "esm": "^3.2.25",
     "typescript": "^3.7.2"
   },
   "devDependencies": {
