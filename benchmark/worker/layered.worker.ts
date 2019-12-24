@@ -1,7 +1,7 @@
 import Kademlia, { KeyValueStore, Peer } from "../../src/vendor/kademlia";
 import {
   PeerUdpModule,
-  closeSocket,
+  closeUdpSocket,
   setUpSocket
 } from "../../src/vendor/kademlia/modules/peer/udp";
 
@@ -11,6 +11,8 @@ import { expose } from "airpc";
 import sha1 from "sha1";
 import { workerThreadsExposer } from "airpc/module/workerThreads";
 
+const timeout = 60_000 * 60 * 24;
+
 export class LayeredWorker {
   private kad = new Kademlia(
     sha1(Math.random().toString()),
@@ -18,16 +20,14 @@ export class LayeredWorker {
       peerCreate: PeerUdpModule,
       kvs: new KeyValueStore()
     },
-    {
-      timeout: 60_000
-    }
+    { timeout }
   );
   private layered = new SP2P(
     { PeerCreator: new PeerCreator(PeerUdpModule) },
     this.kad,
     {
-      subNetTimeout: 5_000,
-      kadTimeout: 5_000
+      subNetTimeout: timeout,
+      kadTimeout: timeout
     }
   );
 
@@ -38,7 +38,7 @@ export class LayeredWorker {
   }
 
   async dispose() {
-    await closeSocket();
+    await closeUdpSocket();
   }
 
   async offer(targetKid: string) {

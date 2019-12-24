@@ -19,7 +19,7 @@ export default async function findValue(
 
   const job = async () => {
     const findValueResultResult = await Promise.all(
-      kTable.allPeers.map(async proxy => {
+      kTable.findNode(key).map(async proxy => {
         const except = kTable.findNode(key).map(({ kid }) => kid);
 
         const res = await rpcManager

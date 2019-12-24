@@ -10,7 +10,7 @@ export async function layeredBench(
   GROUP_NUM: number,
   debug = false
 ) {
-  const path = debug ? "/benchmark/worker/" : "/";
+  const path = debug ? "/benchmark" : "";
 
   log();
 
