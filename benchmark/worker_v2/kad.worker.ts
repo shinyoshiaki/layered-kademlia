@@ -8,12 +8,11 @@ import {
   setUpSocket
 } from "../../src/vendor/kademlia/modules/peer/udp";
 
+import { TIMEOUT } from "./kad.bench";
 import { expose } from "airpc";
 import sha1 from "sha1";
 import { sliceArraybuffer } from "../../src/util/arraybuffer";
 import { workerThreadsExposer } from "airpc/module/workerThreads";
-
-const timeout = 60_000;
 
 export class KadWorker {
   private kad = new Kademlia(
@@ -22,7 +21,7 @@ export class KadWorker {
       peerCreate: PeerUdpModule,
       kvs: new KeyValueStore()
     },
-    { timeout }
+    { timeout: TIMEOUT }
   );
 
   private peer?: PeerUdpMock;
