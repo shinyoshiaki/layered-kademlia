@@ -7,10 +7,11 @@ import {
 
 import { PeerCreator } from "../../src/sp2p/module/peerCreator";
 import { SP2P } from "../../src/sp2p/main";
-import { TIMEOUT } from "./layered.bench";
 import { expose } from "airpc";
 import sha1 from "sha1";
 import { workerThreadsExposer } from "airpc/module/workerThreads";
+
+const TIMEOUT = 5_000;
 
 export class LayeredWorker {
   private kad = new Kademlia(
