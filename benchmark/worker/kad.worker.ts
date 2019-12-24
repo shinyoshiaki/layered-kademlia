@@ -12,7 +12,7 @@ import { expose } from "airpc";
 import sha1 from "sha1";
 import { workerThreadsExposer } from "airpc/module/workerThreads";
 
-const timeout = 60_000 * 60 * 24;
+const timeout = 5_000;
 
 export class KadWorker {
   private kad = new Kademlia(
