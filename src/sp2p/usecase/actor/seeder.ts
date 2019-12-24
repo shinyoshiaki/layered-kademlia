@@ -121,7 +121,11 @@ export class SeederContainer {
   }
 
   storeStatic = async (name: string, ab: Buffer) => {
-    const { meta, chunks } = createStaticMeta(name, ab);
+    const { meta, chunks } = createStaticMeta(
+      name,
+      ab,
+      this.options.metaChunksSize
+    );
     const { seeder, url } = await this.connect(meta);
 
     chunks.forEach(ab => seeder.setAsset(ab));
