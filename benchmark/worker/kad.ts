@@ -58,7 +58,7 @@ export async function kadBench(
   const urls = await Promise.all(
     [...Array(GROUP_NUM)].map(async () => {
       const worker = workers.shift()!;
-      const url = await worker.kadStore(Buffer.from("benchmark"));
+      const url = await worker.kadStore(Buffer.from("benchmark")); // chunk length is 9
       if (!url) throw new Error("fail");
       return url;
     })
@@ -66,15 +66,15 @@ export async function kadBench(
 
   log("store done");
 
-  const values = (
-    await Promise.all(
-      workers.map(async (worker, i) => {
-        const url = urls[Math.floor(i / group)];
-        const res = await worker.kadFindValue(url);
-        if (res) return res;
-      })
-    )
-  ).filter(v => !!v) as ArrayBuffer[];
+  const arr = await Promise.all(
+    workers.map(async (worker, i) => {
+      const addresses = urls[Math.floor(i / group)];
+      const res = await worker.kadFindValue(addresses);
+      if (res.length === 9) return true;
+    })
+  );
+
+  const values = arr.filter(v => !!v) as boolean[];
 
   log("findvalue", values.length);
 

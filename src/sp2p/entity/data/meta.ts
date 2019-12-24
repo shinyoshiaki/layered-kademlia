@@ -1,8 +1,6 @@
 import sha1 from "sha1";
 import { sliceArraybuffer } from "../../../util/arraybuffer";
 
-export const metaChunksSize = 16000;
-
 export type Meta = {
   type: "static" | "stream";
   name: string;
@@ -28,7 +26,8 @@ export type StreamMeta = Meta & {
 
 export function createStaticMeta(
   name: string,
-  ab: ArrayBuffer
+  ab: ArrayBuffer,
+  metaChunksSize: number
 ): { meta: StaticMeta; chunks: ArrayBuffer[] } {
   const chunks = sliceArraybuffer(ab, metaChunksSize);
   return {

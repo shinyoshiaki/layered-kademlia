@@ -27,7 +27,8 @@ export class LayeredWorker {
     this.kad,
     {
       subNetTimeout: timeout,
-      kadTimeout: timeout
+      kadTimeout: timeout,
+      metaChunksSize: 1
     }
   );
 
