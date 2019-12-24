@@ -71,7 +71,10 @@ export async function layeredBench(
       workers.map(async (worker, i) => {
         const url = urls[Math.floor(i / group)];
         const res = await worker.userFindStatic(url);
-        if (res) return res;
+        if (res) {
+          // console.log(new TextDecoder("utf-8").decode(res));
+          return res;
+        }
       })
     )
   ).filter(v => !!v) as ArrayBuffer[];

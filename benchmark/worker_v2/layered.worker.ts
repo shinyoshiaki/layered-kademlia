@@ -11,7 +11,7 @@ import { expose } from "airpc";
 import sha1 from "sha1";
 import { workerThreadsExposer } from "airpc/module/workerThreads";
 
-const timeout = 5_000;
+const timeout = 60_000;
 
 export class LayeredWorker {
   private kad = new Kademlia(
@@ -27,7 +27,8 @@ export class LayeredWorker {
     this.kad,
     {
       subNetTimeout: timeout,
-      kadTimeout: timeout
+      kadTimeout: timeout,
+      metaChunksSize: 1
     }
   );
 
