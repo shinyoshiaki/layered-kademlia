@@ -8,6 +8,7 @@ const log = (...s: any[]) => console.log(`kad/worker `, ...s);
 export async function kadBench(
   NODE_NUM: number,
   GROUP_NUM: number,
+  VALUE: string,
   debug = false
 ) {
   const path = debug ? "/benchmark/worker/" : "/";
@@ -19,7 +20,7 @@ export async function kadBench(
       KadWorker,
       workerThreadsWrapper(
         new Worker(`.${path}/worker.js`, {
-          workerData: { path: "./worker/kad.worker.ts" }
+          workerData: { path: "./worker_v2/kad.worker.ts" }
         })
       )
     )
@@ -58,7 +59,7 @@ export async function kadBench(
   const urls = await Promise.all(
     [...Array(GROUP_NUM)].map(async () => {
       const worker = workers.shift()!;
-      const url = await worker.kadStore(Buffer.from("benchmark")); // chunk length is 9
+      const url = await worker.kadStore(Buffer.from(VALUE));
       if (!url) throw new Error("fail");
       return url;
     })
@@ -70,7 +71,10 @@ export async function kadBench(
     workers.map(async (worker, i) => {
       const addresses = urls[Math.floor(i / group)];
       const res = await worker.kadFindValue(addresses);
-      if (res.length === 9) return true;
+      if (res.length === VALUE.length) {
+        // console.log(new TextDecoder("utf-8").decode(mergeArraybuffer(res)));
+        return true;
+      }
     })
   );
 

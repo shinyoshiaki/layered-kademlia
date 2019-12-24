@@ -75,7 +75,6 @@ export class KadWorker {
     )
       .map(v => v?.item.key)
       .filter(v => !!v) as string[];
-
     return arr;
   }
 
