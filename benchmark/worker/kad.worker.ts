@@ -10,6 +10,7 @@ import {
 
 import { expose } from "airpc";
 import sha1 from "sha1";
+import { sliceArraybuffer } from "../../src/util/arraybuffer";
 import { workerThreadsExposer } from "airpc/module/workerThreads";
 
 const timeout = 60_000 * 60 * 24;
@@ -64,16 +65,34 @@ export class KadWorker {
   }
 
   async kadStore(buffer: Buffer) {
-    const res = await this.kad.store(buffer).catch(() => {});
-    if (res) {
-      return res.item.key;
-    }
-    return undefined;
+    const chunks = sliceArraybuffer(buffer, 1);
+    const arr = (
+      await Promise.all(
+        chunks.map(
+          async chunk => await this.kad.store(chunk).catch(() => undefined)
+        )
+      )
+    )
+      .map(v => v?.item.key)
+      .filter(v => !!v) as string[];
+
+    return arr;
   }
 
-  async kadFindValue(key: string) {
-    const res = await this.kad.findValue(key);
-    return res ? new Uint8Array(res.item.value as ArrayBuffer) : undefined;
+  async kadFindValue(keys: string[]) {
+    const chunks = (
+      await Promise.all(
+        keys.map(
+          async key => await this.kad.findValue(key).catch(() => undefined)
+        )
+      )
+    )
+      .map(res =>
+        res ? new Uint8Array(res.item.value as ArrayBuffer) : undefined
+      )
+      .filter(v => !!v) as Uint8Array[];
+
+    return chunks;
   }
 
   getAllMainNetPeers() {
