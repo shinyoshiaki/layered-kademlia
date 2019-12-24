@@ -7,7 +7,7 @@
     "node": ">=11"
   },
   "scripts": {
-    "kad": "ts-node ./worker/kad.bench.ts --respawn",
+    "kad": "ts-node ./worker/kad.bench.ts",
     "layered": "ts-node ./worker/layered.bench.ts",
     "type": "tsc --noEmit"
   },
