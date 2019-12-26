@@ -13,7 +13,7 @@ import sha1 from "sha1";
 import { sliceArraybuffer } from "../../src/util/arraybuffer";
 import { workerThreadsExposer } from "airpc/module/workerThreads";
 
-const TIMEOUT = 20_000;
+const TIMEOUT = 60_000;
 
 export class KadWorker {
   private kad = new Kademlia(
