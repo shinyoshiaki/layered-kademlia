@@ -28,7 +28,7 @@ export class SP2P {
   constructor(
     private modules: { PeerCreator: PeerCreator },
     private existKad: Kademlia,
-    private partialOptions: Partial<Options> = initialOptions
+    private partialOptions?: Partial<Options>
   ) {}
 
   get options() {
