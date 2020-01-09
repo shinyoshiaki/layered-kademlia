@@ -24,11 +24,6 @@ jobs:
       - name: prepare
         run: |
           yarn
-      - name: benchmark
-        run: |
-          cd benchmark
-          ./run.sh
-          cd ..
       - name: test
         run: |
           sudo bash -c 'ulimit -n 4096'          
