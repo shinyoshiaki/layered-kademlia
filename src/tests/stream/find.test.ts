@@ -31,9 +31,9 @@ describe("stream/find", () => {
         r(false);
         return;
       }
-      const { subNet, meta } = res;
+      const { subNet } = res;
       let count = 0;
-      subNet.findStreamMetaTarget(meta as StreamMeta, ({ type, chunk }) => {
+      subNet.findStreamMetaTarget(({ type, chunk }) => {
         expect(type).not.toBe("error");
 
         if (type === "complete") {

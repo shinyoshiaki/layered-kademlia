@@ -61,13 +61,12 @@ export class SubNetwork {
   };
 
   async findStreamMetaTarget(
-    meta: StreamMeta,
     cb: (res: {
       type: "error" | "chunk" | "complete";
       chunk?: ArrayBuffer;
     }) => void
   ) {
-    const { payload } = meta;
+    const { payload } = this.meta as StreamMeta;
     let target = payload.first;
     while (true) {
       const res = await this.kad.findValue(target);

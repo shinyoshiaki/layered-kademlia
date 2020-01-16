@@ -45,7 +45,7 @@ const WatchStream: FC = () => {
       sender.execute(new Uint8Array(Object.values(v)).buffer);
     });
 
-    subNet.findStreamMetaTarget(meta as StreamMeta, async ({ type, chunk }) => {
+    subNet.findStreamMetaTarget(async ({ type, chunk }) => {
       if (type === "chunk") {
         const { video } = decode(chunk) as {
           video: Uint8Array[];
