@@ -1,6 +1,4 @@
-import Kademlia, { Peer } from "../../../vendor/kademlia";
-
-import Event from "rx.mini";
+import Kademlia from "../../../vendor/kademlia";
 import { Meta } from "../data/meta";
 
 const metaMessage = "metaMessage";
@@ -9,20 +7,10 @@ export class MainNetwork {
   readonly kad = this.existKad;
 
   kid = this.kad.kid;
-  onStoreMeta = new Event<{ meta: Meta; peer: Peer }>();
+
   eventManager = this.kad.di.eventManager;
 
-  constructor(private existKad: Kademlia) {
-    this.eventManager.store.subscribe(({ rpc, peer }) => {
-      const { msg, value } = rpc;
-      if (msg === metaMessage) {
-        this.onStoreMeta.execute({
-          meta: JSON.parse(value as string) as Meta,
-          peer
-        });
-      }
-    });
-  }
+  constructor(private existKad: Kademlia) {}
 
   store = async (meta: Meta) => {
     const metaStr = JSON.stringify(meta);

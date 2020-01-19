@@ -94,12 +94,8 @@ export class User {
     }
 
     const { subNet } = connect;
-
     const res = await subNet.findStaticMetaTarget();
 
-    // if (res) {
-    //   await seederContainer.storeStatic(meta.name, Buffer.from(res));
-    // }
     return res;
   }
 }
