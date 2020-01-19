@@ -5,6 +5,7 @@ import { Peer } from "../../../vendor/kademlia";
 import { RPCNavigatorBackOfferBySeeder } from "../../entity/actor/navigator";
 import { SeederContainer } from "./seeder";
 import { Signal } from "webrtc4me";
+import { SubNetwork } from "../../entity/network/sub";
 
 export type Network = {
   store: (v: string) => Promise<string>;
@@ -92,11 +93,25 @@ export class User {
     if (!connect) {
       throw new Error("connect failed");
     }
-
     const { subNet } = connect;
     const res = await subNet.findStaticMetaTarget();
 
     return res;
+  }
+
+  async findStream(
+    url: string,
+    cb: Parameters<SubNetwork["findStreamMetaTarget"]>[0]
+  ) {
+    const connect = await this.connectSubNet(url).catch(() => {});
+    if (!connect) {
+      throw new Error("connect failed");
+    }
+    const { subNet, meta } = connect;
+    const start = () => {
+      subNet.findStreamMetaTarget(cb);
+    };
+    return { meta, start };
   }
 }
 

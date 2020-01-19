@@ -15,15 +15,23 @@ const WatchStream: FC = () => {
   const sp2pClient = useContext(SP2PClientContext);
 
   const watch = async () => {
-    const res = await sp2pClient.actor.user
-      .connectSubNet(url)
-      .catch(console.warn);
-    if (!res) throw new Error("meta not found");
+    const { user } = sp2pClient.actor;
 
-    const { subNet, meta } = res;
+    const { meta, start } = await user.findStream(
+      url,
+      async ({ type, chunk }) => {
+        if (type === "chunk") {
+          const { video } = decode(chunk) as {
+            video: Uint8Array[];
+            audio: Uint8Array[];
+          };
+          streamPlayer.push(video.map(v => decode(v) as any));
+        }
+      }
+    );
+
     const { width, height } = (meta as StreamMeta).payload;
     setResolution({ x: width, y: height });
-    console.log({ meta });
     const { sender, listener } = await libvpxDec({
       codec: "VP8",
       width,
@@ -45,15 +53,7 @@ const WatchStream: FC = () => {
       sender.execute(new Uint8Array(Object.values(v)).buffer);
     });
 
-    subNet.findStreamMetaTarget(async ({ type, chunk }) => {
-      if (type === "chunk") {
-        const { video } = decode(chunk) as {
-          video: Uint8Array[];
-          audio: Uint8Array[];
-        };
-        streamPlayer.push(video.map(v => decode(v) as any));
-      }
-    });
+    start();
   };
 
   const { x, y } = resolution;
