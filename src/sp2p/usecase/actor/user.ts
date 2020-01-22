@@ -88,6 +88,7 @@ export class User {
     return { subNet, meta };
   };
 
+  //ユーティリティ
   async findStatic(url: string) {
     const connect = await this.connectSubNet(url).catch(() => {});
     if (!connect) {
@@ -99,6 +100,7 @@ export class User {
     return res;
   }
 
+  //ユーティリティ
   async findStream(
     url: string,
     cb: Parameters<SubNetwork["findStreamMetaTarget"]>[0]
