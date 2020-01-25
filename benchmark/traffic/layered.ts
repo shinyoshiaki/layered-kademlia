@@ -21,7 +21,8 @@ export async function benchmarkLayeredTraffic(
   const actors = nodes.map(
     node =>
       new SP2P({ PeerCreator: new PeerCreator(PeerTrafficMockModule) }, node, {
-        subNetTimeout: 60_000 * 60 * 24
+        subNetTimeout: 60_000 * 60 * 24,
+        kadTimeout: 60_000 * 60 * 24
       })
   );
 
