@@ -60,14 +60,13 @@ export class SubNetwork {
     return mergeArraybuffer(chunks);
   };
 
-  async findStreamMetaTarget(
-    meta: StreamMeta,
+  findStreamMetaTarget = async (
     cb: (res: {
       type: "error" | "chunk" | "complete";
       chunk?: ArrayBuffer;
     }) => void
-  ) {
-    const { payload } = meta;
+  ) => {
+    const { payload } = this.meta as StreamMeta;
     let target = payload.first;
     while (true) {
       const res = await this.kad.findValue(target);
@@ -86,5 +85,5 @@ export class SubNetwork {
 
       await new Promise(r => setTimeout(r, payload.cycle));
     }
-  }
+  };
 }

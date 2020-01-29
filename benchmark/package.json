@@ -7,6 +7,7 @@
     "node": ">=11"
   },
   "scripts": {
+    "traffic": "ts-node ./traffic/traffic.bench.ts",
     "kad": "ts-node ./worker/kad.bench.ts",
     "layered": "ts-node ./worker/layered.bench.ts",
     "type": "tsc --noEmit"

@@ -2,7 +2,6 @@ import {
   RPCSeederAnswer2Navigator,
   RPCSeederNavigatorCandidate
 } from "./seeder";
-
 import { InjectServices } from "../../service";
 import { MainNetwork } from "../../entity/network/main";
 import { Meta } from "../../entity/data/meta";
