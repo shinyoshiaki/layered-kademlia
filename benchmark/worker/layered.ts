@@ -8,6 +8,7 @@ const log = (...s: any[]) => console.log(`layered/worker `, ...s);
 export async function layeredBench(
   NODE_NUM: number,
   GROUP_NUM: number,
+  VALUE: string,
   debug = false
 ) {
   const path = debug ? "/benchmark" : "";
@@ -19,7 +20,7 @@ export async function layeredBench(
       LayeredWorker,
       workerThreadsWrapper(
         new Worker(`.${path}/worker.js`, {
-          workerData: { path: "./worker/layered.worker.ts" }
+          workerData: { path: "./worker_v2/layered.worker.ts" }
         })
       )
     )
@@ -58,7 +59,7 @@ export async function layeredBench(
   const urls = await Promise.all(
     [...Array(GROUP_NUM)].map(async () => {
       const worker = workers.shift()!;
-      const url = await worker.seederStoreStatic("", Buffer.from("benchmark"));
+      const url = await worker.seederStoreStatic("", Buffer.from(VALUE));
       if (!url) throw new Error("fail");
       return url;
     })
@@ -71,7 +72,10 @@ export async function layeredBench(
       workers.map(async (worker, i) => {
         const url = urls[Math.floor(i / group)];
         const res = await worker.userFindStatic(url);
-        if (res) return res;
+        if (res) {
+          // console.log(new TextDecoder("utf-8").decode(res));
+          return res;
+        }
       })
     )
   ).filter(v => !!v) as ArrayBuffer[];

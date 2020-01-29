@@ -11,7 +11,7 @@ import { expose } from "airpc";
 import sha1 from "sha1";
 import { workerThreadsExposer } from "airpc/module/workerThreads";
 
-const timeout = 5_000;
+const TIMEOUT = 5_000;
 
 export class LayeredWorker {
   private kad = new Kademlia(
@@ -20,14 +20,15 @@ export class LayeredWorker {
       peerCreate: PeerUdpModule,
       kvs: new KeyValueStore()
     },
-    { timeout }
+    { timeout: TIMEOUT }
   );
   private layered = new SP2P(
     { PeerCreator: new PeerCreator(PeerUdpModule) },
     this.kad,
     {
-      subNetTimeout: timeout,
-      kadTimeout: timeout
+      subNetTimeout: TIMEOUT,
+      kadTimeout: TIMEOUT,
+      metaChunksSize: 1
     }
   );
 
