@@ -4,7 +4,6 @@ import {
   closeUdpSocket,
   setUpSocket
 } from "../../src/vendor/kademlia/modules/peer/udp";
-
 import { PeerCreator } from "../../src/sp2p/module/peerCreator";
 import { SP2P } from "../../src/sp2p/main";
 import { expose } from "airpc";

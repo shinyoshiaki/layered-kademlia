@@ -13,7 +13,7 @@ export async function layeredBench(
 ) {
   const path = debug ? "/benchmark" : "";
 
-  log();
+  log(VALUE);
 
   const workers = [...Array(NODE_NUM)].map(() =>
     wrap(
@@ -87,4 +87,5 @@ export async function layeredBench(
   await Promise.all(workers.map(async worker => await worker.dispose()));
 
   log("clean up");
+  process.exit();
 }

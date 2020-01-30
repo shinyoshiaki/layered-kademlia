@@ -1,13 +1,10 @@
 import Kademlia, { KeyValueStore } from "../../src/vendor/kademlia";
 import {
   PeerUdpMock,
-  PeerUdpModule
-} from "../../src/vendor/kademlia/modules/peer/udp";
-import {
+  PeerUdpModule,
   closeUdpSocket,
   setUpSocket
 } from "../../src/vendor/kademlia/modules/peer/udp";
-
 import { expose } from "airpc";
 import sha1 from "sha1";
 import { sliceArraybuffer } from "../../src/util/arraybuffer";

@@ -13,7 +13,7 @@ export async function kadBench(
 ) {
   const path = debug ? "/benchmark/worker/" : "/";
 
-  log();
+  log(VALUE);
 
   const workers = [...Array(NODE_NUM)].map(() =>
     wrap(
@@ -86,4 +86,5 @@ export async function kadBench(
   await Promise.all(workers.map(async worker => await worker.dispose()));
 
   log("clean up");
+  process.exit();
 }
