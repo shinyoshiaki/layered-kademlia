@@ -72,7 +72,6 @@ export async function kadBench(
       const addresses = urls[Math.floor(i / group)];
       const res = await worker.kadFindValue(addresses);
       if (res.length === VALUE.length) {
-        // console.log(new TextDecoder("utf-8").decode(mergeArraybuffer(res)));
         return true;
       }
     })
@@ -87,5 +86,4 @@ export async function kadBench(
   await Promise.all(workers.map(async worker => await worker.dispose()));
 
   log("clean up");
-  process.exit();
 }
