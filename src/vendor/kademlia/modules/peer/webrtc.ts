@@ -6,7 +6,7 @@ import Event from "rx.mini";
 
 const wrtc = require("wrtc");
 
-export const PeerModule = (kid: string) => new PeerWebRTC(kid);
+export const PeerWebRTCModule = (kid: string) => new PeerWebRTC(kid);
 
 export default class PeerWebRTC implements Peer {
   type = "webrtc";

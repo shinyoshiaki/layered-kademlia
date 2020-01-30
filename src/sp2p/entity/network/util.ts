@@ -1,6 +1,5 @@
-import Kademlia, { Options } from "../../../vendor/kademlia";
+import Kademlia, { Options, KeyValueStore } from "../../../vendor/kademlia";
 
-import KeyValueStore from "../../../vendor/kademlia/modules/kvs/base";
 import { PeerCreator } from "../../module/peerCreator";
 
 export const genKad = (peerCreate: PeerCreator, kid: string, option: Options) =>

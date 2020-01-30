@@ -4,7 +4,6 @@ import {
   createStaticMeta,
   createStreamMeta
 } from "../../entity/data/meta";
-
 import Event from "rx.mini";
 import { InjectServices } from "../../service";
 import { MainNetwork } from "../../entity/network/main";

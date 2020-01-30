@@ -1,9 +1,9 @@
-import Kademlia, { PeerMockModule, PeerModule } from "../../vendor/kademlia";
-
+import Kademlia from "../../vendor/kademlia";
 import { PeerCreator } from "../../sp2p/module/peerCreator";
 import { SP2P } from "../../sp2p/main";
-import { StreamMeta } from "../../sp2p/entity/data/meta";
 import { testSetupNodes } from "../setupNetwork";
+import { PeerMockModule } from "../../vendor/kademlia/modules/peer/base";
+import { PeerWebRTCModule } from "../../vendor/kademlia/modules/peer/webrtc";
 
 describe("stream/find", () => {
   const job = async (nodes: Kademlia[], PeerCreator: PeerCreator) => {
@@ -56,7 +56,7 @@ describe("stream/find", () => {
     await job(nodes, new PeerCreator(PeerMockModule));
   }, 60_000_0);
   test("webRtc", async () => {
-    const nodes = await testSetupNodes(5, PeerModule, { timeout: 5_000 });
-    await job(nodes, new PeerCreator(PeerModule));
+    const nodes = await testSetupNodes(5, PeerWebRTCModule, { timeout: 5_000 });
+    await job(nodes, new PeerCreator(PeerWebRTCModule));
   }, 60_000_0);
 });
