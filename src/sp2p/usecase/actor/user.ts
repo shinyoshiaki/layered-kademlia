@@ -1,11 +1,12 @@
 import { InjectServices } from "../../service";
 import { MainNetwork } from "../../entity/network/main";
 import { Options } from "../../main";
-import { Peer } from "../../../vendor/kademlia";
+
 import { RPCNavigatorBackOfferBySeeder } from "../../entity/actor/navigator";
 import { SeederContainer } from "./seeder";
 import { Signal } from "webrtc4me";
 import { SubNetwork } from "../../entity/network/sub";
+import { Peer } from "../../../vendor/kademlia";
 
 export type Network = {
   store: (v: string) => Promise<string>;

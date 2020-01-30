@@ -1,5 +1,5 @@
-import KeyValueStore from "./kvs/base";
 import { Peer } from "./peer/base";
+import { KeyValueStore } from "./kvs/base";
 
 export type PeerCreator = (kid: string) => Peer;
 

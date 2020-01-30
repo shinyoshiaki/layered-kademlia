@@ -31,6 +31,8 @@ type PeerProps = {
   disconnect: () => void;
 };
 
+export const PeerMockModule = (kid: string) => new PeerMock(kid);
+
 export class PeerMock implements Peer {
   type = "mock";
   onData = new Event<RPC>();

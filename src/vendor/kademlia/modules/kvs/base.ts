@@ -2,7 +2,7 @@ import Event from "rx.mini";
 
 export type Item = { value: string | ArrayBuffer; msg?: string };
 
-export default class KeyValueStore {
+export class KeyValueStore {
   db: { [key: string]: Item } = {};
   onSet = new Event<{ key: string; value: string | ArrayBuffer }>();
 

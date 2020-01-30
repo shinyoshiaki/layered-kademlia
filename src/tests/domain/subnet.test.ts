@@ -1,15 +1,15 @@
 import { PeerCreator } from "../../sp2p/module/peerCreator";
-import { PeerModule } from "../../vendor/kademlia";
 import { SP2P } from "../../sp2p/main";
 import { testSetupNodes } from "../setupNetwork";
+import { PeerWebRTCModule } from "../../vendor/kademlia/modules/peer/webrtc";
 
 describe("domain/subnet", () => {
-  test("", async () => {
-    const nodes = await testSetupNodes(4, PeerModule, {
+  test("webrtc", async () => {
+    const nodes = await testSetupNodes(4, PeerWebRTCModule, {
       timeout: 5_000
     });
     const actors = nodes.map(
-      v => new SP2P({ PeerCreator: new PeerCreator(PeerModule) }, v, {})
+      v => new SP2P({ PeerCreator: new PeerCreator(PeerWebRTCModule) }, v, {})
     );
 
     const seederNode = actors.shift()!;

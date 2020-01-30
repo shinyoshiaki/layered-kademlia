@@ -1,4 +1,4 @@
-import { Item, Peer } from "../../../vendor/kademlia";
+import { Peer, Item } from "../../../vendor/kademlia";
 import { Meta, StaticMeta, StreamMeta } from "../data/meta";
 
 import { Chunk } from "../data/stream";
