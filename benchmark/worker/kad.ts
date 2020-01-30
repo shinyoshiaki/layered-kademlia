@@ -20,7 +20,7 @@ export async function kadBench(
       KadWorker,
       workerThreadsWrapper(
         new Worker(`.${path}/worker.js`, {
-          workerData: { path: "./worker_v2/kad.worker.ts" }
+          workerData: { path: "./worker/kad.worker.ts" }
         })
       )
     )

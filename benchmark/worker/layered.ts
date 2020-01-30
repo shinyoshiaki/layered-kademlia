@@ -20,7 +20,7 @@ export async function layeredBench(
       LayeredWorker,
       workerThreadsWrapper(
         new Worker(`.${path}/worker.js`, {
-          workerData: { path: "./worker_v2/layered.worker.ts" }
+          workerData: { path: "./worker/layered.worker.ts" }
         })
       )
     )
