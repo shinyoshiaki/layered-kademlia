@@ -15,7 +15,8 @@
     "publish": "npm publish --access=public",
     "start": "ts-node --project ./tsconfig.json ./src/index.ts",
     "react": "cd examples/react && npm run start",
-    "express": "cd examples/express && npm run server"
+    "express": "cd examples/express && npm run server",
+    "dependency": "yarn code-dependency --source ./src/"
   },
   "dependencies": {
     "@msgpack/msgpack": "^1.9.3",
@@ -28,6 +29,7 @@
     "wrtc": "^0.4.2"
   },
   "devDependencies": {
+    "@code-dependency/cli": "^0.5.0",
     "@types/jest": "^23.3.13",
     "@types/node": "^11.13.6",
     "@types/sha1": "^1.1.2",
